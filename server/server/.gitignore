@@ -1,0 +1,5 @@
+*.config
+obj/
+bin/
+Properties/
+v17/
