@@ -540,7 +540,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadCommandSP("spReadDeps", con);
+        cmd = CreateReadCommandSP("spReadDepartments", con);
 
         try
         {
@@ -553,7 +553,7 @@ public class DBservices
                 Department dep = new Department();
                 dep.DepId = Convert.ToInt32(dataReader["DepId"]);
                 dep.DepName = dataReader["DepName"].ToString();
-                dep.DepPhone = Convert.ToChar(dataReader["DepPhone"]);
+                dep.DepPhone = dataReader["DepPhone"].ToString();
                 dep.DepType = dataReader["DepType"].ToString();
                 list.Add(dep);
 

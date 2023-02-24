@@ -5,20 +5,20 @@
         //fields
         int depId;
         string depName;
-        char depPhone;
+        string depPhone;
         string depType;
 
         //properties
         public int DepId { get => depId; set => depId = value; }
         public string DepName { get => depName; set => depName = value; }
-        public char DepPhone { get => depPhone; set => depPhone = value; }
+        public string DepPhone { get => depPhone; set => depPhone = value; }
         public string DepType { get => depType; set => depType = value; }
 
 
         //constructors
         public Department() { }
 
-        public Department(int depId, string depName, char depPhone, string depType)
+        public Department(int depId, string depName, string depPhone, string depType)
         {
             this.depId = depId;
             this.depName = depName;

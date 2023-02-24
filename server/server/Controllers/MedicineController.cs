@@ -11,9 +11,18 @@ namespace server.Controllers
     {
         // GET: api/<MedicineController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Medicine> Get()
         {
-            return new string[] { "value1", "value2" };
+            Medicine med = new Medicine();
+            return med.Read();
+        }
+
+        // GET: api/<MedicineController>
+        [HttpGet("/GetActive")]
+        public IEnumerable<Medicine> GetActive()
+        {
+            Medicine med = new Medicine();
+            return med.ReadActive();
         }
 
         // GET api/<MedicineController>/5

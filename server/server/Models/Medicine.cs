@@ -66,5 +66,23 @@ namespace server.Models
             return dbs.ReadMeds();
         }
 
+   
+        public List<Medicine> ReadActive() //read only active medicines
+        {
+            DBservices dbs = new DBservices();
+            List<Medicine> medList= dbs.ReadMeds();
+            List<Medicine> newList = new List<Medicine>();
+
+            foreach (Medicine med in medList)
+            {
+                if (med.MedStatus== true)
+                {
+                    newList.Add(med);
+                }
+            }
+            return newList;
+        }
+
+
     }
 }

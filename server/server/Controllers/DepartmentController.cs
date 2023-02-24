@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<DepartmentController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Department> Get()
         {
-            return new string[] { "value1", "value2" };
+            Department dep = new Department();
+            return dep.Read();
         }
 
         // GET api/<DepartmentController>/5
