@@ -1966,6 +1966,7 @@ public class DBservices
                     reqDate = dataReader["reqDate"].ToString(),
                     reqTime = dataReader["reqTime"].ToString(),
                     genName= dataReader["genName"].ToString(),
+                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
                     nurseName = dataReader["nurseName"].ToString(),
                     depName = dataReader["depName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["ReqStatus"]),
