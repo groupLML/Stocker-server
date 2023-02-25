@@ -435,7 +435,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertDepCommandSP("spInsertDep", con, dep);    // create the command
+        cmd = CreateUpdateInsertDepCommandSP("spInsertDepartment", con, dep);    // create the command
 
         try
         {
@@ -477,7 +477,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertDepCommandSP("spUpdateDep", con, dep);
+        cmd = CreateUpdateInsertDepCommandSP("spUpdateDepartment", con, dep);
 
         try
         {

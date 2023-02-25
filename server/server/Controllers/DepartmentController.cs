@@ -26,15 +26,23 @@ namespace server.Controllers
 
         // POST api/<DepartmentController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Department dep)
         {
+            return dep.Insert();
         }
 
         // PUT api/<DepartmentController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{depId}")]
+        public bool Put(int depId, [FromBody] Department dep)
         {
+            dep.DepId = depId;
+            int numAffected = dep.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
+
 
         // DELETE api/<DepartmentController>/5
         [HttpDelete("{id}")]
