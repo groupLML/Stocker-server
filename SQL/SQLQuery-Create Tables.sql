@@ -21,7 +21,7 @@ CREATE TABLE [Users] (
 	[position] nvarchar(30),
 	[jobType] char(1) check(jobType in('P', 'N', 'A','M')) NOT NULL, 
 	[depId] smallint REFERENCES [Departments](depId) NOT NULL, 
-	[isActive]  bit default 'true',
+	[isActive] bit default 'true',
 	Primary key (userId)
 )
 

@@ -42,13 +42,20 @@ namespace server.Models
             this.reqDate = reqDate;
         }
 
-
-        //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
-            return dbs.InsertMedRequest(this);
+            List<MedRequest> List = dbs.ReadMedRequests();
+
+            foreach (MedRequest mr in List) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
+            {
+                if (this.CDep==mr.CDep && this.MedId == mr.MedId && this.ReqStatus == 'W')
+                    return false;
+            }
+            dbs.InsertMedRequest(this);
+            return true;
         }
+
 
         public int Update()
         {

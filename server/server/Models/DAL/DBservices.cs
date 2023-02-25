@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml.Linq;
 using server.Models;
 using Swashbuckle.AspNetCore;
+using System.Reflection.PortableExecutable;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -1856,7 +1857,7 @@ public class DBservices
         cmd.Parameters.AddWithValue("@medId", mr.MedId);
         cmd.Parameters.AddWithValue("@reqQty", mr.ReqQty);
         cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
-        cmd.Parameters.AddWithValue("@reqDate", mr.ReqStatus);
+        cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
 
         return cmd;
 
@@ -1894,9 +1895,15 @@ public class DBservices
                 MedRequest mr = new MedRequest();
                 mr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
                 mr.CUser = Convert.ToInt32(dataReader["CUser"]);
-                mr.AUser = Convert.ToInt32(dataReader["AUser"]);
+                if(!dataReader.IsDBNull(dataReader.GetOrdinal("AUser")))
+                { 
+                    mr.AUser = Convert.ToInt32(dataReader["AUser"]);
+                }
                 mr.CDep = Convert.ToInt32(dataReader["CDep"]);
-                mr.ADep = Convert.ToInt32(dataReader["ADep"]);
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("ADep")))
+                {
+                    mr.ADep = Convert.ToInt32(dataReader["ADep"]); ;
+                }
                 mr.MedId = Convert.ToInt32(dataReader["MedId"]);
                 mr.ReqQty = (float)Convert.ToSingle(dataReader["ReqQty"]);
                 mr.ReqStatus = Convert.ToChar(dataReader["ReqStatus"]);

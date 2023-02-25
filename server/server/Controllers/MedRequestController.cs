@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<MedRequestController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<MedRequest> Get()
         {
-            return new string[] { "value1", "value2" };
+            MedRequest mr = new MedRequest();
+            return mr.Read();
         }
 
         // GET api/<MedRequestController>/5
@@ -25,14 +26,22 @@ namespace server.Controllers
 
         // POST api/<MedRequestController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] MedRequest mr)
         {
+            return mr.Insert();
         }
 
+
         // PUT api/<MedRequestController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{reqId}")]
+        public bool Put(int reqId, [FromBody] MedRequest mr)
         {
+            mr.ReqId = reqId;
+            int numAffected = mr.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<MedRequestController>/5
