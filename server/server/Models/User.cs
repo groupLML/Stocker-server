@@ -81,7 +81,7 @@
 
             foreach (User user in UserList)
             {
-                if (username == user.Username && password == user.Password)
+                if (username == user.Username && password == user.Password && user.IsActive==true)
                 {
                     return user;
                 }
