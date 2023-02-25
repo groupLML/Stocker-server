@@ -41,14 +41,22 @@ namespace server.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] User user)
         {
+            return user.Insert();
         }
 
+
         // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{userId}")]
+        public bool Put(int userId, [FromBody] User user)
         {
+            user.UserId = userId;
+            int numAffected = user.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<UserController>/5
