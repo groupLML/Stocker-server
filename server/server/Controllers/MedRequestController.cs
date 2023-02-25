@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System.Text.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,12 +18,14 @@ namespace server.Controllers
             return mr.Read();
         }
 
-        // GET api/<MedRequestController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/<MedRequestController>
+        [HttpGet("{depId}")]
+        public Object GetRequests(int depId)
         {
-            return "value";
+            MedRequest mr = new MedRequest();
+            return mr.ReadRequests(depId);
         }
+
 
         // POST api/<MedRequestController>
         [HttpPost]

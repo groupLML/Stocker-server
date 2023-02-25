@@ -69,5 +69,10 @@ namespace server.Models
             return dbs.ReadMedRequests();
         }
 
+        public Object ReadRequests(int depId) //טבלה בקשות ממחלקות עבור המחלקה של אותה אחות מחוברת
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadMedRequestsNClientMine(depId);
+        }
     }
 }
