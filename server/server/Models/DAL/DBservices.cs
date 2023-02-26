@@ -2010,6 +2010,183 @@ public class DBservices
 
 
 
+
+
+
+    /*****************MedReturns*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method insert a MedReturn to the MedReturns table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMedReturn(MedReturn mr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedReturnCommandSP("spInsertMedReturn", con, mr);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedReturn in the MedReturns table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedReturn(MedReturn mr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedReturnCommandSP("spUpdateMedReturn", con, mr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, MedReturn mr)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@medId", mr.MedId);
+        cmd.Parameters.AddWithValue("@depId", mr.DepId);
+        cmd.Parameters.AddWithValue("@rtnDate", mr.RtnDate);
+        cmd.Parameters.AddWithValue("@userId", mr.UserId);
+        cmd.Parameters.AddWithValue("@rtnQty", mr.RtnQty);
+        cmd.Parameters.AddWithValue("@reason", mr.Reason);
+
+        return cmd;
+
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedReturns from the MedReturns table
+    //--------------------------------------------------------------------------------------------------
+    public List<MedReturn> ReadMedReturns()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedReturns", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<MedReturn> list = new List<MedReturn>();
+
+            while (dataReader.Read())
+            {
+                MedReturn mr = new MedReturn();
+                mr.MedId = Convert.ToInt32(dataReader["MedId"]);
+                mr.DepId = Convert.ToInt32(dataReader["DepId"]);
+                mr.RtnDate = Convert.ToDateTime(dataReader["RtnDate"]);
+                mr.UserId = Convert.ToInt32(dataReader["UserId"]);
+                mr.RtnQty = (float)Convert.ToSingle(dataReader["RtnQty"]);
+                mr.Reason = dataReader["Reason"].ToString(); ;
+                list.Add(mr);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
+
+
+
     /*****************PushOrders*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -2184,6 +2361,7 @@ public class DBservices
 
 
 
+
     /*****************PullOrders*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -2340,179 +2518,6 @@ public class DBservices
                 list.Add(po);
             }
 
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
-
-    /*****************MedReturns*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a MedReturn to the MedReturns table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMedReturn(MedReturn mr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedReturnCommandSP("spInsertMedReturn", con, mr);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a MedReturn in the MedReturns table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMedReturn(MedReturn mr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedReturnCommandSP("spUpdateMedReturn", con, mr);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, MedReturn mr)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@medId", mr.MedId);
-        cmd.Parameters.AddWithValue("@depId", mr.DepId);
-        cmd.Parameters.AddWithValue("@rtnDate", mr.RtnDate);
-        cmd.Parameters.AddWithValue("@userId", mr.UserId);
-        cmd.Parameters.AddWithValue("@rtnQty", mr.RtnQty);
-        cmd.Parameters.AddWithValue("@reason", mr.Reason);
-
-        return cmd;
-
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read MedReturns from the MedReturns table
-    //--------------------------------------------------------------------------------------------------
-    public List<MedReturn> ReadMedReturns()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMedReturns", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<MedReturn> list = new List<MedReturn>();
-
-            while (dataReader.Read())
-            {
-                MedReturn mr = new MedReturn();
-                mr.MedId = Convert.ToInt32(dataReader["MedId"]);
-                mr.DepId = Convert.ToInt32(dataReader["DepId"]);
-                mr.RtnDate = Convert.ToDateTime(dataReader["RtnDate"]);
-                mr.UserId = Convert.ToInt32(dataReader["UserId"]);
-                mr.RtnQty = (float)Convert.ToSingle(dataReader["RtnQty"]);
-                mr.Reason = dataReader["Reason"].ToString(); ;
-                list.Add(mr);
-
-            }
             return list;
         }
         catch (Exception ex)
