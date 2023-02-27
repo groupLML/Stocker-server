@@ -25,14 +25,25 @@ namespace server.Controllers
 
         // POST api/<NormController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Norm norm)
         {
+            int numAffected = norm.Insert();
+            if (numAffected == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT api/<NormController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{normId}")]
+        public bool Put(int normId, [FromBody] Norm norm)
         {
+            norm.NormId = normId;
+            int numAffected = norm.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<NormController>/5

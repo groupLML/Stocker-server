@@ -28,10 +28,19 @@
         }
 
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
-            return dbs.InsertMedNorm(this);
+            List<Medicine> MedList = dbs.ReadMeds();
+
+            foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+            {
+                if (this.MedId == med.MedId && med.MedStatus == false)
+                    return false;
+            }
+
+            dbs.InsertMedNorm(this);
+            return true;
         }
 
         public int Update()
@@ -44,6 +53,13 @@
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMedNorms();
+        }
+
+
+        public Object ReadDepMedNorms(int depId) //טבלת תקן מחלקתי
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepMedNorms(depId);
         }
 
     }

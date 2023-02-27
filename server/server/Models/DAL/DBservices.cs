@@ -53,7 +53,27 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
         return cmd;
-    } 
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the global Read Object SqlCommand 
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadDepObjectCommandSP(String spName, SqlConnection con, int depId)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@depId", depId);
+
+        return cmd;
+    }
 
 
 
@@ -744,6 +764,7 @@ public class DBservices
     }
 
 
+
     /*****************MedNorms*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -893,6 +914,63 @@ public class DBservices
                 list.Add(mn);
             }
             return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepMedNorms from the MedNorms table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepMedNorms(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadDepMedNorms", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    genName = dataReader["genName"].ToString(),
+                    comName = dataReader["comName"].ToString(),
+                    normQty = Convert.ToInt32(dataReader["normQty"])
+
+                });
+            }
+            return listObj;
         }
         catch (Exception ex)
         {
@@ -1582,7 +1660,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // 2 methods bellow: Read StocksObjects and Create read command
+    // This method Read Dep's Stocks from the Stocks table
     //--------------------------------------------------------------------------------------------------
     public Object ReadDepStocks(int depId)
     {
@@ -1600,7 +1678,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadDepStockObjectCommandSP("spReadDepStocks", con, depId);
+        cmd = CreateReadDepObjectCommandSP("spReadDepStocks", con, depId);
 
         try
         {
@@ -1637,27 +1715,7 @@ public class DBservices
             }
         }
     }
-    private SqlCommand CreateReadDepStockObjectCommandSP(String spName, SqlConnection con, int depId)
-    {
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@depId", depId);
-
-        return cmd;
-    }
-
-
-
-
-
+   
 
 
     /*****************Messages*****************/

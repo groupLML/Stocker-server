@@ -17,22 +17,30 @@ namespace server.Controllers
         }
 
         // GET api/<MedNormController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{depId}")]
+        public Object GetMedNorms(int depId)
         {
-            return "value";
+            MedNorm mn = new MedNorm();
+            return mn.ReadDepMedNorms(depId);
         }
 
         // POST api/<MedNormController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] MedNorm mn)
         {
+            return mn.Insert();
         }
 
         // PUT api/<MedNormController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{normId}")]
+        public bool Put(int normId, [FromBody] MedNorm mn)
         {
+            mn.NormId = normId;
+            int numAffected = mn.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<MedNormController>/5
