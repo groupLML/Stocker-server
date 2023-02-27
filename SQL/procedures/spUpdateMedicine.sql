@@ -16,11 +16,21 @@ GO
 -- =============================================
 -- Author:		<Lital>
 -- Create date: <27/02/2023>
--- Description:	<Read Dep Stocks>
+-- Description:	<update Medicine>
 -- =============================================
-ALTER PROCEDURE spReadDepStocks
-     @depId smallint
-
+CREATE PROCEDURE spUpdateMedicine
+	-- Add the parameters for the stored procedure here
+	@medId smallint,
+    @genName nvarchar(100),
+    @comName nvarchar(100),
+	@ea smallint,
+	@unit varchar(10),
+	@method varchar(5),
+	@atc varchar(10),
+	@mazNum varchar(10),
+	@chamNum varchar(10),
+	@medStatus bit,
+	@lastUpdate datetime
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -28,11 +38,8 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [Stocks].medId,genName,comName, sum(stcQty) as 'stcQty'
-	FROM [Stocks] inner join [Medicines]
-	on [Stocks].medId=[Medicines].medId
-	where depId=@depId
-	group by [Stocks].medId, genName, comName
-
+     UPDATE Medicines set genName=@genName, comName = @comName ,ea = @ea, unit=@unit,
+	 method=@method, atc=@atc, mazNum=@mazNum, chamNum=@chamNum, medStatus=@medStatus,lastUpdate=@lastUpdate
+	 where medId=@medId 
 END
 GO

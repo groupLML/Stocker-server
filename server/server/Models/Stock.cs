@@ -33,11 +33,22 @@ namespace server.Models
 
 
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
-            return dbs.InsertToStock(this);
+            List<Medicine> MedList = dbs.ReadMeds();
+
+
+            foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+            {
+                if (this.MedId == med.MedId && med.MedStatus == false)
+                    return false;
+            }
+
+            dbs.InsertToStock(this);
+            return true;
         }
+
 
         public int Update()
         {
@@ -51,6 +62,11 @@ namespace server.Models
             return dbs.ReadStocks();
         }
 
+        public Object ReadDepStocks(int depId) //טבלת מחסן מחלקתי
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepStocks(depId);
+        }
 
     }
 }

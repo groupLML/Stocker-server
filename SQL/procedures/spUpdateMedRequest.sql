@@ -18,7 +18,7 @@ GO
 -- Create date: <25/02/2023>
 -- Description:	<update MedRequest>
 -- =============================================
-CREATE PROCEDURE spUpdateMedRequest
+Alter PROCEDURE spUpdateMedRequest
 
     @reqId smallint,
    	@cUser smallint,
@@ -45,9 +45,10 @@ BEGIN
 END
 GO
 
-select * from MedRequests
+--select * from MedRequests
 
+--select * from DepRequests
 
-UPDATE MedRequests set cUser=18, aUser = null,cDep = 6, aDep=null,
-	 medId=3, reqQty=1, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
-	 where reqId = 4
+--UPDATE MedRequests set cUser=18, aUser = null,cDep = 6, aDep=null,
+--	 medId=3, reqQty=1, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
+--	 where reqId = 4

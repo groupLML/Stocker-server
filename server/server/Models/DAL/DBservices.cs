@@ -10,6 +10,7 @@ using server.Models;
 using Swashbuckle.AspNetCore;
 using System.Reflection.PortableExecutable;
 using System.Runtime.ConstrainedExecution;
+using System.Collections;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -1579,6 +1580,83 @@ public class DBservices
             }
         }
     }
+
+    //--------------------------------------------------------------------------------------------------
+    // 2 methods bellow: Read StocksObjects and Create read command
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepStocks(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepStockObjectCommandSP("spReadDepStocks", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    genName = dataReader["genName"].ToString(),
+                    comName = dataReader["comName"].ToString(),
+                    stcQty = Convert.ToInt32(dataReader["stcQty"])
+
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+    private SqlCommand CreateReadDepStockObjectCommandSP(String spName, SqlConnection con, int depId)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@depId", depId);
+
+        return cmd;
+    }
+
+
+
+
 
 
 

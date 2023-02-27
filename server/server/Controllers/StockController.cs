@@ -16,24 +16,34 @@ namespace server.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<StockController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/<StockController>
+        [HttpGet("{depId}")]
+        public Object GetRequests(int depId)
         {
-            return "value";
+            Stock stock = new Stock();
+            return stock.ReadDepStocks(depId);
         }
 
         // POST api/<StockController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Stock stock)
         {
+            return stock.Insert();
         }
 
+
         // PUT api/<StockController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{stcId}")]
+        public bool Put(int stcId, [FromBody] Stock stock)
         {
+            stock.StcId = stcId;
+            int numAffected = stock.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
+
 
         // DELETE api/<StockController>/5
         [HttpDelete("{id}")]

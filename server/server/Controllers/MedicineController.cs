@@ -38,11 +38,19 @@ namespace server.Controllers
         {
         }
 
+
         // PUT api/<MedicineController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{medId}")]
+        public bool Put(int medId, [FromBody] Medicine med)
         {
+            med.MedId = medId;
+            int numAffected = med.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
+
 
         // DELETE api/<MedicineController>/5
         [HttpDelete("{id}")]

@@ -16,11 +16,15 @@ GO
 -- =============================================
 -- Author:		<Lital>
 -- Create date: <27/02/2023>
--- Description:	<Read Dep Stocks>
+-- Description:	<Insert Stock>
 -- =============================================
-ALTER PROCEDURE spReadDepStocks
-     @depId smallint
+ALTER PROCEDURE spInsertStock
 
+	@stcId smallint,
+	@medId smallint,
+	@depId smallint,
+	@stcQty real,
+	@entryDate datetime
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -28,11 +32,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [Stocks].medId,genName,comName, sum(stcQty) as 'stcQty'
-	FROM [Stocks] inner join [Medicines]
-	on [Stocks].medId=[Medicines].medId
-	where depId=@depId
-	group by [Stocks].medId, genName, comName
-
+	Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@stcQty,@entryDate)
 END
 GO
+
