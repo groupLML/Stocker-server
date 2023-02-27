@@ -15,20 +15,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<Lital>
--- Create date: <25/02/2023>
--- Description:	<insert MedRequest>
+-- Create date: <27/02/2023>
+-- Description:	<insert depRequest>
 -- =============================================
-Alter PROCEDURE spInsertMedRequest
-
-    @reqId smallint,
-   	@cUser smallint,
-	@aUser smallint,
+CREATE PROCEDURE spInsertDepRequest
+	
+	@reqId smallint,
 	@cDep smallint,
-	@aDep smallint,
-	@medId smallint,
-	@reqQty real,
-	@reqStatus char(1),
-	@reqDate datetime
+	@reqDep smallint,
+	@reqStatus char(1)
 
 AS
 BEGIN
@@ -37,8 +32,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE())
-	
+	Insert INTO [DepRequests] ([reqId],[cDep],[reqDep],[reqStatus]) Values (@reqId,@cDep,@reqDep,'W')
 END
 GO
-

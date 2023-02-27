@@ -39,9 +39,15 @@ BEGIN
     -- Insert statements for procedure here
 	 UPDATE MedRequests set cUser=@cUser, aUser = @aUser ,cDep = @cDep, aDep=@aDep,
 	 medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=@reqDate
-	 where reqId = @reqId
+	 where reqId = @reqId 
 
 
 END
 GO
 
+select * from MedRequests
+
+
+UPDATE MedRequests set cUser=18, aUser = null,cDep = 6, aDep=null,
+	 medId=3, reqQty=1, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
+	 where reqId = 4

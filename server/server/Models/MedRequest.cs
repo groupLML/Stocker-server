@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace server.Models
 {
@@ -42,10 +43,19 @@ namespace server.Models
             this.reqDate = reqDate;
         }
 
+        //methodes
         public bool Insert()
         {
             DBservices dbs = new DBservices();
             List<MedRequest> List = dbs.ReadMedRequests();
+            List<Medicine> MedList = dbs.ReadMeds();
+
+
+            foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+            {
+                if (this.MedId == med.MedId && med.MedStatus==false)
+                    return false;
+            }
 
             foreach (MedRequest mr in List) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
             {
@@ -72,7 +82,7 @@ namespace server.Models
         public Object ReadRequests(int depId) //טבלה בקשות ממחלקות עבור המחלקה של אותה אחות מחוברת
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadMedRequestsNClientMine(depId);
+            return dbs.ReadMedRequestsNurseMine(depId);
         }
     }
 }

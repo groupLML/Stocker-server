@@ -15,21 +15,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<Lital>
--- Create date: <25/02/2023>
--- Description:	<insert MedRequest>
+-- Create date: <27/02/2023>
+-- Description:	<read MedRequest Nurse Mine>
 -- =============================================
-Alter PROCEDURE spInsertMedRequest
-
-    @reqId smallint,
-   	@cUser smallint,
-	@aUser smallint,
-	@cDep smallint,
-	@aDep smallint,
-	@medId smallint,
-	@reqQty real,
-	@reqStatus char(1),
-	@reqDate datetime
-
+CREATE PROCEDURE spReadMedRequestsNurseMine
+      @cDep smallint
+	
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -37,8 +28,13 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE())
-	
+   SELECT reqId, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
+	       genName,reqQty, firstName+' '+lastName as 'nurseName', depName, reqStatus
+	FROM [MedRequests] INNER JOIN [Medicines]
+         ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
+		 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
+		 ON [MedRequests].[aDep] = Departments.[depId]
+   WHERE Medicines.medStatus=1 and (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=@cDep
+
 END
 GO
-

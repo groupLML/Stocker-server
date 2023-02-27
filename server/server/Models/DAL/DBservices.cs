@@ -1793,7 +1793,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Update a Message in the Messages table 
+    // This method Update a MedRequest in the MedRequests table 
     //--------------------------------------------------------------------------------------------------
     public int UpdateMedRequest(MedRequest mr)
     {
@@ -1933,7 +1933,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // 2 methods bellow: Read MedRequestsObjects and Create read command
     //--------------------------------------------------------------------------------------------------
-    public Object ReadMedRequestsNClientMine(int depId)
+    public Object ReadMedRequestsNurseMine(int depId)
     {
 
         SqlConnection con;
@@ -1949,7 +1949,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadObjectCommandSP("spReadMedRequestsNClientMine", con, depId);
+        cmd = CreateReadObjectCommandSP("spReadMedRequestsNurseMine", con, depId);
 
         try
         {
@@ -2008,6 +2008,232 @@ public class DBservices
     }
 
 
+
+
+
+
+    /*****************DepRequests*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method insert a DepRequest to the DepRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertDepRequest(DepRequest dr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertDepRequestCommandSP("spInsertDepRequest", con, dr);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a DepRequest in the DepRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateDepRequest(DepRequest dr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertDepRequestCommandSP("spUpdateDepRequest", con, dr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertDepRequestCommandSP(String spName, SqlConnection con, DepRequest dr)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", dr.ReqId);
+        cmd.Parameters.AddWithValue("@cDep", dr.CDep);
+        cmd.Parameters.AddWithValue("@reqDep", dr.ReqDep);
+        cmd.Parameters.AddWithValue("@reqStatus", dr.ReqStatus);
+
+        return cmd;
+
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepRequests from the DepRequests table
+    //--------------------------------------------------------------------------------------------------
+    public List<DepRequest> ReadDepRequests()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadDepRequests", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<DepRequest> list = new List<DepRequest>();
+
+            while (dataReader.Read())
+            {
+                DepRequest dr = new DepRequest();
+                dr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
+                dr.CDep = Convert.ToInt32(dataReader["CDep"]);
+                dr.ReqDep = Convert.ToInt32(dataReader["ReqDep"]);
+                dr.ReqStatus = Convert.ToChar(dataReader["ReqStatus"]);
+                list.Add(dr);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepRequestsObjects from the DepRequests table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepRequestsNurseOthers(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadObjectCommandSP("spReadDepRequestsNurseOthers", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    depName = dataReader["depName"].ToString(),
+                    reqDate = dataReader["reqDate"].ToString(),
+                    reqTime = dataReader["reqTime"].ToString(),
+                    genName = dataReader["genName"].ToString(),
+                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
+                    stcQty = Convert.ToInt32(dataReader["stcQty"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
 
 

@@ -15,30 +15,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<Lital>
--- Create date: <25/02/2023>
--- Description:	<insert MedRequest>
+-- Create date: <27/02/2023>
+-- Description:	<Read DepRequests>
 -- =============================================
-Alter PROCEDURE spInsertMedRequest
-
-    @reqId smallint,
-   	@cUser smallint,
-	@aUser smallint,
-	@cDep smallint,
-	@aDep smallint,
-	@medId smallint,
-	@reqQty real,
-	@reqStatus char(1),
-	@reqDate datetime
-
+CREATE PROCEDURE spReadDepRequests
+	
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	--SET NOCOUNT ON;
+	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE())
-	
+	Select * from [DepRequests]
 END
 GO
-
