@@ -44,5 +44,12 @@
             DBservices dbs = new DBservices();
             return dbs.ReadMedUsages();
         }
+
+        public Object ReadMedUsages(int depId) //טבלה צריכה של מחלקה ספציפית עבור מנהל בית המרקחת
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepMedUsages(depId);
+        }
+
     }
 }

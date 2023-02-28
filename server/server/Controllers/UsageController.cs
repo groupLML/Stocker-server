@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<UsageController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Usage> Get()
         {
-            return new string[] { "value1", "value2" };
+            Usage use = new Usage();
+            return use.Read();
         }
 
         // GET api/<UsageController>/5
@@ -25,14 +26,25 @@ namespace server.Controllers
 
         // POST api/<UsageController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Usage use)
         {
+            int numAffected = use.Insert();
+            if (numAffected == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT api/<UsageController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{useId}")]
+        public bool Put(int useId, [FromBody] Usage use)
         {
+            use.UseId = useId;
+            int numAffected = use.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<UsageController>/5

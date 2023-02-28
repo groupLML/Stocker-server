@@ -11,28 +11,42 @@ namespace server.Controllers
     {
         // GET: api/<MedUsageController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<MedUsage> Get()
         {
-            return new string[] { "value1", "value2" };
+            MedUsage mu = new MedUsage();
+            return mu.Read();
         }
 
         // GET api/<MedUsageController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{depId}")]
+        public Object GetMedUsages(int depId)
         {
-            return "value";
+            MedUsage mu = new MedUsage();
+            return mu.ReadMedUsages(depId);
         }
 
         // POST api/<MedUsageController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] MedUsage mu)
         {
+            int numAffected = mu.Insert();
+            if (numAffected == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT api/<MedUsageController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("useId/medId")]
+        public bool Put(int useId, int medId, [FromBody] MedUsage mu)
         {
+            mu.UseId = useId;
+            mu.MedId= medId;
+            int numAffected = mu.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<MedUsageController>/5

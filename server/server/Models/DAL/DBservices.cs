@@ -932,7 +932,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Read DepMedNorms from the MedNorms table
+    // This method Read DepMedNorms from the MedNorms table by depId
     //--------------------------------------------------------------------------------------------------
     public Object ReadDepMedNorms(int depId)
     {
@@ -1388,7 +1388,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertMedUsageCommandSP("spUpdateMedUsage", con, mu);
+        cmd = CreateUpdateInsertMedUsageCommandSP("spUpdateMedUsages", con, mu);
 
         try
         {
@@ -1490,6 +1490,63 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepMedUsages from the MedUsages table by depId
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepMedUsages(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadDepMedUsagesManager", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    medId= Convert.ToInt32(dataReader["medId"]),
+                    mazNum = dataReader["mazNum"].ToString(),
+                    genName = dataReader["genName"].ToString(),
+                    comName = dataReader["comName"].ToString(),
+                    useQty = Convert.ToInt32(dataReader["useQty"])
+
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
 
     /*****************Stocks*****************/
@@ -1660,7 +1717,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Read Dep's Stocks from the Stocks table
+    // This method Read Dep's Stocks from the Stocks table by depId
     //--------------------------------------------------------------------------------------------------
     public Object ReadDepStocks(int depId)
     {
@@ -2067,7 +2124,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // 2 methods bellow: Read MedRequestsObjects and Create read command
+    // 2 methods bellow: Read MedRequestsObjects by depId and Create read command 
     //--------------------------------------------------------------------------------------------------
     public Object ReadMedRequestsNurseMine(int depId)
     {
@@ -2142,9 +2199,6 @@ public class DBservices
 
         return cmd;
     }
-
-
-
 
 
 
@@ -2314,7 +2368,7 @@ public class DBservices
         }
     }
     //--------------------------------------------------------------------------------------------------
-    // This method Read DepRequestsObjects from the DepRequests table
+    // This method Read DepRequestsObjects from the DepRequests table by depId
     //--------------------------------------------------------------------------------------------------
     public Object ReadDepRequestsNurseOthers(int depId)
     {

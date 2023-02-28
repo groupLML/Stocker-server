@@ -42,14 +42,6 @@ END
 GO
 
 
-
-
-
-
-
-	
-
-
  --   SELECT depName, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
 	--       genName,reqQty, Medicines.[medId]
  --   FROM [DepRequests] INNER JOIN [MedRequests] 

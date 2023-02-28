@@ -5,7 +5,6 @@
 	[depType] nvarchar(11) check(depType in(N'כירורגיה', N'מערכות מידע', N'אורטופדיה', N'פנימית', N'בית מרקחת')) NOT NULL,
 	Primary key (depId) 
 )
---(N'כירורגיה', N'מערכות מידע', N'אורטופדיה', N'פנימית', N'בית מרקחת')
 
 
 CREATE TABLE [Users] (
@@ -147,7 +146,6 @@ CREATE TABLE [DepRequests] (
 --	[rtnQty] real check(rtnQty>0) NOT NULL,
 --	Primary key (rtnId, medId) 
 --)
---('äåæîï áèòåú', 'çåñø ùéîåù', 'ôâ úå÷ó', 'ôâåí')
 
 
 
@@ -163,7 +161,7 @@ CREATE TABLE [MedReturns](
 
 
 CREATE TABLE [PushOrders] (
-    [pushId] smallint IDENTITY (1,1),
+    [pushId] int IDENTITY (1,1),
 	[pUser] smallint REFERENCES [Users](userId),
 	[depId] smallint REFERENCES [Departments](depId) NOT NULL,
 	[reportNum] varchar (10),
@@ -175,7 +173,7 @@ CREATE TABLE [PushOrders] (
 
 
 CREATE TABLE [PullOrders] (
-    [pullId] smallint IDENTITY (1,1),
+    [pullId] int IDENTITY (1,1),
 	[pUser] smallint REFERENCES [Users](userId),
 	[nUser] smallint REFERENCES [Users](userId) NOT NULL,
 	[depId] smallint REFERENCES [Departments](depId) NOT NULL,
@@ -188,8 +186,8 @@ CREATE TABLE [PullOrders] (
 
 --T=taken, W=waiting, I= ??
 
-CREATE TABLE [PushMedOrder] (
-   	[pushId] smallint REFERENCES [PushOrders](pushId) NOT NULL,
+CREATE TABLE [PushMedOrders] (
+   	[pushId] int REFERENCES [PushOrders](pushId) NOT NULL,
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[poQty] real check(poQty>0) NOT NULL,
 	[supQty] real check(supQty>=0) default 0,
@@ -198,8 +196,8 @@ CREATE TABLE [PushMedOrder] (
 )
 
 
-CREATE TABLE [PullMedOrder] (
-   	[pullId] smallint REFERENCES [PullOrders](pullId) NOT NULL,
+CREATE TABLE [PullMedOrders] (
+   	[pullId] int REFERENCES [PullOrders](pullId) NOT NULL,
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[poQty] real check(poQty>0) NOT NULL,
 	[supQty] real check(supQty>=0) default 0,
@@ -209,18 +207,20 @@ CREATE TABLE [PullMedOrder] (
 
 
 
---Select * from [Departments]--îçì÷åú
---Select * from [Users] --îùúîùéí
---Select * from [Units] --éçéãåú îéãä
---Select * from [Medicines] --úøåôåú
---Select * from [Norms]-- ú÷ðéí îçì÷úééí
--- Select * from [MedUsages]--öøéëú úøåôä
---Select * from [Stocks]--îìàé
---Select * from [Messages] --äåãòåú
---Select * from [Requests]--á÷ùåú
---Select * from [Returns]--äçæøåú
---Select * from [MedReturns]--äçæøú úøåôä
---Select * from [PushOrders]--äæîðåú ãçéôä
---Select * from [PullOrders]--äæîðåú îùéëä
---Select * from [PushMedOrder]--úøåôåú áäæîðú ãçéôä
---Select * from [PullMedOrder]--úøåôåú áäæîðú îùéëä
+Select * from [Departments]
+Select * from [Users]  
+Select * from [Medicines]
+Select * from [Norms]
+Select * from [MedNorms]
+Select * from [NormRequests]
+Select * from [Usages]
+Select * from [MedUsages]
+Select * from [Stocks]
+Select * from [Messages] 
+Select * from [MedRequests]
+Select * from [DepRequests]
+Select * from [MedReturns]
+Select * from [PushOrders]
+Select * from [PullOrders]
+Select * from [PushMedOrder]
+Select * from [PullMedOrder]
