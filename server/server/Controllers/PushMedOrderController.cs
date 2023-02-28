@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<PushMedOrderController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<PushMedOrder> Get()
         {
-            return new string[] { "value1", "value2" };
+            PushMedOrder pmo = new PushMedOrder();
+            return pmo.Read();
         }
 
         // GET api/<PushMedOrderController>/5
@@ -25,14 +26,26 @@ namespace server.Controllers
 
         // POST api/<PushMedOrderController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] PushMedOrder pmo)
         {
+            int numAffected = pmo.Insert();
+            if (numAffected == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT api/<PushMedOrderController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("pushId/medId")]
+        public bool Put(int pushId, int medId, [FromBody] PushMedOrder pmo)
         {
+            pmo.PushId = pushId;
+            pmo.MedId = medId;
+            int numAffected = pmo.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<PushMedOrderController>/5

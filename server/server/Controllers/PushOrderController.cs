@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<PushOrderController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<PushOrder> Get()
         {
-            return new string[] { "value1", "value2" };
+            PushOrder po = new PushOrder();
+            return po.Read();
         }
 
         // GET api/<PushOrderController>/5
@@ -25,14 +26,25 @@ namespace server.Controllers
 
         // POST api/<PushOrderController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] PushOrder po)
         {
+            int numAffected = po.Insert();
+            if (numAffected == 1)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         // PUT api/<PushOrderController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{pushId}")]
+        public bool Put(int pushId, [FromBody] PushOrder po)
         {
+            po.PushId = pushId;
+            int numAffected = po.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<PushOrderController>/5

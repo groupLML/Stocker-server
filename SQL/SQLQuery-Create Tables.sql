@@ -171,6 +171,7 @@ CREATE TABLE [PushOrders] (
 	Primary key (pushId) 
 )
 
+--A=  ,S=Shipped
 
 CREATE TABLE [PullOrders] (
     [pullId] int IDENTITY (1,1),
