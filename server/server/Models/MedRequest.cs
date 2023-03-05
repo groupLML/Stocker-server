@@ -44,7 +44,7 @@ namespace server.Models
         }
 
         //methodes
-        public bool Insert()
+        public int Insert()
         {
             DBservices dbs = new DBservices();
             List<MedRequest> List = dbs.ReadMedRequests();
@@ -54,16 +54,15 @@ namespace server.Models
             foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
             {
                 if (this.MedId == med.MedId && med.MedStatus==false)
-                    return false;
+                    return 0;
             }
 
             foreach (MedRequest mr in List) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
             {
                 if (this.CDep==mr.CDep && this.MedId == mr.MedId && this.ReqStatus == 'W')
-                    return false;
+                    return 0;
             }
-            dbs.InsertMedRequest(this);
-            return true;
+            return dbs.InsertMedRequest(this);
         }
 
 

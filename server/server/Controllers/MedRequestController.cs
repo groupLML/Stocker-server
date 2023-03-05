@@ -29,7 +29,7 @@ namespace server.Controllers
 
         // POST api/<MedRequestController>
         [HttpPost]
-        public bool Post([FromBody] MedRequest mr)
+        public int Post([FromBody] MedRequest mr)
         {
             return mr.Insert();
         }

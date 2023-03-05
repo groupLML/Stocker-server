@@ -1549,6 +1549,7 @@ public class DBservices
     }
 
 
+
     /*****************Stocks*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -1966,8 +1967,8 @@ public class DBservices
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            int reqId=Convert.ToInt32(cmd.ExecuteScalar()); 
+            return reqId;
         }
         catch (Exception ex)
         {

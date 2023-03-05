@@ -14,7 +14,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <25/02/2023>
 -- Description:	<insert MedRequest>
 -- =============================================
@@ -37,7 +37,9 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE())
+	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) 
+	 Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE()); select SCOPE_IDENTITY()
+
 	
 END
 GO
