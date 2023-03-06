@@ -14,11 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <27/02/2023>
 -- Description:	<read MedRequest Nurse Mine>
 -- =============================================
-CREATE PROCEDURE spReadMedRequestsNurseMine
+Alter PROCEDURE spReadMedRequestsNurseMine
       @cDep smallint
 	
 AS
@@ -29,12 +29,12 @@ BEGIN
 
     -- Insert statements for procedure here
    SELECT reqId, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
-	       genName,reqQty, firstName+' '+lastName as 'nurseName', depName, reqStatus
+	      MedRequests.medId AS 'medId', genName, MedRequests.cUser AS 'userId', firstName+' '+lastName as 'nurseName', MedRequests.cDep AS 'depId', depName, reqStatus, reqQty
 	FROM [MedRequests] INNER JOIN [Medicines]
          ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
 		 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
 		 ON [MedRequests].[aDep] = Departments.[depId]
-   WHERE Medicines.medStatus=1 and (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=@cDep
+   WHERE Medicines.medStatus=1 and (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=3
 
 END
 GO

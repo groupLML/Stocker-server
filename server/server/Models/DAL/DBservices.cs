@@ -2153,18 +2153,19 @@ public class DBservices
 
             while (dataReader.Read())
             {
-              
                 listObj.Add(new
                 {
                     reqId = Convert.ToInt32(dataReader["reqId"]),
                     reqDate = dataReader["reqDate"].ToString(),
                     reqTime = dataReader["reqTime"].ToString(),
-                    genName= dataReader["genName"].ToString(),
-                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    genName = dataReader["genName"].ToString(),
+                    nurseId = Convert.ToInt32(dataReader["userId"]),
                     nurseName = dataReader["nurseName"].ToString(),
+                    depId = Convert.ToInt32(dataReader["depId"]),
                     depName = dataReader["depName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["ReqStatus"]),
-                   
+                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
                 });
             }
             return listObj;
