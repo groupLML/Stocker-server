@@ -2164,7 +2164,7 @@ public class DBservices
                     nurseName = dataReader["nurseName"].ToString(),
                     depId = Convert.ToInt32(dataReader["depId"]),
                     depName = dataReader["depName"].ToString(),
-                    reqStatus = Convert.ToChar(dataReader["ReqStatus"]),
+                    reqStatus = Convert.ToChar(dataReader["reqStatus"]),
                     reqQty = Convert.ToInt32(dataReader["reqQty"]),
                 });
             }
