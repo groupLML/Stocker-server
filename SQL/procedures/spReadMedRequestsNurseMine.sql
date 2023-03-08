@@ -29,7 +29,8 @@ BEGIN
 
     -- Insert statements for procedure here
    SELECT reqId, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
-	      MedRequests.medId AS 'medId', genName, MedRequests.cUser AS 'userId', firstName+' '+lastName as 'nurseName', MedRequests.cDep AS 'depId', depName, reqStatus, reqQty
+	      MedRequests.medId AS 'medId', genName, MedRequests.cUser AS 'cUserId', firstName+' '+lastName AS 'cNurseName',
+		  MedRequests.cDep AS 'aDepId', depName AS 'aDepName', reqStatus, reqQty
 	FROM [MedRequests] INNER JOIN [Medicines]
          ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
 		 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
