@@ -38,7 +38,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) 
-	 Values (@cUser,null,@cDep,null,@medId,@reqQty,'W',GETDATE()); select SCOPE_IDENTITY()
+	 Values (@cUser,@aUser,@cDep,@aDep,@medId,@reqQty,'W',GETDATE()); select SCOPE_IDENTITY()
 
 	
 END
