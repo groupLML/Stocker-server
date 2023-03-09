@@ -29,9 +29,18 @@ namespace server.Controllers
 
         // POST api/<MedRequestController>
         [HttpPost]
-        public int Post([FromBody] MedRequest mr)
+        public bool Post([FromBody] JsonElement medReq)
         {
-            return mr.Insert();
+            int cUser = medReq.GetProperty("cUser").GetInt32();
+            int cDep= medReq.GetProperty("cDep").GetInt32();
+            int medId = medReq.GetProperty("medId").GetInt32();
+            float reqQty = (float)medReq.GetProperty("reqQty").GetSingle();
+            DateTime reqDate = medReq.GetProperty("reqDate").GetDateTime();
+            string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
+
+            MedRequest mr = new MedRequest();
+            return mr.InsertReq(cUser, cDep, medId, reqQty, reqDate, depTypes);
+           
         }
 
 

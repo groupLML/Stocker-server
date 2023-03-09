@@ -66,7 +66,6 @@ namespace server.Models
             return dbs.ReadMeds();
         }
 
-   
         public List<Medicine> ReadActive() //read only active medicines
         {
             DBservices dbs = new DBservices();

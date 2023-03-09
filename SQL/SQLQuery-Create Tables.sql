@@ -123,11 +123,8 @@ CREATE TABLE [DepRequests] (
     [reqId] smallint  REFERENCES [Users](userId) NOT NULL,
     [cDep] smallint REFERENCES [Departments](depId) NOT NULL,
 	[reqDep] smallint REFERENCES [Departments](depId) NOT NULL,
-	[reqStatus] char(1) check(reqStatus in('A', 'W')) default 'W',
 	Primary key (reqId,cDep,reqDep)
 )
---A=approved, W=waiting
-
 
 
 --CREATE TABLE [Returns] (

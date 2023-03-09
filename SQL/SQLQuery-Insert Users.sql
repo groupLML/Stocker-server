@@ -50,7 +50,7 @@ insert into [Users] ([username], [firstName], [lastName], [email], [password], [
 insert into [Users] ([username], [firstName], [lastName], [email], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Leena', 'Catina', 'Tiernan', 'ctiernan1c@stumbleupon.com', '123', '0557218734', 'Account Coordinator', 'N', 17, 1);
 insert into [Users] ([username], [firstName], [lastName], [email], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Sarajane', 'Filippa', 'Sydney', 'fsydney1d@prnewswire.com', '123', '0599863592', 'Internal Auditor', 'N', 12, 1);
 insert into [Users] ([username], [firstName], [lastName], [email], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Le', 'Ca', 'Tier', 'ctiern@stumbleupon.com', '123', '0557218534', 'Account Coordinator', 'N', 11, 1);
-insert into [Users] ([username], [firstName], [lastName], [email], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Sara', 'Filip', 'Syd', 'sydney@prnewswire.com', '123', '0599828592', 'Internal Auditor', 'N', 13, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [password], [phone], [position], [jobType], [depId], [isActive]) values ('user', 'user', 'user', 'user@gmail.com', '123', '0501111111', 'user', 'A', 1, 1);
 
 
 select * from [Users]

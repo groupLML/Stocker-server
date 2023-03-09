@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 
 namespace server.Models
 {
@@ -44,26 +45,63 @@ namespace server.Models
         }
 
         //methodes
-        public int Insert()
+
+        //public int Insert()
+        //{
+        //    DBservices dbs = new DBservices();
+        //    List<MedRequest> List = dbs.ReadMedRequests();
+        //    List<Medicine> MedList = dbs.ReadMeds();
+
+
+        //    foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+        //    {
+        //        if (this.MedId == med.MedId && med.MedStatus==false)
+        //            return 0;
+        //    }
+
+        //    foreach (MedRequest mr in List) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
+        //    {
+        //        if (this.CDep==mr.CDep && this.MedId == mr.MedId && this.ReqStatus == 'W')
+        //            return 0;
+        //    }
+        //    return dbs.InsertMedRequest(this);
+        //}
+
+
+        public bool InsertReq(int cUser, int cDep, int medId, float reqQty, DateTime reqDate, string[] depTypes)
         {
             DBservices dbs = new DBservices();
-            List<MedRequest> List = dbs.ReadMedRequests();
-            List<Medicine> MedList = dbs.ReadMeds();
+            List<MedRequest> ReqList = dbs.ReadMedRequests();
+            //List<Medicine> MedList = dbs.ReadMeds();
+            List<Department> DepList = dbs.ReadDeps();
 
+            //foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+            //{
+            //    if (medId == med.MedId && med.MedStatus == false)
+            //        return false;
+            //}
 
-            foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
+            foreach (MedRequest mr in ReqList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
             {
-                if (this.MedId == med.MedId && med.MedStatus==false)
-                    return 0;
+                if (cDep == mr.CDep && this.MedId == mr.MedId && mr.ReqStatus == 'W')
+                    return false;
             }
 
-            foreach (MedRequest mr in List) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
+            MedRequest medReq = new MedRequest(0, cUser, 56, cDep, 1, medId, reqQty, 'W', reqDate);
+            int reqId=dbs.InsertMedRequest(medReq);
+
+            foreach (Department dep in DepList) //הכנסת בקשה לטבלת DepRequests   
             {
-                if (this.CDep==mr.CDep && this.MedId == mr.MedId && this.ReqStatus == 'W')
-                    return 0;
+                for (int i = 0; i < depTypes.Length; i++)
+                {
+                    if (depTypes[i]== dep.DepType)
+                        dbs.InsertDepRequest(reqId, cDep, dep.DepId);
+                }      
             }
-            return dbs.InsertMedRequest(this);
+
+            return true;
         }
+
 
 
         public int Update()
