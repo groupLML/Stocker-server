@@ -32,7 +32,7 @@ namespace server.Controllers
         public bool Post([FromBody] JsonElement medReq)
         {
             int cUser = medReq.GetProperty("cUser").GetInt32();
-            int cDep= medReq.GetProperty("cDep").GetInt32();
+            int cDep = medReq.GetProperty("cDep").GetInt32();
             int medId = medReq.GetProperty("medId").GetInt32();
             float reqQty = (float)medReq.GetProperty("reqQty").GetSingle();
             DateTime reqDate = medReq.GetProperty("reqDate").GetDateTime();
@@ -40,7 +40,9 @@ namespace server.Controllers
 
             MedRequest mr = new MedRequest();
             return mr.InsertReq(cUser, cDep, medId, reqQty, reqDate, depTypes);
-           
+
+            // {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "reqDate": "2023-02-22T23:30:30","depTypes": ["כירורגיה"]}
+
         }
 
 
