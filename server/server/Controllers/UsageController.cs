@@ -36,10 +36,10 @@ namespace server.Controllers
         }
 
         // PUT api/<UsageController>/5
-        [HttpPut("{useId}")]
-        public bool Put(int useId, [FromBody] Usage use)
+        [HttpPut("{usageId}")]
+        public bool Put(int usageId, [FromBody] Usage use)
         {
-            use.UseId = useId;
+            use.UsageId = usageId;
             int numAffected = use.Update();
             if (numAffected == 1)
                 return true;

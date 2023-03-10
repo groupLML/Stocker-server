@@ -14,13 +14,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <28-02-2023>
 -- Description:	<insert Usage>
 -- =============================================
-CREATE PROCEDURE spInsertUsage
+ALTER PROCEDURE spInsertUsage
 
-    @useId int,
+    @usageId int,
     @depId smallint,
 	@reportNum varchar (10),
 	@lastUpdate datetime

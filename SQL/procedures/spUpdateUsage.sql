@@ -14,13 +14,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LNL>
 -- Create date: <28-02-2023>
 -- Description:	<update Usage>
 -- =============================================
-CREATE PROCEDURE spUpdateUsage
+ALTER PROCEDURE spUpdateUsage
 
-    @useId int,
+    @usageId int,
     @depId smallint,
 	@reportNum varchar (10),
 	@lastUpdate datetime
@@ -32,6 +32,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE [Usages] set [depId]=@depId,[reportNum]=@reportNum,[lastUpdate]=getdate() where [useId]=@useId
+	 UPDATE [Usages] set [depId]=@depId,[reportNum]=@reportNum,[lastUpdate]=getdate() where [usageId]=@usageId
 END
 GO

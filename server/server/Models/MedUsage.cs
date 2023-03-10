@@ -4,23 +4,23 @@
     {
         //fields
         int medId;
-        int useId;
+        int usageId;
         float useQty;
         string chamNum;
 
         //properties
         public int MedId { get => medId; set => medId = value; }
-        public int UseId { get => useId; set => useId = value; }
+        public int UsageId { get => usageId; set => usageId = value; }
         public float UseQty { get => useQty; set => useQty = value; }
         public string ChamNum { get => chamNum; set => chamNum = value; }
 
         //constructors
         public MedUsage() { }
 
-        public MedUsage(int medId, int useId, float useQty, string chamNum)
+        public MedUsage(int medId, int usageId, float useQty, string chamNum)
         {
             this.medId = medId;
-            this.useId = useId;
+            this.usageId = usageId;
             this.useQty = useQty;
             this.chamNum = chamNum;
         }

@@ -41,8 +41,7 @@ namespace server.Controllers
             MedRequest mr = new MedRequest();
             return mr.InsertReq(cUser, cDep, medId, reqQty, reqDate, depTypes);
 
-            // {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "reqDate": "2023-02-22T23:30:30","depTypes": ["כירורגיה"]}
-
+            //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "reqDate": "2023-02-22T23:30:30","depTypes": ["כירורגיה"]}
         }
 
 

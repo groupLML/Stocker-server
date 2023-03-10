@@ -14,14 +14,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LNL>
 -- Create date: <28-02-2023>
 -- Description:	<Update MedUsages>
 -- =============================================
-CREATE PROCEDURE spUpdateMedUsages
+ALTER PROCEDURE spUpdateMedUsages
 
     @medId smallint,
-    @useId int,
+    @usageId int,
 	@useQty real,
 	@chamNum varchar(10)
 
@@ -34,7 +34,7 @@ BEGIN
     -- Insert statements for procedure here
 
 	 UPDATE [MedUsages] set [useQty]=@useQty,[chamNum]=@chamNum
-	 where [medId]=@medId and [useId]=@useId
+	 where [medId]=@medId and [usageId]=@usageId
 
 END
 GO

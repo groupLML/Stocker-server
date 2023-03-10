@@ -14,14 +14,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <28-02-2023>
 -- Description:	<Insert MedUsages>
 -- =============================================
-CREATE PROCEDURE spInsertMedUsages
+ALTER PROCEDURE spInsertMedUsages
 
     @medId smallint,
-    @useId int,
+    @usageId int,
 	@useQty real,
 	@chamNum varchar(10)
 
@@ -33,7 +33,7 @@ BEGIN
 
     -- Insert statements for procedure here
 
-	 INSERT INTO [MedUsages] ([medId],[useId],[useQty],[chamNum]) Values (@medId,@useId,@useQty,@chamNum)
+	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@medId,@usageId,@useQty,@chamNum)
 
 	 --select [Medicines].chamNum
 	 --from [Medicines] inner join [MedUsages] on [MedUsages].medId=[Medicines].medId

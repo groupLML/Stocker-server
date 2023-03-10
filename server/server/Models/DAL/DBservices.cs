@@ -181,12 +181,11 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@genName", medicine.GenName);
         cmd.Parameters.AddWithValue("@comName", medicine.ComName);
-        cmd.Parameters.AddWithValue("@ea", medicine.Ea);
+        cmd.Parameters.AddWithValue("@mazNum", medicine.MazNum);
+        cmd.Parameters.AddWithValue("@eaQty", medicine.EaQty);
         cmd.Parameters.AddWithValue("@unit", medicine.Unit);
         cmd.Parameters.AddWithValue("@method", medicine.Method);
-        cmd.Parameters.AddWithValue("@atc", medicine.Atc);
-        cmd.Parameters.AddWithValue("@mazNum", medicine.MazNum);
-        cmd.Parameters.AddWithValue("@chamNum", medicine.ChamNum);
+        cmd.Parameters.AddWithValue("@given", medicine.Given);
         cmd.Parameters.AddWithValue("@medStatus", medicine.MedStatus);
         cmd.Parameters.AddWithValue("@lastUpdate", medicine.LastUpdate);
 
@@ -226,12 +225,11 @@ public class DBservices
                 medicine.MedId = Convert.ToInt32(dataReader["MedId"]);
                 medicine.GenName = dataReader["GenName"].ToString();
                 medicine.ComName = dataReader["ComName"].ToString();
-                medicine.Ea = Convert.ToInt32(dataReader["Ea"]);
+                medicine.MazNum = dataReader["MazNum"].ToString();
+                medicine.EaQty = Convert.ToInt32(dataReader["EaQty"]);
                 medicine.Unit = dataReader["Unit"].ToString();
                 medicine.Method = dataReader["Method"].ToString();
-                medicine.Atc = dataReader["Atc"].ToString();
-                medicine.MazNum = dataReader["MazNum"].ToString();
-                medicine.ChamNum = dataReader["ChamNum"].ToString();
+                medicine.Given = dataReader["Given"].ToString();
                 medicine.MedStatus = Convert.ToBoolean(dataReader["MedStatus"]);
                 medicine.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
                 list.Add(medicine);
@@ -1262,7 +1260,7 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@useId", use.UseId);
+        cmd.Parameters.AddWithValue("@usageId", use.UsageId);
         cmd.Parameters.AddWithValue("@depId", use.DepId);
         cmd.Parameters.AddWithValue("@reportNum", use.ReportNum);
         cmd.Parameters.AddWithValue("@lastUpdate", use.LastUpdate);
@@ -1300,7 +1298,7 @@ public class DBservices
             while (dataReader.Read())
             {
                 Usage use = new Usage();
-                use.UseId = Convert.ToInt32(dataReader["UseId"]);
+                use.UsageId = Convert.ToInt32(dataReader["UsageId"]);
                 use.DepId = Convert.ToInt32(dataReader["DepId"]);
                 use.ReportNum = dataReader["ReportNum"].ToString();
                 use.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
@@ -1430,7 +1428,7 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
         cmd.Parameters.AddWithValue("@medId", mu.MedId);
-        cmd.Parameters.AddWithValue("@useId", mu.UseId);
+        cmd.Parameters.AddWithValue("@usageId", mu.UsageId);
         cmd.Parameters.AddWithValue("@useQty", mu.UseQty);
         cmd.Parameters.AddWithValue("@chamNum", mu.ChamNum);
 
@@ -1468,7 +1466,7 @@ public class DBservices
             {
                 MedUsage mu = new MedUsage();
                 mu.MedId = Convert.ToInt32(dataReader["MedId"]);
-                mu.UseId = Convert.ToInt32(dataReader["UseId"]);
+                mu.UsageId = Convert.ToInt32(dataReader["UsageId"]);
                 mu.UseQty = (float)Convert.ToSingle(dataReader["UseQty"]);
                 mu.ChamNum = dataReader["ChamNumm"].ToString();
                 list.Add(mu);

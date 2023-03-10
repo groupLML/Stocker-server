@@ -14,7 +14,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <28/02/2023>
 -- Description:	<Read Dep MedUsages Manager>
 -- =============================================
@@ -30,7 +30,7 @@ BEGIN
 	SELECT [MedUsages].medId,mazNum,genName,comName, sum(useQty) as 'useQty'
 	FROM [MedUsages] inner join [Medicines]
 	     on [MedUsages].medId=[Medicines].medId inner join [Usages]
-	     on [MedUsages].useId=[Usages].useId
+	     on [MedUsages].usageId=[Usages].usageId
 	where [Usages].depId=@depId
 	group by [MedUsages].medId,mazNum,genName,comName
 

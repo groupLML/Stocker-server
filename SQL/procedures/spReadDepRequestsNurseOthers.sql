@@ -14,12 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
+-- Author:		<LML>
+-- Create date: <09/03/2023>
 -- Description:	<Read DepRequests Nurse Others>
 -- =============================================
-CREATE PROCEDURE spReadDepRequestsNurseOthers
-
+ALTER PROCEDURE spReadDepRequestsNurseOthers
 	@cDep smallint
 AS
 BEGIN
@@ -34,7 +33,7 @@ BEGIN
 	     ON MedRequests.[reqId] = DepRequests.[reqId] INNER JOIN [Departments] 
          ON DepRequests.[cDep] = Departments.[depId] INNER JOIN [Medicines]
          ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Stocks] ON MedRequests.[medId] = Stocks.[medId]
-	WHERE Medicines.medStatus=1 and DepRequests.reqDep=@cDep and Stocks.depId=@cDep 
+	WHERE DepRequests.reqDep=@cDep and Stocks.depId=@cDep 
 	      and (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A')
 	group by Medicines.[medId], depName, reqDate ,genName,reqQty
 

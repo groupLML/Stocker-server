@@ -37,10 +37,10 @@ namespace server.Controllers
         }
 
         // PUT api/<MedUsageController>/5
-        [HttpPut("useId/medId")]
-        public bool Put(int useId, int medId, [FromBody] MedUsage mu)
+        [HttpPut("usageId/medId")]
+        public bool Put(int usageId, int medId, [FromBody] MedUsage mu)
         {
-            mu.UseId = useId;
+            mu.UsageId = usageId;
             mu.MedId= medId;
             int numAffected = mu.Update();
             if (numAffected == 1)

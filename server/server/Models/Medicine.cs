@@ -8,12 +8,11 @@ namespace server.Models
         int medId;
         string genName;
         string comName;
-        int ea;
+        string mazNum;
+        int eaQty;
         string unit;
         string method;
-        string atc;
-        string mazNum;
-        string chamNum;
+        string given;
         bool medStatus;
         DateTime lastUpdate;
 
@@ -21,31 +20,31 @@ namespace server.Models
         public int MedId { get => medId; set => medId = value; }
         public string GenName { get => genName; set => genName = value; }
         public string ComName { get => comName; set => comName = value; }
-        public int Ea { get => ea; set => ea = value; }
+        public string MazNum { get => mazNum; set => mazNum = value; }
+        public int EaQty { get => eaQty; set => eaQty = value; }
         public string Unit { get => unit; set => unit = value; }
         public string Method { get => method; set => method = value; }
-        public string Atc { get => atc; set => atc = value; }
-        public string MazNum { get => mazNum; set => mazNum = value; }
-        public string ChamNum { get => chamNum; set => chamNum = value; }
+        public string Given { get => given; set => given = value; }
         public bool MedStatus { get => medStatus; set => medStatus = value; }
         public DateTime LastUpdate { get => lastUpdate; set => lastUpdate = value; }
 
+
         //constructors
         public Medicine() { }
-        public Medicine(int medId, string genName, string comName, int ea, string unit, string method, string atc, string mazNum, string chamNum, bool medStatus, DateTime lastUpdate)
+        public Medicine(int medId, string genName, string comName, string mazNum, int eaQty, string unit, string method, string given, bool medStatus, DateTime lastUpdate)
         {
             this.medId = medId;
             this.genName = genName;
             this.comName = comName;
-            this.ea = ea;
+            this.mazNum = mazNum;
+            this.eaQty = eaQty;
             this.unit = unit;
             this.method = method;
-            this.atc = atc;
-            this.mazNum = mazNum;
-            this.chamNum = chamNum;
+            this.given = given;
             this.medStatus = medStatus;
             this.lastUpdate = lastUpdate;
         }
+
 
         //methodes
         public int Insert()
