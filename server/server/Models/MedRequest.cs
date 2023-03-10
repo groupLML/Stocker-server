@@ -64,7 +64,7 @@ namespace server.Models
             {
                 for (int i = 0; i < depTypes.Length; i++)
                 {
-                    if (depTypes[i]== dep.DepType)
+                    if (depTypes[i]== dep.DepType && cDep!= dep.DepId) 
                         dbs.InsertDepRequest(reqId, cDep, dep.DepId);
                 }      
             }
