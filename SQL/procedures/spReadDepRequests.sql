@@ -14,11 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <27/02/2023>
 -- Description:	<Read DepRequests>
 -- =============================================
-CREATE PROCEDURE spReadDepRequests
+ALTER PROCEDURE spReadDepRequests
 	
 AS
 BEGIN

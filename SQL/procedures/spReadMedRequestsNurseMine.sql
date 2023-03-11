@@ -35,7 +35,7 @@ BEGIN
          ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
 		 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
 		 ON [MedRequests].[aDep] = Departments.[depId]
-   WHERE (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=@cDep
+   WHERE (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=3
 
 END
 GO
@@ -45,11 +45,11 @@ GO
 
 
 
-      SELECT reqId, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
-	      MedRequests.medId AS 'medId', genName, MedRequests.cUser AS 'cUserId', firstName+' '+lastName AS 'cNurseName',
-		  MedRequests.aDep AS 'aDepId', depName AS 'aDepName',MedRequests.aUser AS 'aUserId', reqStatus, reqQty
-	FROM [MedRequests] INNER JOIN [Medicines]
-         ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
-		 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
-		 ON [MedRequests].[aDep] = Departments.[depId]
-   WHERE (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=@cDep
+ --     SELECT reqId, CAST(reqDate AS DATE) AS 'reqDate', CONVERT(varchar(5), reqDate, 108) AS 'reqTime', 
+	--      MedRequests.medId AS 'medId', genName, MedRequests.cUser AS 'cUserId', firstName+' '+lastName AS 'cNurseName',
+	--	  MedRequests.aDep AS 'aDepId', depName AS 'aDepName',MedRequests.aUser AS 'aUserId', reqStatus, reqQty
+	--FROM [MedRequests] INNER JOIN [Medicines]
+ --        ON MedRequests.[medId] = Medicines.[medId] INNER JOIN [Users] 
+	--	 ON Users.[userId] = MedRequests.[cUser] left JOIN [Departments] 
+	--	 ON [MedRequests].[aDep] = Departments.[depId]
+ --  WHERE (MedRequests.reqStatus='W' OR MedRequests.reqStatus='A') and MedRequests.cDep=@cDep

@@ -18,7 +18,7 @@ GO
 -- Create date: <24/02/2023>
 -- Description:	<Read Medicines>
 -- =============================================
-CREATE PROCEDURE spReadMedicines
+ALTER PROCEDURE spReadMedicines
 	-- Add the parameters for the stored procedure here
 AS
 BEGIN

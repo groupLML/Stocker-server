@@ -14,12 +14,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <25-02-2023>
 -- Description:	<Update Department>
 -- =============================================
 
-Create PROCEDURE spUpdateDepartment
+ALTER PROCEDURE spUpdateDepartment
 
     @depId smallint,
     @depName nvarchar(30),

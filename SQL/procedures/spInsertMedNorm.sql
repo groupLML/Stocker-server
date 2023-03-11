@@ -14,11 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <27/02/2023>
 -- Description:	<insert MedNorm>
 -- =============================================
-CREATE PROCEDURE spInsertMedNorm
+ALTER PROCEDURE spInsertMedNorm
 	
     @normId smallint,
 	@medId smallint,

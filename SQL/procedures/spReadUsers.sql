@@ -19,7 +19,8 @@ GO
 -- Description:	<Description>
 -- =============================================
 
-CREATE PROCEDURE spReadUsers
+ALTER PROCEDURE spReadUsers
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

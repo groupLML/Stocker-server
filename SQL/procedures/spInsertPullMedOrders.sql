@@ -14,11 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <28-02-2023>
 -- Description:	<Insert PullMedOrders>
 -- =============================================
-CREATE PROCEDURE spInsertPullMedOrders
+ALTER PROCEDURE spInsertPullMedOrders
 
  	@pullId int,
 	@medId smallint,

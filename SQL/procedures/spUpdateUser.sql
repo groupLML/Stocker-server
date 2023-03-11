@@ -14,11 +14,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <25-02-2023>
 -- Description:	<Update User >
 -- =============================================
-CREATE PROCEDURE spUpdateUser 
+ALTER PROCEDURE spUpdateUser 
 
 	@userId smallint,
 	@username varchar(30),

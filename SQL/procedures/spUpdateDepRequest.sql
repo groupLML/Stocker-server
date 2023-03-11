@@ -14,16 +14,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
+-- Author:		<LML>
 -- Create date: <27/02/2023>
 -- Description:	<update depRequest>
 -- =============================================
-CREATE PROCEDURE spUpdateDepRequest
+ALTER PROCEDURE spUpdateDepRequest
 	
 	@reqId smallint,
 	@cDep smallint,
-	@reqDep smallint,
-	@reqStatus char(1)
+	@reqDep smallint
 
 AS
 BEGIN
@@ -32,6 +31,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	UPDATE [DepRequests] set [reqStatus]=@reqStatus where [reqId]=@reqId and [cDep]=@cDep and [reqDep]=@reqDep
+	UPDATE [DepRequests] set [cDep]=@cDep, [reqDep]=@reqDep where [reqId]=@reqId 
 END
 GO
