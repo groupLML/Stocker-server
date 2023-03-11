@@ -14,24 +14,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Lital>
--- Create date: <25-02-2023>
--- Description:	<Update User >
+-- Author:		<LML>
+-- Create date: <11/03/2023>
+-- Description:	<Delete DepRequests>
 -- =============================================
-CREATE PROCEDURE spUpdateUser 
-
-	@userId smallint,
-	@username varchar(30),
-	@firstName nvarchar (20),
-    @lastName nvarchar (20),
-    @email nvarchar (50),
-    @password char(3),
-	@phone char(10) ,
-	@position nvarchar(30),
-	@jobType char(1), 
-	@depId smallint, 
-	@isActive bit
-
+CREATE PROCEDURE spDeleteDepRequests
+  @reqId smallint
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -39,10 +27,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE Users set username=@username, firstName = @firstName ,lastName = @lastName, [email]=@email,
-	 [password] = @password, [phone]=@phone, position=@position, jobType=@jobType, depId=@depId, isActive=@isActive
-	 where userId = @userId
+	delete from [DepRequests] where reqId= @reqId
 END
 GO
-
-

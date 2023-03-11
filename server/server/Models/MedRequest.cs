@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using Newtonsoft.Json;
 
 namespace server.Models
 {
@@ -53,7 +54,7 @@ namespace server.Models
 
             foreach (MedRequest mr in ReqList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
             {
-                if (cDep == mr.CDep && this.MedId == mr.MedId && mr.ReqStatus == 'W')
+                if (cDep == mr.CDep && medId == mr.MedId && mr.ReqStatus == 'W')
                     return false;
             }
 
@@ -73,11 +74,53 @@ namespace server.Models
         }
 
 
-        public int Update()
+        //public bool UpdateWattingReq(int reqId, int cUser, int cDep, int medId, float reqQty, string[] depTypes)
+        //{
+        //    DBservices dbs = new DBservices();
+        //    List<MedRequest> ReqList = dbs.ReadMedRequests();
+
+        //    foreach (MedRequest mr in ReqList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
+        //    {
+        //        if (cDep == mr.CDep && this.MedId == mr.MedId && mr.ReqStatus == 'W')
+        //        {
+
+
+        //        }
+        //            return false;
+        //    }
+
+        //    return dbs.UpdateMedRequest(this);
+        //}
+
+
+        public bool UpdateWaittingReq(string[] depTypes)
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdateMedRequest(this);
+            List<MedRequest> ReqList = dbs.ReadMedRequests();
+            List<Department> DepList = dbs.ReadDeps();
+
+            foreach (MedRequest mr in ReqList) 
+            {
+                if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W')
+                {
+                    dbs.UpdateMedRequest(this);
+
+                    dbs.DeleteDepRequests(this.ReqId);
+
+                    foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
+                    {
+                        for (int i = 0; i < depTypes.Length; i++)
+                        {
+                            if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
+                                dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
+
 
         public List<MedRequest> Read()
         {

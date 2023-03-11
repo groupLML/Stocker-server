@@ -2160,10 +2160,11 @@ public class DBservices
                     reqTime = dataReader["reqTime"].ToString(),
                     medId = Convert.ToInt32(dataReader["medId"]),
                     genName = dataReader["genName"].ToString(),
-                    nurseId = Convert.ToInt32(dataReader["userId"]),
-                    nurseName = dataReader["nurseName"].ToString(),
-                    depId = Convert.ToInt32(dataReader["depId"]),
-                    depName = dataReader["depName"].ToString(),
+                    cUserId = Convert.ToInt32(dataReader["cUserId"]),
+                    cNurseName = dataReader["cNurseName"].ToString(),
+                    aDepId = Convert.ToInt32(dataReader["aDepId"]),
+                    aDepName = dataReader["aDepName"].ToString(),
+                    aUserId = Convert.ToInt32(dataReader["aUserId"]),
                     reqStatus = Convert.ToChar(dataReader["reqStatus"]),
                     reqQty = (float)Convert.ToSingle(dataReader["reqQty"]),
                 });
@@ -2263,6 +2264,67 @@ public class DBservices
 
     }
 
+    //--------------------------------------------------------------------
+    // This method Delete DepRequests by reqId
+    //--------------------------------------------------------------------
+    public int DeleteDepRequests(int reqId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = createDeleteDepReqCommand("spDeleteDepRequests", con, reqId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+    //--------------------------------------------------------------------
+    // Create the Delete DepRequests SqlCommand 
+    //--------------------------------------------------------------------
+    private SqlCommand createDeleteDepReqCommand(String spName, SqlConnection con, int reqId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+
+        return cmd;
+    }
 
 
 
