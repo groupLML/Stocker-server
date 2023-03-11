@@ -2160,7 +2160,7 @@ public class DBservices
                     medId = Convert.ToInt32(dataReader["medId"]),
                     genName = dataReader["genName"].ToString(),
                     comName = dataReader["comName"].ToString(),
-                    eaQty = Convert.ToInt32(dataReader["comName"]),
+                    eaQty = Convert.ToInt32(dataReader["eaQty"]),
                     unit = dataReader["unit"].ToString(),
                     given = dataReader["given"].ToString(),
                     cUserId = Convert.ToInt32(dataReader["cUserId"]),
