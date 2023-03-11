@@ -45,7 +45,7 @@ namespace server.Models
         }
 
         //methodes
-        public bool InsertReq(int cUser, int cDep, int medId, float reqQty, DateTime reqDate, string[] depTypes)
+        public bool InsertReq(int cUser, int cDep, int medId, float reqQty, string[] depTypes)
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
@@ -57,7 +57,7 @@ namespace server.Models
                     return false;
             }
 
-            MedRequest medReq = new MedRequest(0, cUser, 0, cDep, 0, medId, reqQty, 'W', reqDate);
+            MedRequest medReq = new MedRequest(0, cUser, 0, cDep, 0, medId, reqQty, 'W', DateTime.Now);
             int reqId=dbs.InsertMedRequest(medReq);
 
             foreach (Department dep in DepList) //הכנסת בקשה לטבלת DepRequests   

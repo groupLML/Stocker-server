@@ -31,17 +31,16 @@ namespace server.Controllers
         [HttpPost]
         public bool Post([FromBody] JsonElement medReq)
         {
-            int cUser = medReq.GetProperty("cUser").GetInt32();
+            string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
             int cDep = medReq.GetProperty("cDep").GetInt32();
+            int cUser = medReq.GetProperty("cUser").GetInt32();
             int medId = medReq.GetProperty("medId").GetInt32();
             float reqQty = (float)medReq.GetProperty("reqQty").GetSingle();
-            DateTime reqDate = medReq.GetProperty("reqDate").GetDateTime();
-            string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
 
             MedRequest mr = new MedRequest();
-            return mr.InsertReq(cUser, cDep, medId, reqQty, reqDate, depTypes);
+            return mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
 
-            //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "reqDate": "2023-02-22T23:30:30","depTypes": ["כירורגיה"]}
+            //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }
 
 
