@@ -2156,10 +2156,13 @@ public class DBservices
                 listObj.Add(new
                 {
                     reqId = Convert.ToInt32(dataReader["reqId"]),
-                    reqDate = dataReader["reqDate"].ToString(),
-                    reqTime = dataReader["reqTime"].ToString(),
+                    reqDate = Convert.ToDateTime(dataReader["reqDate"]),
                     medId = Convert.ToInt32(dataReader["medId"]),
                     genName = dataReader["genName"].ToString(),
+                    comName = dataReader["comName"].ToString(),
+                    eaQty = Convert.ToInt32(dataReader["comName"]),
+                    unit = dataReader["unit"].ToString(),
+                    given = dataReader["given"].ToString(),
                     cUserId = Convert.ToInt32(dataReader["cUserId"]),
                     cNurseName = dataReader["cNurseName"].ToString(),
                     aDepId = Convert.ToInt32(dataReader["aDepId"]),
