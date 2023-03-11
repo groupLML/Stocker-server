@@ -49,6 +49,6 @@ GO
 
 --select * from DepRequests
 
-UPDATE MedRequests set cUser=18, aUser = null,cDep = 6, aDep=null,
-	 medId=3, reqQty=1, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
-	 where reqId = 4
+--UPDATE MedRequests set cUser=3, aUser = 0,cDep = 3, aDep=0,
+--	 medId=4, reqQty=6, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
+--	 where reqId = 39

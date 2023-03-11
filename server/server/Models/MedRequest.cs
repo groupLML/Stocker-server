@@ -74,25 +74,6 @@ namespace server.Models
         }
 
 
-        //public bool UpdateWattingReq(int reqId, int cUser, int cDep, int medId, float reqQty, string[] depTypes)
-        //{
-        //    DBservices dbs = new DBservices();
-        //    List<MedRequest> ReqList = dbs.ReadMedRequests();
-
-        //    foreach (MedRequest mr in ReqList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
-        //    {
-        //        if (cDep == mr.CDep && this.MedId == mr.MedId && mr.ReqStatus == 'W')
-        //        {
-
-
-        //        }
-        //            return false;
-        //    }
-
-        //    return dbs.UpdateMedRequest(this);
-        //}
-
-
         public bool UpdateWaittingReq(string[] depTypes)
         {
             DBservices dbs = new DBservices();
