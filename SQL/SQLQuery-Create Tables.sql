@@ -209,8 +209,8 @@ Select * from [DepRequests]
 Select * from [MedReturns]
 Select * from [PushOrders]
 Select * from [PullOrders]
-Select * from [PushMedOrder]
-Select * from [PullMedOrder]
+Select * from [PushMedOrders]
+Select * from [PullMedOrders]
 
 
 
