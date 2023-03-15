@@ -73,7 +73,6 @@ namespace server.Models
             return true;
         }
 
-
         public bool UpdateWaittingReq(string[] depTypes)
         {
             DBservices dbs = new DBservices();
@@ -102,17 +101,22 @@ namespace server.Models
             return false;
         }
 
-
         public List<MedRequest> Read()
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMedRequests();
         }
 
-        public Object ReadRequests(int depId) //טבלה בקשות ממחלקות עבור המחלקה של אותה אחות מחוברת
+        public Object ReadRequestsMine(int depId) //טבלה בקשות ממחלקות עבור המחלקה של אותה אחות מחוברת
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMedRequestsNurseMine(depId);
+        }
+
+        public Object ReadRequestsOthers(int depId) //טבלת בקשות של מחלקות אחרות עבור אותה מחלקה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepRequestsNurseOthers(depId);
         }
     }
 }

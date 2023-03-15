@@ -21,11 +21,19 @@ namespace server.Controllers
         }
 
         // GET: api/<MedRequestController>
-        [HttpGet("{depId}")]
-        public Object GetRequests(int depId)
+        [HttpGet("RequestsMine/{depId}")]
+        public Object GetRequestsMine(int depId)
         {
             MedRequest mr = new MedRequest();
-            return mr.ReadRequests(depId);
+            return mr.ReadRequestsMine(depId);
+        }
+
+        // GET: api/<MedRequestController>
+        [HttpGet("RequestsOthers/{depId}")]
+        public Object GetRequestsOthers(int depId)
+        {
+            MedRequest mr = new MedRequest();
+            return mr.ReadRequestsOthers(depId);
         }
 
 

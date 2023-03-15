@@ -989,6 +989,7 @@ public class DBservices
 
 
 
+
     /*****************NormRequests*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -1155,6 +1156,7 @@ public class DBservices
             }
         }
     }
+
 
 
 
@@ -2158,11 +2160,7 @@ public class DBservices
                     reqId = Convert.ToInt32(dataReader["reqId"]),
                     reqDate = Convert.ToDateTime(dataReader["reqDate"]),
                     medId = Convert.ToInt32(dataReader["medId"]),
-                    genName = dataReader["genName"].ToString(),
-                    comName = dataReader["comName"].ToString(),
-                    eaQty = Convert.ToInt32(dataReader["eaQty"]),
-                    unit = dataReader["unit"].ToString(),
-                    given = dataReader["given"].ToString(),
+                    medName = dataReader["medName"].ToString(),
                     cUserId = Convert.ToInt32(dataReader["cUserId"]),
                     cNurseName = dataReader["cNurseName"].ToString(),
                     aDepId = Convert.ToInt32(dataReader["aDepId"]),
@@ -2328,6 +2326,66 @@ public class DBservices
 
         return cmd;
     }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepRequestsObjects from the DepRequests table by depId
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepRequestsNurseOthers(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadObjectCommandSP("spReadDepRequestsNurseOthers", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    depName = dataReader["depName"].ToString(),
+                    cNurseName = dataReader["cNurseName"].ToString(),
+                    reqDate = Convert.ToDateTime(dataReader["reqDate"]),
+                    medName = dataReader["medName"].ToString(),
+                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
+                    stcQty = Convert.ToInt32(dataReader["stcQty"])
+
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
 
 
 
