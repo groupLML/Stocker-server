@@ -1,3 +1,4 @@
+insert into [Departments] ([depName], [depPhone], [depType]) values ('', '040000000', 'מערכות מידע');
 insert into [Departments] ([depName], [depPhone], [depType]) values ('מערכות מידע', '045555555', 'מערכות מידע');
 insert into [Departments] ([depName], [depPhone], [depType]) values ('בית מרקחת', '045555551', 'בית מרקחת');
 insert into [Departments] ([depName], [depPhone], [depType]) values ('כירורגיה א', '045555552', 'כירורגיה');
