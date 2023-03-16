@@ -81,6 +81,10 @@ namespace server.Models
             return newList;
         }
 
-
+        public Object ReadMedsFullNames() //read full name medicines
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadMedsFullNames();
+        }
     }
 }

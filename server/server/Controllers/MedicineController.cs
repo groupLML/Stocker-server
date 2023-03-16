@@ -26,11 +26,13 @@ namespace server.Controllers
         }
 
         // GET api/<MedicineController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("/GetMedsFullNames")]
+        public Object GetMedsFullNames()
         {
-            return "value";
+            Medicine med = new Medicine();
+            return med.ReadMedsFullNames();
         }
+
 
         // POST api/<MedicineController>
         [HttpPost]

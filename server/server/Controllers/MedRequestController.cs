@@ -35,7 +35,7 @@ namespace server.Controllers
             MedRequest mr = new MedRequest();
             return mr.ReadRequestsOthers(depId);
         }
-
+        
 
         // POST api/<MedRequestController>
         [HttpPost]

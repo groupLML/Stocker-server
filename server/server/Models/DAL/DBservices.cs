@@ -252,6 +252,59 @@ public class DBservices
         }
     }
 
+    public Object ReadMedsFullNames()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadFullNameMedicines", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medName = dataReader["medName"].ToString(),
+                    mazNum = dataReader["mazNum"].ToString(),
+                    medStatus = Convert.ToBoolean(dataReader["medStatus"]),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"]),
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
 
 
     /*****************Users*****************/
@@ -2166,6 +2219,7 @@ public class DBservices
                     aDepId = Convert.ToInt32(dataReader["aDepId"]),
                     aDepName = dataReader["aDepName"].ToString(),
                     aUserId = Convert.ToInt32(dataReader["aUserId"]),
+                    aNurseName = dataReader["aNurseName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["reqStatus"]),
                     reqQty = (float)Convert.ToSingle(dataReader["reqQty"]),
                 });
