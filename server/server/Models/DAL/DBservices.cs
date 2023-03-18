@@ -252,6 +252,9 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read active medicine from the medicines table
+    //--------------------------------------------------------------------------------------------------
     public Object ReadMedsFullNames()
     {
 
@@ -278,16 +281,20 @@ public class DBservices
 
             while (dataReader.Read())
             {
-                listObj.Add(new
+                var MedStatus = Convert.ToBoolean(dataReader["medStatus"]);
+                if (MedStatus == true) //read only active medicines
                 {
-                    medId = Convert.ToInt32(dataReader["medId"]),
-                    medName = dataReader["medName"].ToString(),
-                    mazNum = dataReader["mazNum"].ToString(),
-                    medStatus = Convert.ToBoolean(dataReader["medStatus"]),
-                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"]),
-                });
+                    listObj.Add(new
+                    {
+                        medId = Convert.ToInt32(dataReader["medId"]),
+                        medName = dataReader["medName"].ToString(),
+                        mazNum = dataReader["mazNum"].ToString(),
+                        medStatus = MedStatus,
+                        lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"]),
+                    });
+                }
             }
-            return listObj;
+                return listObj;
         }
         catch (Exception ex)
         {
@@ -2360,6 +2367,7 @@ public class DBservices
             }
         }
     }
+
     //--------------------------------------------------------------------
     // Create the Delete DepRequests SqlCommand 
     //--------------------------------------------------------------------
@@ -2413,6 +2421,7 @@ public class DBservices
 
                 listObj.Add(new
                 {
+                    reqId = Convert.ToInt32(dataReader["reqId"]),
                     depName = dataReader["depName"].ToString(),
                     cNurseName = dataReader["cNurseName"].ToString(),
                     reqDate = Convert.ToDateTime(dataReader["reqDate"]),

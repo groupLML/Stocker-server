@@ -18,19 +18,11 @@ namespace server.Controllers
         }
 
         // GET: api/<MedicineController>
-        [HttpGet("/GetActive")]
-        public IEnumerable<Medicine> GetActive()
+        [HttpGet("/GetActiveMeds")]
+        public Object GetActiveMeds()
         {
             Medicine med = new Medicine();
-            return med.ReadActive();
-        }
-
-        // GET api/<MedicineController>/5
-        [HttpGet("/GetMedsFullNames")]
-        public Object GetMedsFullNames()
-        {
-            Medicine med = new Medicine();
-            return med.ReadMedsFullNames();
+            return med.ReadActiveMeds();
         }
 
 
