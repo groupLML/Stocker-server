@@ -60,17 +60,20 @@ namespace server.Models
 
             MedRequest medReq = new MedRequest(0, cUser, 0, cDep, 0, medId, reqQty, 'W', DateTime.Now);
             int reqId=dbs.InsertMedRequest(medReq);
+            int numAffected = 0;
 
             foreach (Department dep in DepList) //הכנסת בקשה לטבלת DepRequests   
             {
                 for (int i = 0; i < depTypes.Length; i++)
                 {
-                    if (depTypes[i]== dep.DepType && cDep!= dep.DepId) 
-                        dbs.InsertDepRequest(reqId, cDep, dep.DepId);
+                    if (depTypes[i]== dep.DepType && cDep!= dep.DepId)
+                        numAffected = dbs.InsertDepRequest(reqId, cDep, dep.DepId);
                 }      
             }
-
-            return true;
+            if (numAffected == 0)
+                return false;
+            else
+                return true;
         }
 
         public bool UpdateWaittingReq(string[] depTypes)
@@ -78,28 +81,75 @@ namespace server.Models
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
             List<Department> DepList = dbs.ReadDeps();
+            int numAffectedTemp = 0;
 
             foreach (MedRequest mr in ReqList) 
             {
                 if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W')
                 {
-                    dbs.UpdateMedRequest(this);
+                    numAffectedTemp = dbs.UpdateMedRequest(this);
 
-                    dbs.DeleteDepRequests(this.ReqId);
-
-                    foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
+                    if (numAffectedTemp != 0)
                     {
-                        for (int i = 0; i < depTypes.Length; i++)
-                        {
-                            if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
-                                dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
+                        numAffectedTemp = 0;
+
+                        do{ 
+                            numAffectedTemp = dbs.DeleteDepRequests(this.ReqId);
                         }
+                        while (numAffectedTemp == 0);
+
+                        numAffectedTemp=0;
+                        foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
+                        {
+                            for (int i = 0; i < depTypes.Length; i++)
+                            {
+                                if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
+                                {
+                                    do  { //////// לבדוק!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                                        numAffectedTemp = dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
+                                    }
+                                    while (numAffectedTemp == 0);
+                                } 
+                            }
+                         }
+                         return true;
                     }
-                    return true;
                 }
             }
             return false;
         }
+
+        //public bool UpdateWaittingReq(string[] depTypes)
+        //{
+        //    DBservices dbs = new DBservices();
+        //    List<MedRequest> ReqList = dbs.ReadMedRequests();
+        //    List<Department> DepList = dbs.ReadDeps();
+
+        //    foreach (MedRequest mr in ReqList)
+        //    {
+        //        if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W')
+        //        {
+        //            dbs.UpdateMedRequest(this);
+
+        //            dbs.DeleteDepRequests(this.ReqId);
+
+        //            foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
+        //            {
+        //                    for (int i = 0; i < depTypes.Length; i++)
+        //                    {
+        //                        if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
+        //                             dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
+        //                    }
+        //            }
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+
+
+
+
 
         public List<MedRequest> Read()
         {
