@@ -23,7 +23,16 @@ namespace server.Controllers
             return "value";
         }
 
-        // POST api/<NormController>
+        // GET api/<NormController>/5
+        [HttpGet("MedsNorm/{depId}")]
+        public Object GetMedNorms(int depId)
+        {
+            Norm norm = new Norm();
+            return norm.ReadDepMedNorms(depId);
+         }
+
+
+         // POST api/<NormController>
         [HttpPost]
         public IActionResult Post([FromBody] Norm norm)
         {
@@ -51,5 +60,8 @@ namespace server.Controllers
         public void Delete(int id)
         {
         }
+
+
+
     }
 }

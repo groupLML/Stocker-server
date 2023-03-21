@@ -7,8 +7,19 @@ namespace server.Models
         //fields
         int usageId;
         int depId;
+        //Department depUsage;
         string reportNum;
         DateTime lastUpdate;
+
+
+        //class MedUsage
+        //{
+        //    int medId;
+        //    int usageId;
+        //    float useQty;
+        //    string chamNum;
+        //}
+
 
         //properties
         public int UsageId { get => usageId; set => usageId = value; }
@@ -46,5 +57,13 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.ReadUsages();
         }
+
+        public Object ReadMedUsages(int depId) //טבלה צריכה של מחלקה ספציפית עבור מנהל בית המרקחת
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepMedUsages(depId);
+        }
+
+
     }
 }

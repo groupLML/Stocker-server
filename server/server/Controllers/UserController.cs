@@ -46,7 +46,6 @@ namespace server.Controllers
             return user.Insert();
         }
 
-
         // PUT api/<UserController>/5
         [HttpPut("{userId}")]
         public bool Put(int userId, [FromBody] User user)

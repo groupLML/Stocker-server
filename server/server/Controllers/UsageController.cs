@@ -52,5 +52,45 @@ namespace server.Controllers
         public void Delete(int id)
         {
         }
+
+
+        //// GET api/<MedUsageController>/5
+        //[HttpGet("{depId}")]
+        //public Object GetMedUsages(int depId)
+        //{
+        //    MedUsage mu = new MedUsage();
+        //    return mu.ReadMedUsages(depId);
+        //}
+
+        //// POST api/<MedUsageController>
+        //[HttpPost]
+        //public IActionResult Post([FromBody] MedUsage mu)
+        //{
+        //    int numAffected = mu.Insert();
+        //    if (numAffected == 1)
+        //        return Ok();
+        //    else
+        //        return BadRequest();
+        //}
+
+        //// PUT api/<MedUsageController>/5
+        //[HttpPut("usageId/medId")]
+        //public bool Put(int usageId, int medId, [FromBody] MedUsage mu)
+        //{
+        //    mu.UsageId = usageId;
+        //    mu.MedId = medId;
+        //    int numAffected = mu.Update();
+        //    if (numAffected == 1)
+        //        return true;
+        //    else
+        //        return false;
+        //}
+
+
+
+
+
+
+
     }
 }

@@ -63,7 +63,7 @@ namespace server.Models
         }
 
         public Object ReadDepStocks(int depId) //טבלת מחסן מחלקתי
-        {
+        {   
             DBservices dbs = new DBservices();
             return dbs.ReadDepStocks(depId);
         }
