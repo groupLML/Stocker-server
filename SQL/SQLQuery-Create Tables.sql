@@ -41,6 +41,7 @@ CREATE TABLE [Medicines] (
 
 
 CREATE TABLE [Conversions] (
+    [medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[atc] varchar(10) NOT NULL,
 	[mazNum] varchar(10) NOT NULL,
 	[chamNum] varchar(10) NOT NULL,
