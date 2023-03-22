@@ -7,46 +7,43 @@ namespace server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NormController : ControllerBase
+    public class MedNormController : ControllerBase
     {
-        // GET: api/<NormController>
+        // GET: api/<MedNormController>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<NormController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET api/<MedNormController>/5
+        [HttpGet("{depId}")]
+        public Object GetMedNorms(int depId)
         {
-            return "value";
+            MedNorm mn = new MedNorm();
+            return mn.ReadDepMedNorms(depId);
         }
 
-        // POST api/<NormController>
+        // POST api/<MedNormController>
         [HttpPost]
-        public IActionResult Post([FromBody] Norm norm)
+        public bool Post([FromBody] MedNorm mn)
         {
-            int numAffected = norm.Insert();
-            if (numAffected == 1)
-                return Ok();
-            else
-                return BadRequest();
+            return mn.Insert();
         }
 
-        // PUT api/<NormController>/5
+        // PUT api/<MedNormController>/5
         [HttpPut("{normId}")]
-        public bool Put(int normId, [FromBody] Norm norm)
+        public bool Put(int normId, [FromBody] MedNorm mn)
         {
-            norm.NormId = normId;
-            int numAffected = norm.Update();
+            mn.NormId = normId;
+            int numAffected = mn.Update();
             if (numAffected == 1)
                 return true;
             else
                 return false;
         }
 
-        // DELETE api/<NormController>/5
+        // DELETE api/<MedNormController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

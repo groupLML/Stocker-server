@@ -119,8 +119,6 @@ namespace server.Models
             return false;
         }
 
-
-        //old version
         //public bool UpdateWaittingReq(string[] depTypes)
         //{
         //    DBservices dbs = new DBservices();

@@ -16,16 +16,6 @@ namespace server.Models
         bool medStatus;
         DateTime lastUpdate;
 
-
-        //class Conversion
-        //{
-        //    string atc;
-        //    string mazNum;;
-        //    string chamNum;
-        //}
-
-
-
         //properties
         public int MedId { get => medId; set => medId = value; }
         public string GenName { get => genName; set => genName = value; }

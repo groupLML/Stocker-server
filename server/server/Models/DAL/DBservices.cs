@@ -822,6 +822,174 @@ public class DBservices
         }
     }
 
+
+
+    /*****************MedNorms*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method inserts a MedNorm to the MedNorms table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMedNorm(MedNorm mn)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedNormCommandSP("spInsertMedNorm", con, mn);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedNorm in the MedNorms table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedNorm(MedNorm mn)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedNormCommandSP("spUpdateMedNorm", con, mn);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedNormCommandSP(String spName, SqlConnection con, MedNorm mn)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@normId", mn.NormId);
+        cmd.Parameters.AddWithValue("@medId", mn.MedId);
+        cmd.Parameters.AddWithValue("@normQty", mn.NormQty);
+        cmd.Parameters.AddWithValue("@mazNum", mn.MazNum);
+        cmd.Parameters.AddWithValue("@inNorm", mn.InNorm);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedNorms from the MedNorms table
+    //--------------------------------------------------------------------------------------------------
+    public List<MedNorm> ReadMedNorms()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedNorms", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<MedNorm> list = new List<MedNorm>();
+
+            while (dataReader.Read())
+            {
+                MedNorm mn = new MedNorm();
+                mn.NormId = Convert.ToInt32(dataReader["NormId"]);
+                mn.MedId = Convert.ToInt32(dataReader["MedId"]);
+                mn.NormQty = (float)Convert.ToSingle(dataReader["NormQty"]);
+                mn.MazNum = dataReader["MazNum"].ToString();
+                mn.InNorm = Convert.ToBoolean(dataReader["InNorm"]);
+                list.Add(mn);
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------
     // This method Read DepMedNorms from the MedNorms table by depId
     //--------------------------------------------------------------------------------------------------
@@ -1216,6 +1384,174 @@ public class DBservices
         }
     }
 
+
+
+
+    /*****************MedUsages*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method inserts a MedUsage to the MedUsages table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMedUsage(MedUsage mu)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedUsageCommandSP("spInsertMedUsage", con, mu);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedUsage in the MedUsages table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedUsage(MedUsage mu)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedUsageCommandSP("spUpdateMedUsages", con, mu);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedUsageCommandSP(String spName, SqlConnection con, MedUsage mu)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@medId", mu.MedId);
+        cmd.Parameters.AddWithValue("@usageId", mu.UsageId);
+        cmd.Parameters.AddWithValue("@useQty", mu.UseQty);
+        cmd.Parameters.AddWithValue("@chamNum", mu.ChamNum);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedUsages from the MedUsages table
+    //--------------------------------------------------------------------------------------------------
+    public List<MedUsage> ReadMedUsages()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedUsages", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<MedUsage> list = new List<MedUsage>();
+
+            while (dataReader.Read())
+            {
+                MedUsage mu = new MedUsage();
+                mu.MedId = Convert.ToInt32(dataReader["MedId"]);
+                mu.UsageId = Convert.ToInt32(dataReader["UsageId"]);
+                mu.UseQty = (float)Convert.ToSingle(dataReader["UseQty"]);
+                mu.ChamNum = dataReader["ChamNumm"].ToString();
+                list.Add(mu);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------
     // This method Read DepMedUsages from the MedUsages table by depId
     //--------------------------------------------------------------------------------------------------
@@ -1248,7 +1584,7 @@ public class DBservices
 
                 listObj.Add(new
                 {
-                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medId= Convert.ToInt32(dataReader["medId"]),
                     mazNum = dataReader["mazNum"].ToString(),
                     genName = dataReader["genName"].ToString(),
                     comName = dataReader["comName"].ToString(),
@@ -1273,7 +1609,6 @@ public class DBservices
             }
         }
     }
-
 
 
 
@@ -1501,7 +1836,6 @@ public class DBservices
         }
     }
    
-
 
 
     /*****************Messages*****************/
@@ -1818,9 +2152,15 @@ public class DBservices
                 MedRequest mr = new MedRequest();
                 mr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
                 mr.CUser = Convert.ToInt32(dataReader["CUser"]);
-                mr.AUser = Convert.ToInt32(dataReader["AUser"]);
+                if(!dataReader.IsDBNull(dataReader.GetOrdinal("AUser")))
+                { 
+                    mr.AUser = Convert.ToInt32(dataReader["AUser"]);
+                }
                 mr.CDep = Convert.ToInt32(dataReader["CDep"]);
-                mr.ADep = Convert.ToInt32(dataReader["ADep"]); ;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("ADep")))
+                {
+                    mr.ADep = Convert.ToInt32(dataReader["ADep"]); ;
+                }
                 mr.MedId = Convert.ToInt32(dataReader["MedId"]);
                 mr.ReqQty = (float)Convert.ToSingle(dataReader["ReqQty"]);
                 mr.ReqStatus = Convert.ToChar(dataReader["ReqStatus"]);
