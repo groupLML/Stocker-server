@@ -21,7 +21,6 @@ GO
 Alter PROCEDURE spInsertDepRequest
 	
 	@reqId smallint,
-	@cDep smallint,
 	@reqDep smallint
 
 AS
@@ -31,6 +30,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	Insert INTO [DepRequests] ([reqId],[cDep],[reqDep]) Values (@reqId,@cDep,@reqDep)
+	Insert INTO [DepRequests] ([reqId],[reqDep]) Values (@reqId,@reqDep)
 END
 GO

@@ -113,7 +113,7 @@ CREATE TABLE [Messages] (
 )
 
 
-CREATE TABLE [MedRequests] (
+create TABLE [MedRequests] (
     [reqId] smallint IDENTITY (1,1),
    	[cUser] smallint REFERENCES [Users](userId) NOT NULL,
 	[aUser] smallint REFERENCES [Users](userId),
@@ -128,11 +128,10 @@ CREATE TABLE [MedRequests] (
 --A=approved, D=decline, W=waiting
 
 
-CREATE TABLE [DepRequests] (
+create TABLE [DepRequests] (
     [reqId] smallint REFERENCES [Users](userId) NOT NULL,
-    [cDep] smallint REFERENCES [Departments](depId) NOT NULL,
 	[reqDep] smallint REFERENCES [Departments](depId) NOT NULL,
-	Primary key (reqId,cDep,reqDep)
+	Primary key (reqId,reqDep)
 )
 
 
