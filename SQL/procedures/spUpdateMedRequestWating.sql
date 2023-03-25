@@ -18,7 +18,7 @@ GO
 -- Create date: <25/02/2023>
 -- Description:	<update MedRequest>
 -- =============================================
-Alter PROCEDURE spUpdateMedRequest
+CREATE PROCEDURE spUpdateMedRequestWaiting
 
     @reqId smallint,
    	@cUser smallint,

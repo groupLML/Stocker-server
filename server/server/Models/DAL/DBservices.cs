@@ -2051,7 +2051,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a MedRequest in the MedRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateMedRequest(MedRequest mr, List<int> depList)
+    public int UpdateMedRequestWaiting(MedRequest mr, List<int> depList)
     {
 
         SqlConnection con;
@@ -2067,7 +2067,7 @@ public class DBservices
             throw (ex);
         }
         string strDepList = string.Join(",", depList);
-        cmd = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequest", con, mr, strDepList);
+        cmd = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequestWaiting", con, mr, strDepList);
 
         try
         {
@@ -2117,6 +2117,77 @@ public class DBservices
         cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
         cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
         cmd.Parameters.AddWithValue("@depList", depList);
+
+        return cmd;
+
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedRequest in the MedRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedRequestApproved(MedRequest mr)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        cmd = CreateUpdateMedRequestCommandSP("spUpdateMedRequestApproved", con, mr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+
+        cmd.Parameters.AddWithValue("@reqId", mr.ReqId);
+        cmd.Parameters.AddWithValue("@cUser", mr.CUser);
+        cmd.Parameters.AddWithValue("@aUser", mr.AUser);
+        cmd.Parameters.AddWithValue("@cDep", mr.CDep);
+        cmd.Parameters.AddWithValue("@aDep", mr.ADep);
+        cmd.Parameters.AddWithValue("@medId", mr.MedId);
+        cmd.Parameters.AddWithValue("@reqQty", mr.ReqQty);
+        cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
+        cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
 
         return cmd;
 

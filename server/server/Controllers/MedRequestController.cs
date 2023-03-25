@@ -62,15 +62,15 @@ namespace server.Controllers
 
 
         // PUT api/<MedRequestController>/5
-        [HttpPut("WaittingReq/{reqId}")]
-        public IActionResult PutWaitting(int reqId, [FromBody] JsonElement medReq)
+        [HttpPut("WaitingReq/{reqId}")]
+        public IActionResult PutWaitingReq(int reqId, [FromBody] JsonElement medReq)
         {
             string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
             string json = medReq.GetProperty("medRequest").ToString();
             MedRequest mr = JsonConvert.DeserializeObject<MedRequest>(json);
             mr.ReqId = reqId;
 
-            int numAffected = mr.UpdateWaittingReq(depTypes);
+            int numAffected = mr.UpdateWaitingReq(depTypes);
 
             if (numAffected > 0)
                 return Ok();
@@ -80,6 +80,19 @@ namespace server.Controllers
                 return BadRequest("The update is failed");
 
             // swagger exp:{"medRequest": { "reqId": 0, "cUser": 44, "aUser": 0, "cDep": 3, "aDep": 0, "medId": 7,"reqQty": 50, "reqStatus": "W",  "reqDate": "2023-03-12T15:28:45.17"},"depTypes":  ["כירורגיה"]}
+        }
+
+
+        // PUT api/<MedRequestController>/5
+        [HttpPut("ApprovedReq/{reqId}")]
+        public bool PutApprovedReq(int reqId, [FromBody] MedRequest mr)
+        {
+            mr.ReqId = reqId;
+            int numAffected = mr.UpdateApprovedReq();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
 

@@ -72,7 +72,7 @@ namespace server.Models
             return dbs.InsertMedRequest(medReq, DepAsked);
         }
 
-        public int UpdateWaittingReq(string[] depTypes)
+        public int UpdateWaitingReq(string[] depTypes)
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
@@ -91,11 +91,16 @@ namespace server.Models
             foreach (MedRequest mr in ReqList) 
             {
                 if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W') //עדכון בקשה יתבצע רק במידה והבקשה במצב "המתנה"
-                    return dbs.UpdateMedRequest(this, DepAsked);
+                    return dbs.UpdateMedRequestWaiting(this, DepAsked);
             }
             return -1;
         }
 
+        public int UpdateApprovedReq()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateMedRequestApproved(this);
+        }
 
         public List<MedRequest> Read()
         {
