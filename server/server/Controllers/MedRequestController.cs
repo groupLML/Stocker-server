@@ -63,14 +63,21 @@ namespace server.Controllers
 
         // PUT api/<MedRequestController>/5
         [HttpPut("WaittingReq/{reqId}")]
-        public bool PutWaitting(int reqId, [FromBody] JsonElement medReq)
+        public IActionResult PutWaitting(int reqId, [FromBody] JsonElement medReq)
         {
             string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
             string json = medReq.GetProperty("medRequest").ToString();
             MedRequest mr = JsonConvert.DeserializeObject<MedRequest>(json);
             mr.ReqId = reqId;
 
-            return mr.UpdateWaittingReq(depTypes);
+            int numAffected = mr.UpdateWaittingReq(depTypes);
+
+            if (numAffected > 0)
+                return Ok();
+            else if (numAffected == -1)
+                return BadRequest("This request is being processed, it is not possible to make changes to it");
+            else
+                return BadRequest("The update is failed");
 
             // swagger exp:{"medRequest": { "reqId": 0, "cUser": 44, "aUser": 0, "cDep": 3, "aDep": 0, "medId": 7,"reqQty": 50, "reqStatus": "W",  "reqDate": "2023-03-12T15:28:45.17"},"depTypes":  ["כירורגיה"]}
         }

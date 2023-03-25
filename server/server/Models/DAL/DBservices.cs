@@ -2025,7 +2025,7 @@ public class DBservices
             throw (ex);
         }
         string strDepList = string.Join(",", depList);
-        cmd = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequestNew", con, mr, strDepList);    // create the command
+        cmd = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequest", con, mr, strDepList);    // create the command
 
         try
         {
@@ -2107,6 +2107,7 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
 
+        cmd.Parameters.AddWithValue("@reqId", mr.ReqId);
         cmd.Parameters.AddWithValue("@cUser", mr.CUser);
         cmd.Parameters.AddWithValue("@aUser", mr.AUser);
         cmd.Parameters.AddWithValue("@cDep", mr.CDep);
@@ -2153,15 +2154,9 @@ public class DBservices
                 MedRequest mr = new MedRequest();
                 mr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
                 mr.CUser = Convert.ToInt32(dataReader["CUser"]);
-                if(!dataReader.IsDBNull(dataReader.GetOrdinal("AUser")))
-                { 
-                    mr.AUser = Convert.ToInt32(dataReader["AUser"]);
-                }
+                mr.AUser = Convert.ToInt32(dataReader["AUser"]);
                 mr.CDep = Convert.ToInt32(dataReader["CDep"]);
-                if (!dataReader.IsDBNull(dataReader.GetOrdinal("ADep")))
-                {
-                    mr.ADep = Convert.ToInt32(dataReader["ADep"]); ;
-                }
+                mr.ADep = Convert.ToInt32(dataReader["ADep"]); ;
                 mr.MedId = Convert.ToInt32(dataReader["MedId"]);
                 mr.ReqQty = (float)Convert.ToSingle(dataReader["ReqQty"]);
                 mr.ReqStatus = Convert.ToChar(dataReader["ReqStatus"]);
@@ -2188,7 +2183,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // 2 methods bellow: Read MedRequestsObjects by depId and Create read command 
+    // 3 methods bellow: Read MedRequestsObjects by depId and Create read command 
     //--------------------------------------------------------------------------------------------------
     public Object ReadMedRequestsNurseMine(int depId)
     {
@@ -2249,150 +2244,6 @@ public class DBservices
             }
         }
     }
-    private SqlCommand CreateReadObjectCommandSP(String spName, SqlConnection con, int cDep)
-    {
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@cDep", cDep);
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // 2 methods bellow: insert DepRequests and Create insert command 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertDepRequest(int reqId, int cDep, int aDep)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateInsertDepRequestCommandSP("spInsertDepRequest", con, reqId, cDep, aDep);   // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-    private SqlCommand CreateInsertDepRequestCommandSP(String spName, SqlConnection con, int reqId, int cDep, int aDep)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@reqId", reqId);
-        cmd.Parameters.AddWithValue("@cDep", cDep);
-        cmd.Parameters.AddWithValue("@reqDep", aDep);
-
-        return cmd;
-
-    }
-
-    //--------------------------------------------------------------------
-    // This method Delete DepRequests by reqId
-    //--------------------------------------------------------------------
-    public int DeleteDepRequests(int reqId)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = createDeleteDepReqCommand("spDeleteDepRequests", con, reqId);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------
-    // Create the Delete DepRequests SqlCommand 
-    //--------------------------------------------------------------------
-    private SqlCommand createDeleteDepReqCommand(String spName, SqlConnection con, int reqId)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
-
-        cmd.Parameters.AddWithValue("@reqId", reqId);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read DepRequestsObjects from the DepRequests table by depId
-    //--------------------------------------------------------------------------------------------------
     public Object ReadDepRequestsNurseOthers(int depId)
     {
 
@@ -2448,6 +2299,21 @@ public class DBservices
                 con.Close();
             }
         }
+    }
+    private SqlCommand CreateReadObjectCommandSP(String spName, SqlConnection con, int cDep)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@cDep", cDep);
+        return cmd;
     }
 
 

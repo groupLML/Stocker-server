@@ -28,7 +28,8 @@ Alter PROCEDURE spUpdateMedRequest
 	@medId smallint,
 	@reqQty real,
 	@reqStatus char(1),
-	@reqDate datetime
+	@reqDate datetime,
+	@depList varchar(max)
 
 AS
 BEGIN
@@ -38,16 +39,28 @@ BEGIN
 
     -- Insert statements for procedure here
 	 UPDATE MedRequests set cUser=@cUser, aUser=@aUser ,cDep=@cDep, aDep=@aDep,
-	 medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=@reqDate
+	        medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=@reqDate
 	 where reqId = @reqId 
+
+	 delete from [DepRequests] where reqId= @reqId
+
+	 DECLARE @depId smallint, @depString varchar(max)
+	 SET @depString= @depList;
+
+     WHILE LEN(@depString) <> 0
+	       BEGIN
+	             SET @depId =CAST(LEFT(@depString, 1) as smallint)
+				 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@reqId, @depId);
+				 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
+		   END
 
 
 END
 GO
 
---select * from MedRequests
+select * from MedRequests
 
---select * from DepRequests
+select * from DepRequests
 
 --UPDATE MedRequests set cUser=3, aUser = 0,cDep = 3, aDep=0,
 --	 medId=4, reqQty=6, reqStatus='W', reqDate='2023-02-25 17:52:51.000'

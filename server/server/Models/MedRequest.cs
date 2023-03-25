@@ -70,83 +70,31 @@ namespace server.Models
                 }
             }
             return dbs.InsertMedRequest(medReq, DepAsked);
-
-          
         }
 
-        public bool UpdateWaittingReq(string[] depTypes)
+        public int UpdateWaittingReq(string[] depTypes)
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
             List<Department> DepList = dbs.ReadDeps();
-            int numAffectedTemp = 0;
+            List<int> DepAsked = new List<int>();
+
+            foreach (Department dep in DepList) //יצירת רשימת מספרי מחלקות שאליהן נשלחת הבקשה
+            {
+                for (int i = 0; i < depTypes.Length; i++)
+                {
+                    if (depTypes[i] == dep.DepType && cDep != dep.DepId)
+                        DepAsked.Add(dep.DepId);
+                }
+            }
 
             foreach (MedRequest mr in ReqList) 
             {
-                if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W')
-                {
-                    numAffectedTemp = dbs.UpdateMedRequest(this);
-
-                    if (numAffectedTemp != 0)
-                    {
-                        numAffectedTemp = 0;
-
-                        do{ 
-                            numAffectedTemp = dbs.DeleteDepRequests(this.ReqId);
-                        }
-                        while (numAffectedTemp == 0);
-
-                        numAffectedTemp=0;
-                        foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
-                        {
-                            for (int i = 0; i < depTypes.Length; i++)
-                            {
-                                if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
-                                {
-                                    do  { //////// לבדוק!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-                                        numAffectedTemp = dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
-                                    }
-                                    while (numAffectedTemp == 0);
-                                } 
-                            }
-                         }
-                         return true;
-                    }
-                }
+                if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W') //עדכון בקשה יתבצע רק במידה והבקשה במצב "המתנה"
+                    return dbs.UpdateMedRequest(this, DepAsked);
             }
-            return false;
+            return -1;
         }
-
-        //public bool UpdateWaittingReq(string[] depTypes)
-        //{
-        //    DBservices dbs = new DBservices();
-        //    List<MedRequest> ReqList = dbs.ReadMedRequests();
-        //    List<Department> DepList = dbs.ReadDeps();
-
-        //    foreach (MedRequest mr in ReqList)
-        //    {
-        //        if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W')
-        //        {
-        //            dbs.UpdateMedRequest(this);
-
-        //            dbs.DeleteDepRequests(this.ReqId);
-
-        //            foreach (Department dep in DepList) //הכנסת בקשה מעודכנת לטבלת DepRequests   
-        //            {
-        //                    for (int i = 0; i < depTypes.Length; i++)
-        //                    {
-        //                        if (depTypes[i] == dep.DepType && this.CDep != dep.DepId)
-        //                             dbs.InsertDepRequest(this.ReqId, this.CDep, dep.DepId);
-        //                    }
-        //            }
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-
-
-
 
 
         public List<MedRequest> Read()

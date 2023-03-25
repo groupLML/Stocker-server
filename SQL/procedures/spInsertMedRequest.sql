@@ -20,6 +20,7 @@ GO
 -- =============================================
 ALTER PROCEDURE spInsertMedRequest
 
+	@reqId smallint,
    	@cUser smallint,
 	@aUser smallint,
 	@cDep smallint,
@@ -39,15 +40,15 @@ BEGIN
      INSERT INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) 
      VALUES (@cUser,@aUser,@cDep,@aDep,@medId,@reqQty,'W',GETDATE());
 
-	 DECLARE @reqId smallint, @depId smallint, @depString varchar(max)
+	 DECLARE @ID smallint, @depId smallint, @depString varchar(max)
 	 
-	 SET @reqId= (SELECT SCOPE_IDENTITY());
+	 SET @ID= (SELECT SCOPE_IDENTITY());
 	 SET @depString= @depList;
 
      WHILE LEN(@depString) <> 0
 	       BEGIN
 	             SET @depId =CAST(LEFT(@depString, 1) as smallint)
-				 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@reqId, @depId);
+				 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@ID, @depId);
 				 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
 		   END
 
