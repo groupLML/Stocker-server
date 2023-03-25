@@ -39,7 +39,7 @@ namespace server.Controllers
 
         // POST api/<MedRequestController>
         [HttpPost]
-        public bool Post([FromBody] JsonElement medReq)
+        public IActionResult Post([FromBody] JsonElement medReq)
         {
             string[] depTypes = medReq.GetProperty("depTypes").EnumerateArray().Select(x => x.GetString()).ToArray();
             int cDep = medReq.GetProperty("cDep").GetInt32();
@@ -48,7 +48,14 @@ namespace server.Controllers
             float reqQty = (float)medReq.GetProperty("reqQty").GetSingle();
 
             MedRequest mr = new MedRequest();
-            return mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
+            int numAffected= mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
+
+            if (numAffected > 0)
+                return Ok();
+            else if (numAffected == -1)
+                return BadRequest("This request is already exist");
+            else 
+                return BadRequest("The insert is failed");
 
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }

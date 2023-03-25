@@ -2009,7 +2009,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method insert a MedRequest to the MedRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int InsertMedRequest(MedRequest mr)
+    public int InsertMedRequest(MedRequest mr, List<int> depList)
     {
 
         SqlConnection con;
@@ -2024,13 +2024,13 @@ public class DBservices
             // write to log
             throw (ex);
         }
-
-        cmd = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequest", con, mr);    // create the command
+        string strDepList = string.Join(",", depList);
+        cmd = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequestNew", con, mr, strDepList);    // create the command
 
         try
         {
-            int reqId=Convert.ToInt32(cmd.ExecuteScalar()); 
-            return reqId;
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
         }
         catch (Exception ex)
         {
@@ -2051,7 +2051,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a MedRequest in the MedRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateMedRequest(MedRequest mr)
+    public int UpdateMedRequest(MedRequest mr, List<int> depList)
     {
 
         SqlConnection con;
@@ -2066,8 +2066,8 @@ public class DBservices
             // write to log
             throw (ex);
         }
-
-        cmd = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequest", con, mr);
+        string strDepList = string.Join(",", depList);
+        cmd = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequest", con, mr, strDepList);
 
         try
         {
@@ -2093,7 +2093,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr)
+    private SqlCommand CreateUpdateInsertMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr, string depList)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -2102,11 +2102,11 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@reqId", mr.ReqId);
+
         cmd.Parameters.AddWithValue("@cUser", mr.CUser);
         cmd.Parameters.AddWithValue("@aUser", mr.AUser);
         cmd.Parameters.AddWithValue("@cDep", mr.CDep);
@@ -2115,6 +2115,7 @@ public class DBservices
         cmd.Parameters.AddWithValue("@reqQty", mr.ReqQty);
         cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
         cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
+        cmd.Parameters.AddWithValue("@depList", depList);
 
         return cmd;
 

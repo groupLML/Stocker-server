@@ -46,34 +46,32 @@ namespace server.Models
         }
 
         //methodes
-        public bool InsertReq(int cUser, int cDep, int medId, float reqQty, string[] depTypes)
+        public int InsertReq(int cUser, int cDep, int medId, float reqQty, string[] depTypes)
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
             List<Department> DepList = dbs.ReadDeps();
+            List<int> DepAsked = new List<int>();
 
             foreach (MedRequest mr in ReqList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
             {
                 if (cDep == mr.CDep && medId == mr.MedId && mr.ReqStatus == 'W')
-                    return false;
+                    return -1;
             }
 
             MedRequest medReq = new MedRequest(0, cUser, 0, cDep, 0, medId, reqQty, 'W', DateTime.Now);
-            int reqId=dbs.InsertMedRequest(medReq);
-            int numAffected = 0;
 
-            foreach (Department dep in DepList) //הכנסת בקשה לטבלת DepRequests   
+            foreach (Department dep in DepList) //יצירת רשימת מספרי מחלקות שאליהן נשלחת הבקשה
             {
                 for (int i = 0; i < depTypes.Length; i++)
                 {
-                    if (depTypes[i]== dep.DepType && cDep!= dep.DepId)
-                        numAffected = dbs.InsertDepRequest(reqId, cDep, dep.DepId);
-                }      
+                    if (depTypes[i] == dep.DepType && cDep != dep.DepId)
+                        DepAsked.Add(dep.DepId);
+                }
             }
-            if (numAffected == 0)
-                return false;
-            else
-                return true;
+            return dbs.InsertMedRequest(medReq, DepAsked);
+
+          
         }
 
         public bool UpdateWaittingReq(string[] depTypes)
