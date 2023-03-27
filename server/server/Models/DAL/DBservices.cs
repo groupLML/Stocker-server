@@ -12,6 +12,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.ConstrainedExecution;
 using System.Collections;
 using System.Runtime.Intrinsics.Arm;
+using Newtonsoft.Json;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -2174,7 +2175,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
@@ -2295,7 +2296,7 @@ public class DBservices
                     aUserId = Convert.ToInt32(dataReader["aUserId"]),
                     aNurseName = dataReader["aNurseName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["reqStatus"]),
-                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"]),
+                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"])
                 });
             }
             return listObj;
@@ -2665,12 +2666,12 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@pushId", po.PushId);
+        cmd.Parameters.AddWithValue("@pushId", po.OrderId);
         cmd.Parameters.AddWithValue("@pUser", po.PUser);
         cmd.Parameters.AddWithValue("@depId", po.DepId);
         cmd.Parameters.AddWithValue("@reportNum", po.ReportNum);
-        cmd.Parameters.AddWithValue("@pushStatus", po.PushStatus);
-        cmd.Parameters.AddWithValue("@pushDate", po.PushDate);
+        cmd.Parameters.AddWithValue("@pushStatus", po.Status);
+        cmd.Parameters.AddWithValue("@pushDate", po.OrderDate);
         cmd.Parameters.AddWithValue("@lastUpdate", po.LastUpdate);
 
         return cmd;
@@ -2707,12 +2708,12 @@ public class DBservices
             while (dataReader.Read())
             {
                 PushOrder po = new PushOrder();
-                po.PushId = Convert.ToInt32(dataReader["PushId"]);
+                po.OrderId = Convert.ToInt32(dataReader["PushId"]);
                 po.PUser = Convert.ToInt32(dataReader["PUser"]);
                 po.DepId = Convert.ToInt32(dataReader["DepId"]);
                 po.ReportNum = dataReader["ReportNum"].ToString();
-                po.PushStatus = Convert.ToChar(dataReader["PushStatus"]);
-                po.PushDate = Convert.ToDateTime(dataReader["PushDate"]);
+                po.Status = Convert.ToChar(dataReader["PushStatus"]);
+                po.OrderDate = Convert.ToDateTime(dataReader["PushDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
                 list.Add(po);
             }
@@ -2840,13 +2841,13 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@pullId", po.PullId);
+        cmd.Parameters.AddWithValue("@pullId", po.OrderId);
         cmd.Parameters.AddWithValue("@pUser", po.PUser);
         cmd.Parameters.AddWithValue("@nUser", po.NUser);
         cmd.Parameters.AddWithValue("@depId", po.DepId);
         cmd.Parameters.AddWithValue("@reportNum", po.ReportNum);
-        cmd.Parameters.AddWithValue("@pullStatus", po.PullStatus);
-        cmd.Parameters.AddWithValue("@pullDate", po.PullDate);
+        cmd.Parameters.AddWithValue("@pullStatus", po.Status);
+        cmd.Parameters.AddWithValue("@pullDate", po.OrderDate);
         cmd.Parameters.AddWithValue("@lastUpdate", po.LastUpdate);
 
         return cmd;
@@ -2883,14 +2884,21 @@ public class DBservices
             while (dataReader.Read())
             {
                 PullOrder po = new PullOrder();
-                po.PullId = Convert.ToInt32(dataReader["PullId"]);
+                po.OrderId = Convert.ToInt32(dataReader["PullId"]);
                 po.PUser = Convert.ToInt32(dataReader["PUser"]);
                 po.NUser = Convert.ToInt32(dataReader["NUser"]);
                 po.DepId = Convert.ToInt32(dataReader["DepId"]);
                 po.ReportNum = dataReader["ReportNum"].ToString();
-                po.PullStatus = Convert.ToChar(dataReader["PullStatus"]);
-                po.PullDate = Convert.ToDateTime(dataReader["PullDate"]);
+                po.Status = Convert.ToChar(dataReader["PullStatus"]);
+                po.OrderDate = Convert.ToDateTime(dataReader["PullDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
+
+                //if (dataReader["MedList"] != DBNull.Value && dataReader["MedList"] != null && dataReader["MedList"] is string medListString)
+                //{
+                //    List<MedOrder> medList = JsonConvert.DeserializeObject<List<MedOrder>>(medListString);
+                //    po.MedList = medList;
+                //}
+
                 list.Add(po);
             }
 
@@ -2911,348 +2919,6 @@ public class DBservices
             }
         }
     }
-
-
-
-
-    /*****************PushMedOrders*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a PushMedOrder to the PushMedOrders table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertPushMedOrder(PushMedOrder pmo)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertPushMedOrderCommandSP("spInsertPushMedOrder", con, pmo);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a PushMedOrder in the PushMedOrders table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdatePushMedOrder(PushMedOrder pmo)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertPushMedOrderCommandSP("spUpdatePushMedOrder", con, pmo);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertPushMedOrderCommandSP(String spName, SqlConnection con, PushMedOrder pmo)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@pushId", pmo.PushId);
-        cmd.Parameters.AddWithValue("@medId", pmo.MedId);
-        cmd.Parameters.AddWithValue("@poQty", pmo.PoQty);
-        cmd.Parameters.AddWithValue("@supQty", pmo.SupQty);
-        cmd.Parameters.AddWithValue("@mazNum", pmo.MazNum);
-
-        return cmd;
-
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read PushMedOrders from the PushMedOrders table
-    //--------------------------------------------------------------------------------------------------
-    public List<PushMedOrder> ReadPushMedOrders()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadPushMedOrders", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<PushMedOrder> list = new List<PushMedOrder>();
-
-            while (dataReader.Read())
-            {
-                PushMedOrder pmo = new PushMedOrder();
-                pmo.PushId = Convert.ToInt32(dataReader["PushId"]);
-                pmo.MedId = Convert.ToInt32(dataReader["MedId"]);
-                pmo.PoQty = (float)Convert.ToSingle(dataReader["PoQty"]);
-                pmo.SupQty = (float)Convert.ToSingle(dataReader["SupQty"]);
-                pmo.MazNum = dataReader["MazNum"].ToString(); ;
-                list.Add(pmo);
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
-
-    /*****************PullMedOrders*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a PullMedOrder to the PullMedOrders table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertPullMedOrder(PullMedOrder pmo)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertPullMedOrderCommandSP("spInsertPullMedOrder", con, pmo);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a PullMedOrder in the PullMedOrders table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdatePullMedOrder(PullMedOrder pmo)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertPullMedOrderCommandSP("spUpdatePullMedOrder", con, pmo);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertPullMedOrderCommandSP(String spName, SqlConnection con, PullMedOrder pmo)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@pullId", pmo.PullId);
-        cmd.Parameters.AddWithValue("@medId", pmo.MedId);
-        cmd.Parameters.AddWithValue("@poQty", pmo.PoQty);
-        cmd.Parameters.AddWithValue("@supQty", pmo.SupQty);
-        cmd.Parameters.AddWithValue("@mazNum", pmo.MazNum);
-
-        return cmd;
-
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read PullMedOrders from the PullMedOrders table
-    //--------------------------------------------------------------------------------------------------
-    public List<PullMedOrder> ReadPullMedOrders()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadPullMedOrders", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<PullMedOrder> list = new List<PullMedOrder>();
-
-            while (dataReader.Read())
-            {
-                PullMedOrder pmo = new PullMedOrder();
-                pmo.PullId = Convert.ToInt32(dataReader["PullId"]);
-                pmo.MedId = Convert.ToInt32(dataReader["MedId"]);
-                pmo.PoQty = (float)Convert.ToSingle(dataReader["PoQty"]);
-                pmo.SupQty = (float)Convert.ToSingle(dataReader["SupQty"]);
-                pmo.MazNum = dataReader["MazNum"].ToString(); ;
-                list.Add(pmo);
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
 
 
 }

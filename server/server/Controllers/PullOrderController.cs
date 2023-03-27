@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System.Text.Json;
+using Newtonsoft.Json;
+using System.Runtime.Intrinsics.X86;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,6 +27,7 @@ namespace server.Controllers
             return "value";
         }
 
+
         // POST api/<PullOrderController>
         [HttpPost]
         public IActionResult Post([FromBody] PullOrder po)
@@ -35,11 +39,12 @@ namespace server.Controllers
                 return BadRequest();
         }
 
+
         // PUT api/<PullOrderController>/5
         [HttpPut("{pullId}")]
         public bool Put(int pullId, [FromBody] PullOrder po)
         {
-            po.PullId = pullId;
+            po.OrderId = pullId;
             int numAffected = po.Update();
             if (numAffected == 1)
                 return true;

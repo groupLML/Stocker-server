@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System.Text.Json;
+using Newtonsoft.Json;
+using System.Runtime.Intrinsics.X86;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,7 +42,7 @@ namespace server.Controllers
         [HttpPut("{pushId}")]
         public bool Put(int pushId, [FromBody] PushOrder po)
         {
-            po.PushId = pushId;
+            po.OrderId = pushId;
             int numAffected = po.Update();
             if (numAffected == 1)
                 return true;

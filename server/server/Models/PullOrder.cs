@@ -2,43 +2,20 @@
 
 namespace server.Models
 {
-    public class PullOrder
+    public class PullOrder : Order
     {
-        //fields
-        int pullId;
-        int pUser;
+        //field
         int nUser;
-        int depId;
-        string reportNum;
-        char pullStatus;
-        DateTime pullDate;
-        DateTime lastUpdate;
 
-        //properties
-        public int PullId { get => pullId; set => pullId = value; }
-        public int PUser { get => pUser; set => pUser = value; }
+        //property
         public int NUser { get => nUser; set => nUser = value; }
-        public int DepId { get => depId; set => depId = value; }
-        public string ReportNum { get => reportNum; set => reportNum = value; }
-        public char PullStatus { get => pullStatus; set => pullStatus = value; }
-        public DateTime PullDate { get => pullDate; set => pullDate = value; }
-        public DateTime LastUpdate { get => lastUpdate; set => lastUpdate = value; }
-
 
         //constructors
-        public PullOrder() { }
-        public PullOrder(int pullId, int pUser, int nUser, int depId, string reportNum, char pullStatus, DateTime pullDate, DateTime lastUpdate)
-        {
-            this.pullId = pullId;
-            this.pUser = pUser;
-            this.nUser = nUser;
-            this.depId = depId;
-            this.reportNum = reportNum;
-            this.pullStatus = pullStatus;
-            this.pullDate = pullDate;
-            this.lastUpdate = lastUpdate;
-        }
-
+        public PullOrder() : base()
+        { }
+        public PullOrder(int orderId, int depId, int nUser, int pUser, string reportNum, char status, DateTime orderDate,
+                         DateTime lastUpdate) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate)
+        { this.nUser = nUser; }
 
         //methodes
         public int Insert()
