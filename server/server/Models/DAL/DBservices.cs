@@ -2708,16 +2708,27 @@ public class DBservices
             while (dataReader.Read())
             {
                 PushOrder po = new PushOrder();
-                po.OrderId = Convert.ToInt32(dataReader["PushId"]);
+                po.OrderId = Convert.ToInt32(dataReader["O.PushId"]);
                 po.PUser = Convert.ToInt32(dataReader["PUser"]);
                 po.DepId = Convert.ToInt32(dataReader["DepId"]);
                 po.ReportNum = dataReader["ReportNum"].ToString();
                 po.Status = Convert.ToChar(dataReader["PushStatus"]);
                 po.OrderDate = Convert.ToDateTime(dataReader["PushDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                list.Add(po);
-            }
+                if (po.MedList == null)
+                    po.MedList = new List<MedOrder>();
 
+                if (dataReader["MO.PushId"] != DBNull.Value)
+                {
+                    MedOrder mo = new MedOrder();
+                    mo.OrderId = Convert.ToInt32(dataReader["MO.PushId"]);
+                    mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    mo.PoQty = (float)(dataReader["PoQty"]);
+                    mo.SupQty = (float)(dataReader["SupQty"]);
+                    mo.MazNum = (dataReader["MazNum"]).ToString();
+                    po.MedList.Add(mo);
+                }
+            }
                 return list;
         }
         catch (Exception ex)
@@ -2884,7 +2895,7 @@ public class DBservices
             while (dataReader.Read())
             {
                 PullOrder po = new PullOrder();
-                po.OrderId = Convert.ToInt32(dataReader["PullId"]);
+                po.OrderId = Convert.ToInt32(dataReader["O.PullId"]);
                 po.PUser = Convert.ToInt32(dataReader["PUser"]);
                 po.NUser = Convert.ToInt32(dataReader["NUser"]);
                 po.DepId = Convert.ToInt32(dataReader["DepId"]);
@@ -2892,12 +2903,19 @@ public class DBservices
                 po.Status = Convert.ToChar(dataReader["PullStatus"]);
                 po.OrderDate = Convert.ToDateTime(dataReader["PullDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
+                if(po.MedList ==null)
+                    po.MedList = new List<MedOrder>();
 
-                //if (dataReader["MedList"] != DBNull.Value && dataReader["MedList"] != null && dataReader["MedList"] is string medListString)
-                //{
-                //    List<MedOrder> medList = JsonConvert.DeserializeObject<List<MedOrder>>(medListString);
-                //    po.MedList = medList;
-                //}
+                if (dataReader["MO.PullId"] != DBNull.Value)
+                {
+                    MedOrder mo = new MedOrder();
+                    mo.OrderId = Convert.ToInt32(dataReader["MO.PullId"]);
+                    mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    mo.PoQty = (float)(dataReader["PoQty"]);
+                    mo.SupQty = (float)(dataReader["SupQty"]);
+                    mo.MazNum = (dataReader["MazNum"]).ToString();
+                    po.MedList.Add(mo);
+                }
 
                 list.Add(po);
             }
@@ -2920,5 +2938,71 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read PullOrders from the PullOrders and MedPullOrders tables
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadMedPullOrders(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadPullMedOrders", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    orderId = Convert.ToInt32(dataReader["orderId"]),
+                    nurseId = Convert.ToInt32(dataReader["nurseId"]),
+                    nurseName = dataReader["nurseName"].ToString(),
+                    depId = Convert.ToInt32(dataReader["depId"]),
+                    depName = dataReader["depName"].ToString(),
+                    pharmacistId = Convert.ToInt32(dataReader["pharmacistId"]),
+                    pharmacistName = dataReader["pharmacistName"].ToString(),
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medName = dataReader["medName"].ToString(),
+                    poQty = (float)(dataReader["poQty"]),
+                    supQty = (float)(dataReader["supQty"]),
+                    reportNum = dataReader["reportNum"].ToString(),
+                    orderStatus = Convert.ToChar(dataReader["orderStatus"]),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"])
+                
+                }); 
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
 }

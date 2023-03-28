@@ -37,6 +37,6 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [PullOrders] ([pUser],[nUser],[depId],[reportNum],[pullStatus],[pullDate],[lastUpdate]) 
-	 Values (@pUser,@nUser,@depId,@reportNum,'W',@pullDate,GETDATE())
+	 Values (0,@nUser,@depId,@reportNum,'W',@pullDate,GETDATE())
 END
 GO

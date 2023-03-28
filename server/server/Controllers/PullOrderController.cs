@@ -21,10 +21,11 @@ namespace server.Controllers
         }
 
         // GET api/<PullOrderController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetPullOrders/{depId}")]
+        public Object GetPullOrders(int depId)
         {
-            return "value";
+            PullOrder po = new PullOrder();
+            return po.ReadPullOrders(depId);
         }
 
 

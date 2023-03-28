@@ -27,6 +27,11 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 SELECT *FROM [PullOrders]
+	 SELECT O.pullId as 'O.PullId', pUser, nUser, depId, reportNum, pullStatus, pullDate, lastUpdate,
+	        MO.pullId as 'MO.PullId', medId, poQty, supQty, mazNum
+	 FROM [PullOrders] as O left outer join [PullMedOrders] as MO
+	 on O.pullId= MO.pullId
+	 order by O.pullId
 END
 GO
+
