@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace server.Models
@@ -96,11 +97,25 @@ namespace server.Models
             return -1;
         }
 
-        public int UpdateApprovedReq()
+        public int UpdateApprovedReq(int reqId, int aUser, int aDep)
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdateMedRequestApproved(this);
+            return dbs.UpdateMedRequestApproved(reqId, aUser, aDep);
         }
+
+        public int Delete(int reqId)
+        {
+            DBservices dbs = new DBservices();
+            List<MedRequest> ReqList = dbs.ReadMedRequests();
+
+            foreach (MedRequest mr in ReqList)
+            {
+                if (reqId == mr.ReqId && mr.ReqStatus == 'W') //מחיקת בקשה תתבצע רק במידה והבקשה במצב "המתנה"
+                    return dbs.DeleteMedRequest(reqId);
+            }
+            return 0;
+        }
+
 
         public List<MedRequest> Read()
         {

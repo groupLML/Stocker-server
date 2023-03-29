@@ -31,7 +31,7 @@ BEGIN
 	 SELECT O.pullId as 'orderId', nUser as 'nurseId', NU.firstName+' '+NU.lastName AS 'nurseName', O.depId, depName, 
 	        pUser as 'pharmacistId', PU.firstName+' '+PU.lastName AS 'pharmacistName',
 			M.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', 
-			poQty, supQty, reportNum, pullStatus as 'orderStatus', pullDate as 'orderDate'
+			poQty, supQty, reportNum, pullStatus as 'orderStatus', pullDate as 'orderDate', O.lastUpdate
 	 FROM [PullOrders] as O inner join [PullMedOrders] as MO
 	      on O.pullId= MO.pullId inner join [Medicines] as M
 		  on MO.medId=M.medId inner join [Users] as NU 
@@ -42,5 +42,3 @@ BEGIN
 END
 GO
 
-SELECT *
-	 FROM [PullOrders]

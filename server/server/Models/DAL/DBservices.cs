@@ -2126,7 +2126,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a MedRequest in the MedRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateMedRequestApproved(MedRequest mr)
+    public int UpdateMedRequestApproved(int reqId, int aUser, int aDep)
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -2140,7 +2140,7 @@ public class DBservices
             // write to log
             throw (ex);
         }
-        cmd = CreateUpdateMedRequestCommandSP("spUpdateMedRequestApproved", con, mr);
+        cmd = CreateUpdateMedRequestCommandSP("spUpdateMedRequestApproved", con, reqId, aUser, aDep);
 
         try
         {
@@ -2166,7 +2166,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr)
+    private SqlCommand CreateUpdateMedRequestCommandSP(String spName, SqlConnection con, int reqId, int aUser, int aDep)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -2180,15 +2180,9 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
 
-        cmd.Parameters.AddWithValue("@reqId", mr.ReqId);
-        cmd.Parameters.AddWithValue("@cUser", mr.CUser);
-        cmd.Parameters.AddWithValue("@aUser", mr.AUser);
-        cmd.Parameters.AddWithValue("@cDep", mr.CDep);
-        cmd.Parameters.AddWithValue("@aDep", mr.ADep);
-        cmd.Parameters.AddWithValue("@medId", mr.MedId);
-        cmd.Parameters.AddWithValue("@reqQty", mr.ReqQty);
-        cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
-        cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+        cmd.Parameters.AddWithValue("@aUser", aUser);
+        cmd.Parameters.AddWithValue("@aDep", aDep);
 
         return cmd;
 
@@ -2385,6 +2379,69 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
         cmd.Parameters.AddWithValue("@cDep", cDep);
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------
+    // This method Delete MewRequest by reqId
+    //--------------------------------------------------------------------
+    public int DeleteMedRequest(int reqId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateDeleteMedRequestCommand("spDeleteMedRequests", con, reqId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Create the DeleteMedRequest SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteMedRequestCommand(String spName, SqlConnection con, int reqId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+
         return cmd;
     }
 
@@ -2983,8 +3040,9 @@ public class DBservices
                     supQty = (float)(dataReader["supQty"]),
                     reportNum = dataReader["reportNum"].ToString(),
                     orderStatus = Convert.ToChar(dataReader["orderStatus"]),
-                    orderDate = Convert.ToDateTime(dataReader["orderDate"])
-                
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+
                 }); 
             }
             return listObj;

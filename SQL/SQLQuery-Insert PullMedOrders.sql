@@ -1,1 +1,2 @@
 insert Into [PullMedOrders] ([pullId],[medId],[poQty],[supQty],[mazNum]) values (1, 1, 2.0,1.0,'M1191300') 
+insert Into [PullMedOrders] ([pullId],[medId],[poQty],[supQty],[mazNum]) values (1, 3, 1.0,1.0,'M1191302') 

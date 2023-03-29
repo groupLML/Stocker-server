@@ -16,9 +16,9 @@ GO
 -- =============================================
 -- Author:		<LML>
 -- Create date: <11/03/2023>
--- Description:	<Delete DepRequests>
+-- Description:	<Delete MedRequests>
 -- =============================================
-CREATE PROCEDURE spDeleteDepRequests
+ALTER PROCEDURE spDeleteMedRequests
   @reqId smallint
 AS
 BEGIN
@@ -28,5 +28,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	delete from [DepRequests] where reqId= @reqId
+	delete from [MedRequests] where reqId= @reqId
+	
 END
 GO

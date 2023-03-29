@@ -21,14 +21,8 @@ GO
 ALTER PROCEDURE spUpdateMedRequestApproved
 
     @reqId smallint,
-   	@cUser smallint,
 	@aUser smallint,
-	@cDep smallint,
-	@aDep smallint,
-	@medId smallint,
-	@reqQty real,
-	@reqStatus char(1),
-	@reqDate datetime
+	@aDep smallint
 
 AS
 BEGIN
@@ -37,11 +31,12 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE MedRequests set cUser=@cUser, aUser=@aUser ,cDep=@cDep, aDep=@aDep,
-	        medId=@medId, reqQty=@reqQty, reqStatus='A', reqDate=getdate()
+	 UPDATE MedRequests set aUser=@aUser, aDep=@aDep,
+	        reqStatus='A', reqDate=getdate()
 	 where reqId = @reqId 
 
 
 END
 GO
+
 

@@ -84,11 +84,11 @@ namespace server.Controllers
 
 
         // PUT api/<MedRequestController>/5
-        [HttpPut("ApprovedReq/{reqId}")]
-        public bool PutApprovedReq(int reqId, [FromBody] MedRequest mr)
+        [HttpPut("ApprovedReq/{reqId}/aUser/{aUser}/aDep/{aDep}")]
+        public bool PutApprovedReq(int reqId, int aUser, int aDep)
         {
-            mr.ReqId = reqId;
-            int numAffected = mr.UpdateApprovedReq();
+            MedRequest mr = new MedRequest();
+            int numAffected = mr.UpdateApprovedReq(reqId, aUser, aDep);
             if (numAffected == 1)
                 return true;
             else
@@ -97,9 +97,15 @@ namespace server.Controllers
 
 
         // DELETE api/<MedRequestController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{reqId}")]
+        public bool Delete(int reqId)
         {
+            MedRequest mr = new MedRequest();
+            int numAffected = mr.Delete(reqId);
+            if (numAffected >= 2)
+                return true;
+            else
+                return false;
         }
     }
 }
