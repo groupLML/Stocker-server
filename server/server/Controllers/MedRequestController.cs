@@ -51,11 +51,11 @@ namespace server.Controllers
             int numAffected= mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
 
             if (numAffected > 0)
-                return Ok();
+                return Ok(true);
             else if (numAffected == -1)
-                return BadRequest("This request is already exist");
+                return Unauthorized("ההזמנה כבר קיימת במערכת");
             else 
-                return BadRequest("The insert is failed");
+                return BadRequest("הפעולה נכשלה");
 
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }
@@ -73,11 +73,11 @@ namespace server.Controllers
             int numAffected = mr.UpdateWaitingReq(depTypes);
 
             if (numAffected > 0)
-                return Ok();
+                return Ok(true);
             else if (numAffected == -1)
-                return BadRequest("This request is being processed, it is not possible to make changes to it");
+                return Unauthorized("הבקשה בטיפול, לא ניתן לעדכן אותה בשלב זה");
             else
-                return BadRequest("The update is failed");
+                return BadRequest("הפעולה נכשלה");
 
             // swagger exp:{"medRequest": { "reqId": 0, "cUser": 44, "aUser": 0, "cDep": 3, "aDep": 0, "medId": 7,"reqQty": 50, "reqStatus": "W",  "reqDate": "2023-03-12T15:28:45.17"},"depTypes":  ["כירורגיה"]}
         }
