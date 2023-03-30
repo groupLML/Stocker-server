@@ -24,7 +24,7 @@ ALTER PROCEDURE spInsertPullOrder
 	@pUser smallint,
 	@nUser smallint,
 	@depId smallint,
-	@reportNum varchar (10),
+	@reportNum varchar(10),
 	@pullStatus char(1),
 	@pullDate datetime,
 	@lastUpdate datetime
@@ -37,6 +37,8 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [PullOrders] ([pUser],[nUser],[depId],[reportNum],[pullStatus],[pullDate],[lastUpdate]) 
-	 Values (0,@nUser,@depId,@reportNum,'W',@pullDate,GETDATE())
+	 Values (0,@nUser,@depId,@reportNum,'W',@pullDate,GETDATE()) SELECT SCOPE_IDENTITY()
+
+	 
 END
 GO

@@ -2761,6 +2761,7 @@ public class DBservices
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             List<PushOrder> list = new List<PushOrder>();
+            int lastOrderId = 0;
 
             while (dataReader.Read())
             {
@@ -2775,18 +2776,148 @@ public class DBservices
                 if (po.MedList == null)
                     po.MedList = new List<MedOrder>();
 
-                if (dataReader["MO.PushId"] != DBNull.Value)
+                if (po.OrderId == lastOrderId)
                 {
-                    MedOrder mo = new MedOrder();
-                    mo.OrderId = Convert.ToInt32(dataReader["MO.PushId"]);
-                    mo.MedId = Convert.ToInt32(dataReader["MedId"]);
-                    mo.PoQty = (float)(dataReader["PoQty"]);
-                    mo.SupQty = (float)(dataReader["SupQty"]);
-                    mo.MazNum = (dataReader["MazNum"]).ToString();
-                    po.MedList.Add(mo);
+                    if (dataReader["MO.PushId"] != DBNull.Value)
+                    {
+                        MedOrder mo = new MedOrder();
+                        mo.OrderId = Convert.ToInt32(dataReader["MO.PushId"]);
+                        mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mo.PoQty = (float)(dataReader["PoQty"]);
+                        mo.SupQty = (float)(dataReader["SupQty"]);
+                        mo.MazNum = (dataReader["MazNum"]).ToString();
+                        list[list.Count - 1].MedList.Add(mo);
+                    }
+                }
+                else
+                {
+                    if (dataReader["MO.PushId"] != DBNull.Value)
+                    {
+                        MedOrder mo = new MedOrder();
+                        mo.OrderId = Convert.ToInt32(dataReader["MO.PushId"]);
+                        mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mo.PoQty = (float)(dataReader["PoQty"]);
+                        mo.SupQty = (float)(dataReader["SupQty"]);
+                        mo.MazNum = (dataReader["MazNum"]).ToString();
+                        po.MedList.Add(mo);
+                    }
+                    list.Add(po);
+                    lastOrderId = po.OrderId;
                 }
             }
                 return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read PushOrders from the PushOrders table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPushOrders(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadPushOrdersMine", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    orderId = Convert.ToInt32(dataReader["orderId"]),
+                    pharmacistId = Convert.ToInt32(dataReader["pharmacistId"]),
+                    pharmacistName = dataReader["pharmacistName"].ToString(),
+                    orderStatus = Convert.ToChar(dataReader["orderStatus"]),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedPushOrders from the PushOrders and MedPushOrders tables
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPushOrderDetails(int depId, int orderId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadOrdersObjectCommandSP("spReadPushOrderDetails", con, depId, orderId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medName = dataReader["medName"].ToString(),
+                    poQty = (float)(dataReader["poQty"]),
+                    supQty = (float)(dataReader["supQty"])
+                });
+            }
+            return listObj;
         }
         catch (Exception ex)
         {
@@ -2812,11 +2943,13 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method insert a PullOrder to the PullOrders table 
     //--------------------------------------------------------------------------------------------------
-    public int InsertPullOrder(PullOrder po)
+    public bool InsertPullOrder(PullOrder po)
     {
 
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        int reqId;
 
         try
         {
@@ -2828,18 +2961,47 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertPullOrderCommandSP("spInsertPullOrder", con, po);    // create the command
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            using (cmd1 = CreateUpdateInsertPullOrderCommandSP("spInsertPullOrder", con, po))
+            {
+                cmd1.ExecuteNonQuery();
+                reqId = Convert.ToInt32(cmd1.ExecuteScalar());
+            }
+            for (int i = 0; i < po.MedList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, reqId, po.MedList[i]))
+                {
+                    cmd2.ExecuteNonQuery();
+                    int numEffected = cmd2.ExecuteNonQuery();
+                }
+            }
+
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
+            return true;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
+
+        //cmd = CreateUpdateInsertPullOrderCommandSP("spInsertPullOrder", con, po);    // create the command
+
+        //try
+        //{
+        //    int numEffected = cmd.ExecuteNonQuery(); // execute the command
+        //    return numEffected;
+        //}
+        //catch (Exception ex)
+        //{
+        //    // write to log
+        //    throw (ex);
+        //}
 
         finally
         {
@@ -2894,7 +3056,7 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
+    // Create the 2 Update/Insert SqlCommands
     //---------------------------------------------------------------------------------
     private SqlCommand CreateUpdateInsertPullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
     {
@@ -2917,6 +3079,29 @@ public class DBservices
         cmd.Parameters.AddWithValue("@pullStatus", po.Status);
         cmd.Parameters.AddWithValue("@pullDate", po.OrderDate);
         cmd.Parameters.AddWithValue("@lastUpdate", po.LastUpdate);
+
+        return cmd;
+
+    }
+
+    private SqlCommand CreateUpdateInsertMedOrderCommandSP(String spName, SqlConnection con, int orderId, MedOrder mo)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@pullId", mo.OrderId);
+        cmd.Parameters.AddWithValue("@medId", mo.MedId);
+        cmd.Parameters.AddWithValue("@poQty", mo.PoQty);
+        cmd.Parameters.AddWithValue("@supQty", mo.SupQty);
+        cmd.Parameters.AddWithValue("@mazNum", mo.MazNum);
 
         return cmd;
 
@@ -2948,6 +3133,7 @@ public class DBservices
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             List<PullOrder> list = new List<PullOrder>();
+            int lastOrderId = 0;
 
             while (dataReader.Read())
             {
@@ -2960,23 +3146,38 @@ public class DBservices
                 po.Status = Convert.ToChar(dataReader["PullStatus"]);
                 po.OrderDate = Convert.ToDateTime(dataReader["PullDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                if(po.MedList ==null)
+                if (po.MedList == null)
                     po.MedList = new List<MedOrder>();
 
-                if (dataReader["MO.PullId"] != DBNull.Value)
+                if (po.OrderId == lastOrderId)
                 {
-                    MedOrder mo = new MedOrder();
-                    mo.OrderId = Convert.ToInt32(dataReader["MO.PullId"]);
-                    mo.MedId = Convert.ToInt32(dataReader["MedId"]);
-                    mo.PoQty = (float)(dataReader["PoQty"]);
-                    mo.SupQty = (float)(dataReader["SupQty"]);
-                    mo.MazNum = (dataReader["MazNum"]).ToString();
-                    po.MedList.Add(mo);
+                    if (dataReader["MO.PullId"] != DBNull.Value)
+                    {
+                        MedOrder mo = new MedOrder();
+                        mo.OrderId = Convert.ToInt32(dataReader["MO.PullId"]);
+                        mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mo.PoQty = (float)(dataReader["PoQty"]);
+                        mo.SupQty = (float)(dataReader["SupQty"]);
+                        mo.MazNum = (dataReader["MazNum"]).ToString();
+                        list[list.Count-1].MedList.Add(mo);
+                    }
                 }
-
-                list.Add(po);
+                else
+                {
+                    if (dataReader["MO.PullId"] != DBNull.Value)
+                    {
+                        MedOrder mo = new MedOrder();
+                        mo.OrderId = Convert.ToInt32(dataReader["MO.PullId"]);
+                        mo.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mo.PoQty = (float)(dataReader["PoQty"]);
+                        mo.SupQty = (float)(dataReader["SupQty"]);
+                        mo.MazNum = (dataReader["MazNum"]).ToString();
+                        po.MedList.Add(mo);
+                    }
+                    list.Add(po);
+                    lastOrderId = po.OrderId;
+                }
             }
-
             return list;
         }
         catch (Exception ex)
@@ -2996,9 +3197,9 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Read PullOrders from the PullOrders and MedPullOrders tables
+    // This method Read PullOrders from the PullOrders table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadMedPullOrders(int depId)
+    public Object ReadPullOrders(int depId)
     {
 
         SqlConnection con;
@@ -3014,7 +3215,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadDepObjectCommandSP("spReadPullMedOrders", con, depId);
+        cmd = CreateReadDepObjectCommandSP("spReadPullOrdersMine", con, depId);
 
         try
         {
@@ -3024,25 +3225,16 @@ public class DBservices
 
             while (dataReader.Read())
             {
-
                 listObj.Add(new
                 {
                     orderId = Convert.ToInt32(dataReader["orderId"]),
                     nurseId = Convert.ToInt32(dataReader["nurseId"]),
                     nurseName = dataReader["nurseName"].ToString(),
-                    depId = Convert.ToInt32(dataReader["depId"]),
-                    depName = dataReader["depName"].ToString(),
                     pharmacistId = Convert.ToInt32(dataReader["pharmacistId"]),
                     pharmacistName = dataReader["pharmacistName"].ToString(),
-                    medId = Convert.ToInt32(dataReader["medId"]),
-                    medName = dataReader["medName"].ToString(),
-                    poQty = (float)(dataReader["poQty"]),
-                    supQty = (float)(dataReader["supQty"]),
-                    reportNum = dataReader["reportNum"].ToString(),
-                    orderStatus = Convert.ToChar(dataReader["orderStatus"]),
                     orderDate = Convert.ToDateTime(dataReader["orderDate"]),
+                    orderStatus = Convert.ToChar(dataReader["orderStatus"]),
                     lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
-
                 }); 
             }
             return listObj;
@@ -3062,5 +3254,83 @@ public class DBservices
             }
         }
     }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedPullOrders from the PullOrders and MedPullOrders tables
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPullOrderDetails(int depId, int orderId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadOrdersObjectCommandSP("spReadPullOrderDetails", con, depId, orderId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medName = dataReader["medName"].ToString(),
+                    poQty = (float)(dataReader["poQty"]),
+                    supQty = (float)(dataReader["supQty"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Read Order Object SqlCommand 
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadOrdersObjectCommandSP(String spName, SqlConnection con, int depId, int orderId)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@depId", depId);
+        cmd.Parameters.AddWithValue("@orderId", orderId);
+
+        return cmd;
+    }
+
+
 
 }

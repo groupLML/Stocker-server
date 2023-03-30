@@ -33,12 +33,15 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 INSERT INTO [PullMedOrders] ([pullId],[medId],[poQty],[supQty],[mazNum]) 
-	 Values (@pullId,@medId,@poQty,@supQty,@mazNum)
+	 DECLARE @MAZ varchar(10)
+	
+	 SET @MAZ= (select mazNum
+	 from [Medicines]
+	 where medId=@medId);
 
-	 --select mazNum
-	 --from [Medicines]
-	 --where medId=@medId
+	 INSERT INTO [PullMedOrders] ([pullId],[medId],[poQty],[supQty],[mazNum]) 
+	 Values (@pullId,@medId,@poQty,@supQty,@MAZ)
+
 
 END
 GO

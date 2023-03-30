@@ -16,10 +16,11 @@ GO
 -- =============================================
 -- Author:		<LML>
 -- Create date: <28-02-2023>
--- Description:	<Read PushMedOrders>
+-- Description:	<Read PullOrderDetails>
 -- =============================================
-ALTER PROCEDURE spReadPushMedOrders
+CREATE PROCEDURE spReadPullOrderDetails
 
+      @orderId smallint, 
       @depId smallint
 AS
 BEGIN
@@ -28,15 +29,11 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 SELECT O.pushId as 'orderId', O.depId, depName, pUser as 'pharmacistId', firstName+' '+lastName AS 'pharmacistName',
-			M.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', 
-			poQty, supQty, reportNum, pushStatus as 'orderStatus', pushDate as 'orderDate', O.lastUpdate
-	 FROM [PushOrders] as O inner join [PushMedOrders] as MO
-	      on O.pushId= MO.pushId inner join [Medicines] as M
-		  on MO.medId=M.medId inner join [Users] as U 
-	      on U.userId= O.pUser inner join [Departments] as D 
-	      on U.depId= D.depId 
-	 where O.depId= @depId
+	 SELECT M.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', poQty, supQty
+	 FROM [PullOrders] as PO inner join [PullMedOrders] as MO
+	      on PO.pullId= MO.pullId inner join [Medicines] as M
+		  on MO.medId=M.medId 
+	 where PO.depId= @depId and PO.pullId=@orderId
 END
 GO
 

@@ -183,7 +183,7 @@ CREATE TABLE [PushMedOrders] (
 )
 
 
-CREATE TABLE [PullMedOrders] (
+Create TABLE [PullMedOrders] (
    	[pullId] int REFERENCES [PullOrders](pullId) NOT NULL,
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[poQty] real check(poQty>0) NOT NULL,

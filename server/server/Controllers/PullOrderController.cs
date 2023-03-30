@@ -21,23 +21,26 @@ namespace server.Controllers
         }
 
         // GET api/<PullOrderController>/5
-        [HttpGet("GetPullOrders/{depId}")]
+        [HttpGet("GetPullOrders/depId/{depId}")]
         public Object GetPullOrders(int depId)
         {
             PullOrder po = new PullOrder();
             return po.ReadPullOrders(depId);
         }
 
+        // GET api/<PullOrderController>/5
+        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}")]
+        public Object GetPullOrders(int depId, int orderId)
+        {
+            PullOrder po = new PullOrder();
+            return po.ReadMedsPullOrder(depId, orderId);
+        }
 
         // POST api/<PullOrderController>
         [HttpPost]
-        public IActionResult Post([FromBody] PullOrder po)
+        public bool Post([FromBody] PullOrder po)
         {
-            int numAffected = po.Insert();
-            if (numAffected == 1)
-                return Ok();
-            else
-                return BadRequest();
+            return po.Insert();
         }
 
 

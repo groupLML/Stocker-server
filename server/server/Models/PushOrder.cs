@@ -27,5 +27,17 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.ReadPushOrders();
         }
+
+        public Object ReadPushOrders(int depId) //טבלת הזמנות דחיפה עבור המחלקה שנשלחה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadPushOrders(depId);
+        }
+
+        public Object ReadMedsPushOrder(int depId, int orderId) //טבלת פרטי הזמנת משיכה עבור המחלקה שנשלחה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadPushOrderDetails(depId, orderId);
+        }
     }
 }

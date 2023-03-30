@@ -18,7 +18,7 @@ namespace server.Models
         { this.nUser = nUser; }
 
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
             return dbs.InsertPullOrder(this);
@@ -39,7 +39,13 @@ namespace server.Models
         public Object ReadPullOrders(int depId) //טבלת הזמנות משיכה עבור המחלקה שנשלחה
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadMedPullOrders(depId);
+            return dbs.ReadPullOrders(depId);
+        }
+
+        public Object ReadMedsPullOrder(int depId, int orderId) //טבלת פרטי הזמנת משיכה עבור המחלקה שנשלחה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadPullOrderDetails(depId,orderId);
         }
     }
 }

@@ -21,10 +21,19 @@ namespace server.Controllers
         }
 
         // GET api/<PushOrderController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetPushOrders/depId/{depId}")]
+        public Object GetPushOrders(int depId)
         {
-            return "value";
+            PushOrder po = new PushOrder();
+            return po.ReadPushOrders(depId);
+        }
+
+        // GET api/<PushOrderController>/5
+        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}")]
+        public Object GetPushOrders(int depId, int orderId)
+        {
+            PushOrder po = new PushOrder();
+            return po.ReadMedsPushOrder(depId, orderId);
         }
 
         // POST api/<PushOrderController>

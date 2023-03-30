@@ -18,7 +18,7 @@ GO
 -- Create date: <28-02-2023>
 -- Description:	<Read PullMedOrders>
 -- =============================================
-ALTER PROCEDURE spReadPullMedOrders
+ALTER PROCEDURE spReadPullOrdersMine
 
       @depId smallint
 AS
@@ -28,17 +28,15 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 SELECT O.pullId as 'orderId', nUser as 'nurseId', NU.firstName+' '+NU.lastName AS 'nurseName', O.depId, depName, 
+	 SELECT PO.pullId as 'orderId', nUser as 'nurseId', NU.firstName+' '+NU.lastName AS 'nurseName',
 	        pUser as 'pharmacistId', PU.firstName+' '+PU.lastName AS 'pharmacistName',
-			M.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', 
-			poQty, supQty, reportNum, pullStatus as 'orderStatus', pullDate as 'orderDate', O.lastUpdate
-	 FROM [PullOrders] as O inner join [PullMedOrders] as MO
-	      on O.pullId= MO.pullId inner join [Medicines] as M
-		  on MO.medId=M.medId inner join [Users] as NU 
-	      on NU.userId= O.nUser inner join [Departments] as D 
-	      on NU.depId= D.depId inner join [Users] as PU 
-	      on PU.userId= O.pUser
-	 where O.depId= @depId
+			pullStatus as 'orderStatus', pullDate as 'orderDate', lastUpdate
+	 FROM [PullOrders] as PO inner join [Users] as NU
+	      on NU.userId= PO.nUser inner join [Users] as PU 
+	      on PU.userId= PO.pUser
+	 where PO.depId= @depId 
 END
 GO
+
+	 
 
