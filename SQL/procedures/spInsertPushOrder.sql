@@ -36,6 +36,6 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [PushOrders] ([pUser],[depId],[reportNum],[pushStatus],[pushDate],[lastUpdate]) 
-	 Values (@pUser,@depId,@reportNum,@pushStatus,@pushDate,GETDATE())
+	 Values (@pUser,@depId,@reportNum,@pushStatus,@pushDate,GETDATE()) SELECT SCOPE_IDENTITY()
 END
 GO

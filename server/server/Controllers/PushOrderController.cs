@@ -29,22 +29,19 @@ namespace server.Controllers
         }
 
         // GET api/<PushOrderController>/5
-        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}")]
-        public Object GetPushOrders(int depId, int orderId)
+        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}/type/{type}")]
+        public Object GetPushOrders(int depId, int orderId, int type)
         {
             PushOrder po = new PushOrder();
-            return po.ReadMedsPushOrder(depId, orderId);
+            return po.ReadMedsPushOrder(depId, orderId, type);
         }
 
         // POST api/<PushOrderController>
         [HttpPost]
-        public IActionResult Post([FromBody] PushOrder po)
+        public bool Post([FromBody] PushOrder po)
         {
-            int numAffected = po.Insert();
-            if (numAffected == 1)
-                return Ok();
-            else
-                return BadRequest();
+            return po.Insert();
+
         }
 
         // PUT api/<PushOrderController>/5

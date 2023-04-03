@@ -41,6 +41,10 @@ namespace server.Controllers
         public bool Post([FromBody] PullOrder po)
         {
             return po.Insert();
+
+         //{ "orderId": 0, "depId": 3, "pUser": 0, "reportNum": "11118", "status": "W", "orderDate": "2023-04-04T07:53:02.996Z",
+         //  "lastUpdate": "2023-04-04T07:53:02.996Z","medList": [ {"medId": 1, "poQty": 3, "supQty": 0, "mazNum": "" } ], "nUser": 3 }
+
         }
 
 

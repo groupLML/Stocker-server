@@ -20,7 +20,7 @@ GO
 -- =============================================
 ALTER PROCEDURE spInsertPushMedOrders
 
- 	@pushId int,
+ 	@orderId int,
 	@medId smallint,
 	@poQty real,
 	@supQty real,
@@ -33,12 +33,15 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 INSERT INTO [PushMedOrders] ([pushId],[medId],[poQty],[supQty],[mazNum]) 
-	 Values (@pushId,@medId,@poQty,@supQty,@mazNum)
+	 DECLARE @MAZ varchar(10)
+	
+	 SET @MAZ= (select mazNum
+	 from [Medicines]
+	 where medId=@medId);
 
-	 --select mazNum
-	 --from [Medicines]
-	 --where medId=@medId
+	 INSERT INTO [PushMedOrders] ([orderId],[medId],[poQty],[supQty],[mazNum]) 
+	 Values (@orderId,@medId,@poQty,@supQty,@MAZ)
+
 
 END
 GO

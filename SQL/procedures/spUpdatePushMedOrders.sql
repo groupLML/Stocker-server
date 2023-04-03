@@ -20,7 +20,7 @@ GO
 -- =============================================
 ALTER PROCEDURE spUpdatePushMedOrders
 
- 	@pushId int,
+ 	@orderId int,
 	@medId smallint,
 	@poQty real,
 	@supQty real,
@@ -34,7 +34,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	 UPDATE [PushMedOrders] Set [poQty]=@poQty,[supQty]=@supQty,[mazNum]=@mazNum 
-	 where pushId=@pushId and medId=@medId
+	 where orderId=@orderId and medId=@medId
 
 
 END

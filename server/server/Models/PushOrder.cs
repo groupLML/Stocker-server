@@ -10,7 +10,7 @@ namespace server.Models
                          DateTime lastUpdate) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate) { }
 
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
             return dbs.InsertPushOrder(this);
@@ -34,10 +34,10 @@ namespace server.Models
             return dbs.ReadPushOrders(depId);
         }
 
-        public Object ReadMedsPushOrder(int depId, int orderId) //טבלת פרטי הזמנת משיכה עבור המחלקה שנשלחה
+        public Object ReadMedsPushOrder(int depId, int orderId, int type) //טבלת פרטי הזמנת דחיפה עבור המחלקה שנשלחה
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadPushOrderDetails(depId, orderId);
+            return dbs.ReadOrderDetails(depId, orderId, type);
         }
     }
 }

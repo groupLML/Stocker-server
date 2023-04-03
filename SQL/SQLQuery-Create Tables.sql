@@ -174,22 +174,22 @@ CREATE TABLE [PullOrders] (
 --T=Taken, W=Waiting, I=Issued
 
 CREATE TABLE [PushMedOrders] (
-   	[pushId] int REFERENCES [PushOrders](pushId) NOT NULL,
+   	[orderId] int REFERENCES [PushOrders](pushId) NOT NULL,
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[poQty] real check(poQty>0) NOT NULL,
 	[supQty] real check(supQty>=0) default 0,
-	[mazNum] varchar(10) NOT NULL,
-	Primary key (pushId, medId) 
+	[mazNum] varchar(10),
+	Primary key (orderId, medId) 
 )
 
 
-Create TABLE [PullMedOrders] (
-   	[pullId] int REFERENCES [PullOrders](pullId) NOT NULL,
+CREATE TABLE [PullMedOrders] (
+   	[orderId] int REFERENCES [PullOrders](pullId) NOT NULL,
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[poQty] real check(poQty>0) NOT NULL,
 	[supQty] real check(supQty>=0) default 0,
-	[mazNum] varchar(10) NOT NULL,
-	Primary key (pullId, medId) 
+	[mazNum] varchar(10),
+	Primary key (orderId, medId) 
 )
 
 
