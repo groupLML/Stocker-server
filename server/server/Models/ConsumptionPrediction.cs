@@ -10,43 +10,25 @@ namespace server.Models
         static public void Main()
         {
             // Load consumption data
-            double[] inputs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            //{
-            //    new double[] { 1 }, // January
-            //    new double[] { 2 }, // February
-            //    new double[] { 3 }, // March
-            //    new double[] { 4 }, // April
-            //    new double[] { 5 }, // May
-            //    new double[] { 6 }, // June
-            //    new double[] { 7 }, // July
-            //    new double[] { 8 }, // August
-            //    new double[] { 9 }, // September
-            //    new double[] { 10 }, // October
-            //    new double[] { 11 }, // November
-            //    new double[] { 12 } // December
-            //};
-
-            double[] outputs =
+            double[][] inputs =
             {
-                100, // Consumption for January
-                110, // Consumption for February
-                111, // Consumption for March
-                121, // Consumption for April
-                93, // Consumption for May
-                87, // Consumption for June
-                132, // Consumption for July
-                102, // Consumption for August
-                96, // Consumption for September
-                200, // Consumption for October
-                101, // Consumption for November
-                110  // Consumption for December
+                new double[] { 1,2,3,4,5,6,7,8,9,10,11,12 }, // 2020 train
+                new double[] { 1,2,3,4,5,6,7,8,9,10,11,12 }, // 2021 train
+                new double[] { 1,2,3,4,5,6,7,8,9,10,11,12 }, // 2022 test
+            };
+
+            double[][] outputs =
+            {
+                new double[] { 103, 111, 110, 120, 93, 87, 132, 102, 99, 207, 101, 110 }, // 2020 train
+                new double[] { 101, 110, 140, 124, 91, 87, 135, 170, 96, 202, 101, 105 }, // 2021 train
+                new double[] { 105, 109, 111, 122, 93, 88, 132, 102, 91, 200, 111, 110 }, // 2022 test
             };
 
             // Split data into training and testing sets
-            double[] inputsTrain = new double[9];
-            double[] inputsTest = new double[3];
-            double[] outputsTrain = new double[9];
-            double[] outputsTest = new double[3];
+            double[][] inputsTrain = new double[2][];
+            double[][] inputsTest = new double[1][];
+            double[][] outputsTrain = new double[2][];
+            double[][] outputsTest = new double[1][];
 
             for (int i = 0; i < inputsTrain.Length; i++)
             {
@@ -56,8 +38,8 @@ namespace server.Models
 
             for (int i = 0; i < inputsTest.Length; i++)
             {
-                inputsTest[i] = inputs[i + 9];
-                outputsTest[i] = outputs[i + 9];
+                inputsTest[i] = inputs[i + 2];
+                outputsTest[i] = outputs[i + 2];
             }
 
             // Train linear regression model
@@ -65,7 +47,7 @@ namespace server.Models
             {
                 UseIntercept = true
             };
-            SimpleLinearRegression model = regression.Learn(inputsTrain, outputsTrain);
+            MultivariateLinearRegression model = regression.Learn(inputsTrain, outputsTrain);
 
             // Predict consumption values for each month
             double[] inputsAll = new double[12];
@@ -82,25 +64,11 @@ namespace server.Models
             }
 
             // Evaluate performance on testing set
-            double[] testPredictions = model.Transform(inputsTest);
+            double[][] testPredictions = model.Transform(inputsTest);
             var mse = new SquareLoss(outputsTest);
             double testError = mse.Loss(testPredictions);
             Console.WriteLine($"Mean squared error on testing set: {testError}");
 
-            // Use model to make predictions for future months
-            double[] futureInputs = new double[12];
-            for (int i = 0; i < futureInputs.Length; i++)
-            {
-                futureInputs[i] = i + 13;
-            }
-            double[] futurePredictions = model.Transform(futureInputs);
-
-            // Print predicted consumption values for future months
-            for (int i = 0; i < futurePredictions.Length; i++)
-            {
-                Console.WriteLine($"Month {i+13}: {futurePredictions[i]}");
-            }
         }
     }
 }
-
