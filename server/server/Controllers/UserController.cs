@@ -23,7 +23,6 @@ namespace server.Controllers
         [Route("Login")]
         public User LoginUser(JsonElement LoginUser)
         {
-            ConsumptionPrediction.Main();
             string username = LoginUser.GetProperty("Username").GetString();
             string password = LoginUser.GetProperty("Password").GetString();
             User user = new User();
