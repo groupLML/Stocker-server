@@ -24,10 +24,10 @@ namespace server.Models
             return dbs.InsertPullOrder(this);
         }
 
-        public int Update()
+        public bool UpdateNurse()
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdatePullOrder(this);
+            return dbs.UpdatePullOrderNurse(this);
         }
 
         public List<PullOrder> Read()

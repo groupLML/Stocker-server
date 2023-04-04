@@ -15,19 +15,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <28-02-2023>
--- Description:	<Update PullOrder>
+-- Create date: <04-04-2023>
+-- Description:	<Update UpdatePullOrderNurse>
 -- =============================================
-ALTER  PROCEDURE spUpdatePullOrder
+CREATE PROCEDURE spUpdatePullOrderNurse
 
 	@pullId int,
-	@pUser smallint,
-	@nUser smallint,
-	@depId smallint,
-	@reportNum varchar (10),
-	@pullStatus char(1),
-	@pullDate datetime,
-	@lastUpdate datetime
+	@nUser smallint
 
 AS
 BEGIN
@@ -36,8 +30,9 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE [PullOrders] set [pUser]=@pUser,[nUser]=@nUser,[depId]=@depId,[reportNum]=@reportNum,
-	 [pullStatus]=@pullStatus,[pullDate]=@pullDate,[lastUpdate]=GETDATE()
-	 where pullId=@pullId
+	 UPDATE [PullOrders] set [nUser]=@nUser,[lastUpdate]=GETDATE()
+	 where pullId=@pullId and pullStatus= 'W'
+
+	 delete from [PullMedOrders] where orderId= @pullId
 END
 GO

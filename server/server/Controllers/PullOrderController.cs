@@ -49,15 +49,14 @@ namespace server.Controllers
 
 
         // PUT api/<PullOrderController>/5
-        [HttpPut("{pullId}")]
-        public bool Put(int pullId, [FromBody] PullOrder po)
-        {
+        [HttpPut("UpdateNurse/pullId/{pullId}/nUser/{nUser}")]
+        public bool PutNurse(int pullId, int nUser, [FromBody] List<MedOrder> medList)
+        { 
+            PullOrder po = new PullOrder();
             po.OrderId = pullId;
-            int numAffected = po.Update();
-            if (numAffected == 1)
-                return true;
-            else
-                return false;
+            po.NUser = nUser;
+            po.MedList = medList;
+            return po.UpdateNurse();
         }
 
         // DELETE api/<PullOrderController>/5

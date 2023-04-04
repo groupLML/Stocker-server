@@ -16,7 +16,7 @@ namespace server.Models
             return dbs.InsertPushOrder(this);
         }
 
-        public int Update()
+        public bool Update()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdatePushOrder(this);

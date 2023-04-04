@@ -13,7 +13,7 @@ namespace server.Controllers
         [HttpGet]
         public IEnumerable<Usage> Get()
         {
-            ConsumptionPrediction.Main();
+            ConsumptionPrediction.Main(); ////למחוק
             Usage use = new Usage();
             return use.Read();
         }

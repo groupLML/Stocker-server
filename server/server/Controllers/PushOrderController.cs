@@ -49,11 +49,7 @@ namespace server.Controllers
         public bool Put(int pushId, [FromBody] PushOrder po)
         {
             po.OrderId = pushId;
-            int numAffected = po.Update();
-            if (numAffected == 1)
-                return true;
-            else
-                return false;
+            return po.Update();
         }
 
         // DELETE api/<PushOrderController>/5

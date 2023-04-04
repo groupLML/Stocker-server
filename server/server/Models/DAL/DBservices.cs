@@ -2692,7 +2692,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a PushOrder in the PushOrders table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdatePushOrder(PushOrder po)
+    public bool UpdatePushOrder(PushOrder po)
     {
 
         SqlConnection con;
@@ -2713,7 +2713,11 @@ public class DBservices
         try
         {
             int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            if (numEffected == 1)
+                return true;
+            else
+               return false;
+
         }
         catch (Exception ex)
         {
@@ -2930,7 +2934,7 @@ public class DBservices
 
         try
         {
-            using (cmd1 = CreateUpdateInsertPullOrderCommandSP("spInsertPullOrder", con, po))
+            using (cmd1 = CreateInsertPullOrderCommandSP("spInsertPullOrder", con, po))
             {
                 cmd1.Transaction = transaction;
                 orderId = Convert.ToInt32(cmd1.ExecuteScalar());
@@ -2975,11 +2979,11 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a PullOrder in the PullOrders table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdatePullOrder(PullOrder po)
+    public bool UpdatePullOrderNurse(PullOrder po)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
 
         try
         {
@@ -2990,17 +2994,40 @@ public class DBservices
             // write to log
             throw (ex);
         }
-      
-        cmd = CreateUpdateInsertPullOrderCommandSP("spUpdatePullOrder", con, po);
+
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po))
+            {
+                cmd1.Transaction = transaction;
+                cmd1.ExecuteNonQuery();
+            }
+            for (int i = 0; i < po.MedList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, po.OrderId, po.MedList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    cmd2.ExecuteNonQuery();
+                }
+            }
+
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
+            return true;
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -3015,9 +3042,9 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
+    // Create the Insert SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertPullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
+    private SqlCommand CreateInsertPullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -3038,6 +3065,29 @@ public class DBservices
         cmd.Parameters.AddWithValue("@pullStatus", po.Status);
         cmd.Parameters.AddWithValue("@pullDate", po.OrderDate);
         cmd.Parameters.AddWithValue("@lastUpdate", po.LastUpdate);
+
+        return cmd;
+
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@pullId", po.OrderId);
+        cmd.Parameters.AddWithValue("@nUser", po.NUser);
 
         return cmd;
 
@@ -3268,9 +3318,9 @@ public class DBservices
             throw (ex);
         }
 
-        if (type == 1)
+        if (type == 1) // if the order type is push 
             cmd = CreateReadOrdersObjectCommandSP("spReadPushOrderDetails", con, depId, orderId);
-        else
+        else // if the order type is pull 
             cmd = CreateReadOrdersObjectCommandSP("spReadPullOrderDetails", con, depId, orderId);
 
         try
