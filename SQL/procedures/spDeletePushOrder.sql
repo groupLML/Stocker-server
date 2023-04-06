@@ -18,7 +18,7 @@ GO
 -- Create date: <06/04/2023>
 -- Description:	<Delete PushOrder>
 -- =============================================
-Create PROCEDURE spDeletePushOrder
+ALTER PROCEDURE spDeletePushOrder
    @pushId smallint
 AS
 BEGIN
@@ -27,8 +27,9 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	delete from [PushOrders] where pushId= @pushId
 	delete from [PushMedOrders] where orderId= @pushId
+	delete from [PushOrders] where pushId= @pushId
+	
 	
 END
 GO
