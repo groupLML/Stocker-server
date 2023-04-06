@@ -3414,7 +3414,7 @@ public class DBservices
         if (type == 1) // if the order type is push 
             cmd.Parameters.AddWithValue("@pushId", orderId);
         else // if the order type is pull 
-            cmd.Parameters.AddWithValue("@pushId", orderId);
+            cmd.Parameters.AddWithValue("@pullId", orderId);
 
         return cmd;
     }
