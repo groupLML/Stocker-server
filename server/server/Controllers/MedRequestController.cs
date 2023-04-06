@@ -95,6 +95,18 @@ namespace server.Controllers
                 return false;
         }
 
+        // PUT api/<MedRequestController>/5
+        [HttpPut("TransportRe/{reqId}/kind/{kind}")]
+        public bool PutTransportReq(int reqId, char kind) //kind: A= approvedTransport, C= cancelledTransport
+        {
+            MedRequest mr = new MedRequest();
+            int numAffected = mr.UpdateTransportReq(reqId, kind);
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
+        }
+
 
         // DELETE api/<MedRequestController>/5
         [HttpDelete("{reqId}")]

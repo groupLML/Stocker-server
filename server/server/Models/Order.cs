@@ -47,7 +47,7 @@
         {
             DBservices dbs = new DBservices();
 
-            if (type == 2)
+            if (type == 2) //pushOrder
             {
                 List<PullOrder> OredrsList = dbs.ReadPullOrders();
 
@@ -58,7 +58,7 @@
                 }
                 return -1;
             }
-            else 
+            else //pullOrder
             {
                 List<PushOrder> OredrsList = dbs.ReadPushOrders();
 

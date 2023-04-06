@@ -103,6 +103,12 @@ namespace server.Models
             return dbs.UpdateMedRequestApproved(reqId, aUser, aDep);
         }
 
+        public int UpdateTransportReq(int reqId, char kind)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateRequestTransport(reqId, kind);
+        }
+
         public int Delete(int reqId)
         {
             DBservices dbs = new DBservices();

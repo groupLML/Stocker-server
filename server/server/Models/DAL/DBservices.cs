@@ -2189,6 +2189,49 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method Update Approved Transport MedRequest in the MedRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateRequestTransport(int reqId, char kind)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        if (kind == 'A') //A meanes the transport was approved
+            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestApprovedTransport", con, reqId);
+        else //C meanes the transport was cancelled
+            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestDeleteTransport", con, reqId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method Read MedRequests from the MedRequests table
     //--------------------------------------------------------------------------------------------------
     public List<MedRequest> ReadMedRequests()
@@ -2403,7 +2446,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateDeleteMedRequestCommand("spDeleteMedRequests", con, reqId);
+        cmd = CreateDeleteUpdateMedRequestCommand("spDeleteMedRequests", con, reqId);
 
         try
         {
@@ -2427,9 +2470,9 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------
-    // Create the DeleteMedRequest SqlCommand
+    // Create the Delete or Uupdate MedRequest SqlCommand
     //--------------------------------------------------------------------
-    private SqlCommand CreateDeleteMedRequestCommand(String spName, SqlConnection con, int reqId)
+    private SqlCommand CreateDeleteUpdateMedRequestCommand(String spName, SqlConnection con, int reqId)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object

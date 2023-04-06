@@ -120,14 +120,15 @@ CREATE TABLE [MedRequests] (
 	[aDep] smallint REFERENCES [Departments](depId),
 	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[reqQty] real check(reqQty>0) NOT NULL,
-	[reqStatus] char(1) check(reqStatus in('A', 'D', 'W')) default 'W',
+	[reqStatus] char(1) check(reqStatus in('A', 'D', 'W','T')) default 'W',
 	[reqDate] datetime default GETDATE(),
 	Primary key (reqId)
 )
---A=approved, D=decline, W=waiting
+
+--A=approved, D=decline, W=waiting, T=transference
 
 
-CREATE  TABLE [DepRequests] (
+CREATE TABLE [DepRequests] (
     [reqId] smallint REFERENCES [MedRequests](reqId) NOT NULL,
 	[reqDep] smallint REFERENCES [Departments](depId) NOT NULL,
 	Primary key (reqId,reqDep)
