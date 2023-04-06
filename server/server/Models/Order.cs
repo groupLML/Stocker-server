@@ -36,5 +36,39 @@
             this.lastUpdate = lastUpdate;
             this.MedList = new List<MedOrder>();
         }
+
+        public Object ReadMedsOrder(int depId, int orderId, int type) //טבלת פרטי הזמנה עבור המחלקה שנשלחה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadOrderDetails(depId, orderId, type);
+        }
+
+        public int Delete(int orderId, int type)
+        {
+            DBservices dbs = new DBservices();
+
+            if (type == 2)
+            {
+                List<PullOrder> OredrsList = dbs.ReadPullOrders();
+
+                foreach (PullOrder pull in OredrsList)
+                {
+                    if (orderId == pull.OrderId && pull.Status == 'W') //מחיקת הזמנה תתבצע רק במידה וההזמנה במצב "המתנה"
+                        return dbs.DeleteOrder(orderId, type);
+                }
+                return -1;
+            }
+            else 
+            {
+                List<PushOrder> OredrsList = dbs.ReadPushOrders();
+
+                foreach (PushOrder push in OredrsList)
+                {
+                    if (orderId == push.OrderId && push.Status == 'R') //מחיקת הזמנה תתבצע רק במידה וההזמנה במצב "הנפקה"
+                        return dbs.DeleteOrder(orderId, type);
+                }
+                return -1;
+            }
+        }
     }
 }

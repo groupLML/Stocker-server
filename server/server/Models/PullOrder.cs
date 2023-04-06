@@ -42,10 +42,6 @@ namespace server.Models
             return dbs.ReadPullOrders(depId);
         }
 
-        public Object ReadMedsPullOrder(int depId, int orderId) //טבלת פרטי הזמנת משיכה עבור המחלקה שנשלחה
-        {
-            DBservices dbs = new DBservices();
-            return dbs.ReadPullOrderDetails(depId,orderId);
-        }
+
     }
 }

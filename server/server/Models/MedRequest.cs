@@ -116,7 +116,6 @@ namespace server.Models
             return 0;
         }
 
-
         public List<MedRequest> Read()
         {
             DBservices dbs = new DBservices();

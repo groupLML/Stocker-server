@@ -158,7 +158,6 @@ CREATE TABLE [PushOrders] (
 
 --R=Reserved, I=Issued
 
-
 CREATE TABLE [PullOrders] (
     [pullId] int IDENTITY (1,1),
 	[pUser] smallint REFERENCES [Users](userId),

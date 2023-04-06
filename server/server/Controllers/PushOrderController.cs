@@ -30,10 +30,10 @@ namespace server.Controllers
 
         // GET api/<PushOrderController>/5
         [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}/type/{type}")]
-        public Object GetPushOrders(int depId, int orderId, int type)
+        public Object GetOrderDetails(int depId, int orderId, int type)
         {
-            PushOrder po = new PushOrder();
-            return po.ReadMedsPushOrder(depId, orderId, type);
+            Order po = new Order();
+            return po.ReadMedsOrder(depId, orderId, type);
         }
 
         // POST api/<PushOrderController>
@@ -53,9 +53,18 @@ namespace server.Controllers
         }
 
         // DELETE api/<PushOrderController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("orderId/{orderId}/type/{type}")]
+        public IActionResult Delete(int orderId, int type)
         {
+            Order po = new Order();
+            int numAffected = po.Delete(orderId,type);
+
+            if (numAffected >= 2)
+                return Ok(true);
+            else if (numAffected == -1)
+                return Unauthorized("ההזמנה נופקה, לא ניתן למחוק אותה בשלב זה");
+            else
+                return BadRequest("הפעולה נכשלה");
         }
     }
 }

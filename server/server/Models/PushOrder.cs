@@ -34,10 +34,5 @@ namespace server.Models
             return dbs.ReadPushOrders(depId);
         }
 
-        public Object ReadMedsPushOrder(int depId, int orderId, int type) //טבלת פרטי הזמנת דחיפה עבור המחלקה שנשלחה
-        {
-            DBservices dbs = new DBservices();
-            return dbs.ReadOrderDetails(depId, orderId, type);
-        }
     }
 }
