@@ -18,7 +18,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE spUpdateMedRequestsToDecline
+ALTER PROCEDURE spUpdateMedRequestsToDecline
 	-- Add the parameters for the stored procedure here
 	
 AS
@@ -29,7 +29,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	UPDATE MedRequests set reqStatus='D'
-	where reqStatus='W' and DATEDIFF(hour,reqDate,getdate())>1
+	where reqStatus='W' and DATEDIFF(MINUTE,reqDate,getdate())>=60
 
 	
 END
