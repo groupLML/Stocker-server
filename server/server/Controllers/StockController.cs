@@ -18,10 +18,10 @@ namespace server.Controllers
 
         // GET: api/<StockController>
         [HttpGet("{depId}")]
-        public Object GetRequests(int depId)
+        public List<Object> GetDepStock(int depId)
         {
             Stock stock = new Stock();
-            return stock.ReadDepStocks(depId);
+            return stock.ReadDepStock(depId);
         }
 
         // POST api/<StockController>

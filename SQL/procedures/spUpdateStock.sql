@@ -32,6 +32,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
+
      UPDATE  Stocks set medId=@medId, depId = @depId ,stcQty = @stcQty, entryDate=@entryDate
 	 where stcId=@stcId 
 END

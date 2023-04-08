@@ -38,7 +38,6 @@ namespace server.Models
             DBservices dbs = new DBservices();
             List<Medicine> MedList = dbs.ReadMeds();
 
-
             foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
             {
                 if (this.MedId == med.MedId && med.MedStatus == false)
@@ -49,24 +48,20 @@ namespace server.Models
             return true;
         }
 
-
         public int Update()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateStock(this);
         }
 
-        public List<Stock> Read()
+        public List<Object> ReadDepStock(int depId) //טבלת מחסן מחלקתי
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadStocks();
-        }
 
-        public Object ReadDepStocks(int depId) //טבלת מחסן מחלקתי
-        {
-            DBservices dbs = new DBservices();
-            return dbs.ReadDepStocks(depId);
+            if(depId >2)
+                return dbs.ReadDepStock(depId);
+            else
+                return null;
         }
-
     }
 }

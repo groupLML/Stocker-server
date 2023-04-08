@@ -28,11 +28,12 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [Stocks].medId,genName,comName, sum(stcQty) as 'stcQty'
+	SELECT [Stocks].medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(stcQty) as 'stcQty'
 	FROM [Stocks] inner join [Medicines]
 	on [Stocks].medId=[Medicines].medId
 	where depId=@depId
-	group by [Stocks].medId, genName, comName
+	group by [Stocks].medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given
+	
 
 END
 GO
