@@ -32,7 +32,7 @@ BEGIN
 			M.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', 
 			poQty, supQty, reportNum, pushStatus as 'orderStatus', pushDate as 'orderDate', O.lastUpdate
 	 FROM [PushOrders] as O inner join [PushMedOrders] as MO
-	      on O.pushId= MO.pushId inner join [Medicines] as M
+	      on O.pushId= MO.orderId inner join [Medicines] as M
 		  on MO.medId=M.medId inner join [Users] as U 
 	      on U.userId= O.pUser inner join [Departments] as D 
 	      on U.depId= D.depId 
