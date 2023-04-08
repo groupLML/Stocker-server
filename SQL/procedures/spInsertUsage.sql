@@ -33,5 +33,6 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (@depId,@reportNum,getdate())
+	 SELECT SCOPE_IDENTITY()
 END
 GO

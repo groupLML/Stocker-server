@@ -27,6 +27,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT * FROM [Usages]
+	SELECT * FROM [Usages] order by [Usages].lastUpdate desc
 END
 GO

@@ -13,39 +13,32 @@ namespace server.Controllers
         [HttpGet]
         public IEnumerable<Usage> Get()
         {
-            ConsumptionPrediction.Main(); ////למחוק
+            ConsumptionPrediction.Main(); /////////למחוק
             Usage use = new Usage();
             return use.Read();
         }
 
         // GET api/<UsageController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{depId}")]
+        public Object GetMedUsages(int depId)
         {
-            return "value";
+            Usage use = new Usage();
+            return use.ReadMedUsages(depId);
         }
 
         // POST api/<UsageController>
         [HttpPost]
-        public IActionResult Post([FromBody] Usage use)
+        public bool Post([FromBody] Usage use)
         {
-            int numAffected = use.Insert();
-            if (numAffected == 1)
-                return Ok();
-            else
-                return BadRequest();
+            return use.Insert();
+          
         }
 
         // PUT api/<UsageController>/5
         [HttpPut("{usageId}")]
-        public bool Put(int usageId, [FromBody] Usage use)
+        public void Put(int usageId, [FromBody] Usage use)
         {
-            use.UsageId = usageId;
-            int numAffected = use.Update();
-            if (numAffected == 1)
-                return true;
-            else
-                return false;
+          
         }
 
         // DELETE api/<UsageController>/5

@@ -32,12 +32,16 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
+	  DECLARE @MED varchar(10)
+	
+	 SET @MED= (select medId
+	 from [Medicines] as M inner join Conversions as C
+	      on M.mazNum=C.mazNum
+	 where chamNum=@chamNum);
 
-	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@medId,@usageId,@useQty,@chamNum)
+	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,@useQty,@chamNum)
 
-	 --select [Medicines].chamNum
-	 --from [Medicines] inner join [MedUsages] on [MedUsages].medId=[Medicines].medId
-	 --where medId=@medId
+	 select @MED from [MedUsages] 
 
 END
 GO
