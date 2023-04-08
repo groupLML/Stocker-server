@@ -77,10 +77,6 @@ public class DBservices
         return cmd;
     }
 
-    internal static void AddHostedService<T>()
-    {
-        throw new NotImplementedException();
-    }
 
 
     /*****************Medicines*****************/
@@ -2301,7 +2297,7 @@ public class DBservices
       
         try
         {
-            cmd.ExecuteNonQuery(); // execute the command
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
            
         }
         catch (Exception ex)
