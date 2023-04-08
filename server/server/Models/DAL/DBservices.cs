@@ -77,6 +77,10 @@ public class DBservices
         return cmd;
     }
 
+    internal static void AddHostedService<T>()
+    {
+        throw new NotImplementedException();
+    }
 
 
     /*****************Medicines*****************/
@@ -1226,11 +1230,12 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method inserts a Usage to the Usages table 
     //--------------------------------------------------------------------------------------------------
-    public int InsertUsage(Usage use)
+    public bool InsertUsage(Usage use)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        int usageId;
 
         try
         {
@@ -1242,58 +1247,39 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertUsageCommandSP("spInsertUsage", con, use);    // create the command
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
+            using (cmd1 = CreateInsertUsageCommandSP("spInsertUsage", con, use))
             {
-                // close the db connection
-                con.Close();
+                cmd1.Transaction = transaction;
+                usageId = Convert.ToInt32(cmd1.ExecuteScalar());
             }
+            for (int i = 0; i < use.MedList.Count; i++)
+            {
+                using (cmd2 = CreateInsertMedUsageCommandSP("spInsertMedUsages", con, usageId, use.MedList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    use.MedList[i].MedId = Convert.ToInt32(cmd2.ExecuteScalar());
+                }
+            }
+
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
+            return true;
         }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a Usage in the Usages table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateUsage(Usage use)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
+        catch (SqlException sqlEx)
         {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertUsageCommandSP("spUpdateUsage", con, use);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -1310,7 +1296,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertUsageCommandSP(String spName, SqlConnection con, Usage use)
+    private SqlCommand CreateInsertUsageCommandSP(String spName, SqlConnection con, Usage use)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -1327,6 +1313,30 @@ public class DBservices
         cmd.Parameters.AddWithValue("@depId", use.DepId);
         cmd.Parameters.AddWithValue("@reportNum", use.ReportNum);
         cmd.Parameters.AddWithValue("@lastUpdate", use.LastUpdate);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateInsertMedUsageCommandSP(String spName, SqlConnection con, int usageId, MedUsage medList)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@medId", 0);
+        cmd.Parameters.AddWithValue("@usageId", usageId);
+        cmd.Parameters.AddWithValue("@useQty", medList.UseQty);
+        cmd.Parameters.AddWithValue("@chamNum", medList.ChamNum);
 
         return cmd;
     }
@@ -1385,178 +1395,10 @@ public class DBservices
         }
     }
 
-
-
-
-    /*****************MedUsages*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method inserts a MedUsage to the MedUsages table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMedUsage(MedUsage mu)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedUsageCommandSP("spInsertMedUsage", con, mu);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a MedUsage in the MedUsages table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMedUsage(MedUsage mu)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedUsageCommandSP("spUpdateMedUsages", con, mu);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedUsageCommandSP(String spName, SqlConnection con, MedUsage mu)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@medId", mu.MedId);
-        cmd.Parameters.AddWithValue("@usageId", mu.UsageId);
-        cmd.Parameters.AddWithValue("@useQty", mu.UseQty);
-        cmd.Parameters.AddWithValue("@chamNum", mu.ChamNum);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read MedUsages from the MedUsages table
-    //--------------------------------------------------------------------------------------------------
-    public List<MedUsage> ReadMedUsages()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMedUsages", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<MedUsage> list = new List<MedUsage>();
-
-            while (dataReader.Read())
-            {
-                MedUsage mu = new MedUsage();
-                mu.MedId = Convert.ToInt32(dataReader["MedId"]);
-                mu.UsageId = Convert.ToInt32(dataReader["UsageId"]);
-                mu.UseQty = (float)Convert.ToSingle(dataReader["UseQty"]);
-                mu.ChamNum = dataReader["ChamNumm"].ToString();
-                list.Add(mu);
-
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
     //--------------------------------------------------------------------------------------------------
     // This method Read DepMedUsages from the MedUsages table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadDepMedUsages(int depId)
+    public Object ReadDepMedsUsage(int depId)
     {
 
         SqlConnection con;
@@ -1585,7 +1427,7 @@ public class DBservices
 
                 listObj.Add(new
                 {
-                    medId= Convert.ToInt32(dataReader["medId"]),
+                    medId = Convert.ToInt32(dataReader["medId"]),
                     mazNum = dataReader["mazNum"].ToString(),
                     genName = dataReader["genName"].ToString(),
                     comName = dataReader["comName"].ToString(),
@@ -1610,6 +1452,8 @@ public class DBservices
             }
         }
     }
+
+
 
 
 
@@ -1725,65 +1569,9 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Read Stocks from the Stocks table
-    //--------------------------------------------------------------------------------------------------
-    public List<Stock> ReadStocks()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadStocks", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<Stock> list = new List<Stock>();
-
-            while (dataReader.Read())
-            {
-                Stock stock = new Stock();
-                stock.StcId = Convert.ToInt32(dataReader["StcId"]);
-                stock.MedId = Convert.ToInt32(dataReader["MedId"]);
-                stock.DepId = Convert.ToInt32(dataReader["DepId"]);
-                stock.StcQty = (float)Convert.ToSingle(dataReader["StcQty"]);
-                stock.EntryDate = Convert.ToDateTime(dataReader["EntryDate"]);
-                list.Add(stock);
-
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
     // This method Read Dep's Stocks from the Stocks table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadDepStocks(int depId)
+    public List<Object> ReadDepStock(int depId)
     {
 
         SqlConnection con;
@@ -1813,8 +1601,7 @@ public class DBservices
                 listObj.Add(new
                 {
                     medId = Convert.ToInt32(dataReader["medId"]),
-                    genName = dataReader["genName"].ToString(),
-                    comName = dataReader["comName"].ToString(),
+                    medName = dataReader["medName"].ToString(),
                     stcQty = Convert.ToInt32(dataReader["stcQty"])
 
                 });
@@ -2236,7 +2023,6 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public List<MedRequest> ReadMedRequests()
     {
-
         SqlConnection con;
         SqlCommand cmd;
 
@@ -2391,7 +2177,10 @@ public class DBservices
                     reqDate = Convert.ToDateTime(dataReader["reqDate"]),
                     medName = dataReader["medName"].ToString(),
                     reqQty = Convert.ToInt32(dataReader["reqQty"]),
-                    stcQty = stcQty
+                    stcQty = stcQty,
+                    reqStatus = dataReader["reqStatus"].ToString(),
+                    aDep = Convert.ToInt32(dataReader["aDep"])
+
                 });
             }
             return listObj;
@@ -2490,6 +2279,64 @@ public class DBservices
         return cmd;
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Update MedRequest do decline status in the MedRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public void UpdateDeclineReqs()
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+       
+        cmd = CreateUpdateRequestsDeclineCommand("spUpdateMedRequestsToDecline", con);
+      
+        try
+        {
+            cmd.ExecuteNonQuery(); // execute the command
+           
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the update request into decline status SqlCommand 
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateRequestsDeclineCommand(String spName, SqlConnection con)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        return cmd;
+    }
 
 
 
@@ -3461,4 +3308,6 @@ public class DBservices
 
         return cmd;
     }
+
+    
 }
