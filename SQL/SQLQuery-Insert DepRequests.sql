@@ -13,7 +13,9 @@ Insert INTO [DepRequests] ([reqId],[reqDep]) Values (3,6)
 Insert INTO [DepRequests] ([reqId],[reqDep]) Values (3,7)
 Insert INTO [DepRequests] ([reqId],[reqDep]) Values (7,8)
 Insert INTO [DepRequests] ([reqId],[reqDep]) Values (7,9)
-
-
+Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,3)
+Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,5)
+Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,6)
+Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,7)
 
 

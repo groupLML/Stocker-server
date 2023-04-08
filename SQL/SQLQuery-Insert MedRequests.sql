@@ -4,7 +4,7 @@ insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], 
 insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], [reqStatus], [reqDate]) values (15, 0, 4, 0, 1 ,3 ,'W', '2023-02-22 23:30:29');
 insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], [reqStatus], [reqDate]) values (3, 0, 3, 0, 1 ,2 ,'W', '2023-02-22 23:30:29');
 insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], [reqStatus], [reqDate]) values (3, 0, 3, 0, 6 ,2 ,'D', '2023-02-22 23:30:29');
-insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], [reqStatus], [reqDate]) values (4, 0, 4, 0, 7 ,5 ,'W', '2023-01-17 23:30:29');
+insert into [MedRequests] ([cUser], [aUser], [cDep], [aDep], [medId], [reqQty], [reqStatus], [reqDate]) values (4, 0, 4, 0, 7 ,5 ,'W', '2023-04-06 23:20:29');
 
 
 select * from Users
