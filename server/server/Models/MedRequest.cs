@@ -107,6 +107,22 @@ namespace server.Models
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateRequestTransport(reqId, kind);
+
+
+            //if (kind == 'A')
+            //{
+            //    object StockList = dbs.ReadDepStock(depId);
+
+            //    foreach (Stock s in StockList) //בדיקה אם הבקשה לתרופה זו עבור מחלקה זו לא קיימת כבר
+            //    {
+            //        if (cDep == mr.CDep && medId == mr.MedId && mr.ReqStatus == 'W')
+            //            return -1;
+            //    }
+            //    return dbs.UpdateRequestTransport(reqId, kind);
+            //}
+            //return -1;
+
+
         }
 
         public int Delete(int reqId)

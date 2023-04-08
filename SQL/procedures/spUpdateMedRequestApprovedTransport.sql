@@ -18,7 +18,7 @@ GO
 -- Create date: <25/03/2023>
 -- Description:	<update MedRequestApprovedTransport>
 -- =============================================
-CREATE PROCEDURE spUpdateMedRequestApprovedTransport
+ALTER PROCEDURE spUpdateMedRequestApprovedTransport
 
     @reqId smallint
 
@@ -29,9 +29,20 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE MedRequests set reqStatus='T', reqDate=getdate()
-	 where reqId = @reqId and reqStatus='A'
+	DECLARE @rQty smallint, @sQty smallint
+	
+	BEGIN
+	set @rQty=(select reqQty from MedRequests
+	           where reqId = @reqId);
 
+	set @sQty=(select sum(stcQty)
+	           from Stocks as S inner join MedRequests as MR
+	                 on S.depId=MR.aDep and S.medId=MR.medId
+	           where reqId = @reqId);
+
+	 if(@sQty >= @rQty)
+	        UPDATE MedRequests set reqStatus='T' where reqId = @reqId  and reqStatus='A'
+	 END
 
 END
 GO

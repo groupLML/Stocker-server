@@ -14,14 +14,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<LML>
--- Create date: <25/03/2023>
--- Description:	<update MedRequestDeleteTransport>
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
 -- =============================================
-ALTER PROCEDURE spUpdateMedRequestDeleteTransport
-
-    @reqId smallint
-
+CREATE PROCEDURE spUpdateMedRequestsToDecline
+	-- Add the parameters for the stored procedure here
+	
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -29,11 +28,10 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE MedRequests set reqStatus='W'
-	 where reqId = @reqId and reqStatus='T'
+	UPDATE MedRequests set reqStatus='D'
+	where reqStatus='W' and DATEDIFF(hour,reqDate,getdate())>1
 
-
+	
 END
 GO
-
 
