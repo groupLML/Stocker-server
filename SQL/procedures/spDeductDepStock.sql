@@ -66,9 +66,14 @@ BEGIN
 END
 GO
 
-   --         select stcId, stcQty
+   --         select *
    --         from Stocks 
    --         where medId = 1 and depId=3
+   --         order by entryDate
+
+			--select *
+   --         from Stocks 
+   --         where medId = 1 and depId=11
    --         order by entryDate
 
 			--UPDATE MedRequests set reqStatus='A' where reqId = 4

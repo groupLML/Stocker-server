@@ -1888,7 +1888,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 

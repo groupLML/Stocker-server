@@ -29,13 +29,20 @@ BEGIN
 	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	DECLARE @qty smallint, @sQty smallint, @depId smallint, @medId smallint
+	DECLARE @qty smallint, @sQty smallint, @depId smallint, @medId smallint,  @cDep smallint, @date datetime
 	
 	set @depId =(select aDep from MedRequests
 	             where reqId = @reqId);
 
+	set @cDep =(select cDep from MedRequests
+	             where reqId = @reqId);
+
     set @medId =(select medId from MedRequests
 	             where reqId = @reqId);
+				 
+	set @date =(select min(entryDate)
+                 from Stocks 
+                 where medId = 1 and depId=3);
 	
 	set @qty=(select reqQty from MedRequests
 	           where reqId = @reqId);
@@ -49,6 +56,7 @@ BEGIN
 	 BEGIN
 	        UPDATE MedRequests set reqStatus='T' where reqId = @reqId and reqStatus='A'
 			Exec spDeductDepStock  @depId, @medId, @qty
+			INSERT INTO [Stocks] ([medId], [depId], [stcQty], [entryDate]) values (@medId, @cDep, @qty, @date);
 	 END
 
 END

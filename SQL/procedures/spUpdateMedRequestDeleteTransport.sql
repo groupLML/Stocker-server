@@ -30,7 +30,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	 UPDATE MedRequests set reqStatus='W'
-	 where reqId = @reqId and reqStatus='T'
+	 where reqId = @reqId and reqStatus='A'
 
 
 END

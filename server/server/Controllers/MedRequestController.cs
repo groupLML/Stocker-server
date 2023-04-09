@@ -101,7 +101,7 @@ namespace server.Controllers
         {
             MedRequest mr = new MedRequest();
             int numAffected = mr.UpdateTransportReq(reqId, kind);
-            if (numAffected >= 2)
+            if (numAffected >= 1)
                 return true;
             else
                 return false;
