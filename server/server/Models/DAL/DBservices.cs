@@ -1797,9 +1797,11 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public int InsertMedRequest(MedRequest mr, List<int> depList)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        int reqId;
+        int numEffected = 1;
 
         try
         {
@@ -1810,17 +1812,40 @@ public class DBservices
             // write to log
             throw (ex);
         }
-        string strDepList = string.Join(",", depList);
-        cmd = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequest", con, mr, strDepList);    // create the command
+
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            using (cmd1 = CreateUpdateInsertMedRequestCommandSP("spInsertMedRequest", con, mr))
+            {
+                cmd1.Transaction = transaction;
+                reqId = Convert.ToInt32(cmd1.ExecuteScalar());
+            }
+            for (int i = 0; i < depList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertDepRequestCommandSP("spInsertDepRequest", con, reqId, depList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    numEffected += cmd2.ExecuteNonQuery();
+                }
+            }
+
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
             return numEffected;
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return 0;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -1839,9 +1864,10 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public int UpdateMedRequestWaiting(MedRequest mr, List<int> depList)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        int numEffected = 0;
 
         try
         {
@@ -1852,17 +1878,40 @@ public class DBservices
             // write to log
             throw (ex);
         }
-        string strDepList = string.Join(",", depList);
-        cmd = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequestWaiting", con, mr, strDepList);
+
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            using (cmd1 = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequestWaiting", con, mr))
+            {
+                cmd1.Transaction = transaction;
+                numEffected += cmd1.ExecuteNonQuery();
+            }
+            for (int i = 0; i < depList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertDepRequestCommandSP("spInsertDepRequest", con, mr.ReqId, depList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    numEffected += cmd2.ExecuteNonQuery();
+                }
+            }
+
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
             return numEffected;
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException: " + sqlEx.Message);
+            return 0;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -1879,7 +1928,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr, string depList)
+    private SqlCommand CreateUpdateInsertMedRequestCommandSP(String spName, SqlConnection con, MedRequest mr)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -1888,7 +1937,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 30;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
@@ -1902,7 +1951,29 @@ public class DBservices
         cmd.Parameters.AddWithValue("@reqQty", mr.ReqQty);
         cmd.Parameters.AddWithValue("@reqStatus", mr.ReqStatus);
         cmd.Parameters.AddWithValue("@reqDate", mr.ReqDate);
-        cmd.Parameters.AddWithValue("@depList", depList);
+
+        return cmd;
+
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertDepRequestCommandSP(String spName, SqlConnection con, int reqId, int reqDep)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 30;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+        cmd.Parameters.AddWithValue("@reqDep", reqDep);
 
         return cmd;
 

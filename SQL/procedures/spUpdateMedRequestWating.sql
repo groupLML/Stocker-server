@@ -18,7 +18,7 @@ GO
 -- Create date: <25/02/2023>
 -- Description:	<update MedRequest>
 -- =============================================
-CREATE PROCEDURE spUpdateMedRequestWaiting
+ALTER PROCEDURE spUpdateMedRequestWaiting
 
     @reqId smallint,
    	@cUser smallint,
@@ -28,8 +28,8 @@ CREATE PROCEDURE spUpdateMedRequestWaiting
 	@medId smallint,
 	@reqQty real,
 	@reqStatus char(1),
-	@reqDate datetime,
-	@depList varchar(max)
+	@reqDate datetime
+	--@depList varchar(max)
 
 AS
 BEGIN
@@ -44,16 +44,6 @@ BEGIN
 
 	 delete from [DepRequests] where reqId= @reqId
 
-	 DECLARE @depId smallint, @depString varchar(max)
-	 SET @depString= @depList;
-
-     WHILE LEN(@depString) <> 0
-	       BEGIN
-	             SET @depId =CAST(LEFT(@depString, 1) as smallint)
-				 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@reqId, @depId);
-				 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
-		   END
-
 
 END
 GO
@@ -65,3 +55,14 @@ GO
 --UPDATE MedRequests set cUser=3, aUser = 0,cDep = 3, aDep=0,
 --	 medId=4, reqQty=6, reqStatus='W', reqDate='2023-02-25 17:52:51.000'
 --	 where reqId = 39
+
+
+	 --DECLARE @depId smallint, @depString varchar(max)
+	 --SET @depString= @depList;
+
+  --   WHILE LEN(@depString) <> 0
+	 --      BEGIN
+	 --            SET @depId =CAST(LEFT(@depString, 1) as smallint)
+		--		 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@reqId, @depId);
+		--		 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
+		--   END

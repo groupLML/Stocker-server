@@ -33,14 +33,14 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 DECLARE @MAZ varchar(10)
+	 DECLARE @MED varchar(10)
 	
-	 SET @MAZ= (select mazNum
+	 SET @MED= (select medId
 	 from [Medicines]
-	 where medId=@medId);
+	 where mazNum=@mazNum);
 
 	 INSERT INTO [PushMedOrders] ([orderId],[medId],[poQty],[supQty],[mazNum]) 
-	 Values (@orderId,@medId,@poQty,@supQty,@MAZ)
+	 Values (@orderId,@MED,@poQty,@supQty,@mazNum)
 
 
 END

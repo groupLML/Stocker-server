@@ -28,8 +28,8 @@ ALTER PROCEDURE spInsertMedRequest
 	@medId smallint,
 	@reqQty real,
 	@reqStatus char(1),
-	@reqDate datetime,
-	@depList varchar(max)
+	@reqDate datetime
+	--@depList varchar(max)
 
 AS
 BEGIN
@@ -38,21 +38,26 @@ BEGIN
 	--SET NOCOUNT ON;
    
      INSERT INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) 
-     VALUES (@cUser,@aUser,@cDep,@aDep,@medId,@reqQty,'W',GETDATE());
+     VALUES (@cUser,@aUser,@cDep,@aDep,@medId,@reqQty,'W',GETDATE()) SELECT SCOPE_IDENTITY();
 
-	 DECLARE @ID smallint, @depId smallint, @depString varchar(max)
-	 
-	 SET @ID= (SELECT SCOPE_IDENTITY());
-	 SET @depString= @depList;
 
-     WHILE LEN(@depString) <> 0
-	       BEGIN
-	             SET @depId =CAST(LEFT(@depString, 1) as smallint)
-				 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@ID, @depId);
-				 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
-		   END
 
 END
 GO
 
 
+	           
+  --   INSERT INTO [MedRequests] ([cUser],[aUser],[cDep],[aDep],[medId],[reqQty],[reqStatus],[reqDate]) 
+  --   VALUES (@cUser,@aUser,@cDep,@aDep,@medId,@reqQty,'W',GETDATE());
+
+	 --DECLARE @ID smallint, @depId smallint, @depString varchar(max)
+	 
+	 --SET @ID= (SELECT SCOPE_IDENTITY());
+	 --SET @depString= @depList;
+
+  --   WHILE LEN(@depString) <> 0
+	 --      BEGIN
+	 --            SET @depId =CAST(LEFT(@depString, 1) as smallint)
+		--		 INSERT INTO [DepRequests] ([reqId],[reqDep]) VALUES (@ID, @depId);
+		--		 SET @depString=SUBSTRING(@depString,3,LEN(@depString))
+		--   END
