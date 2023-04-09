@@ -35,7 +35,7 @@ namespace server.Models
                 "Timed Hosted Service is working. Count: {Count}", count);
 
             DBservices dbs = new DBservices();
-            dbs.UpdateDeclineReqs();
+            dbs.UpdateDeclineReqs(_logger);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

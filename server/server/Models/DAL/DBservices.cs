@@ -2351,7 +2351,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update MedRequest do decline status in the MedRequests table 
     //--------------------------------------------------------------------------------------------------
-    public void UpdateDeclineReqs()
+    public void UpdateDeclineReqs(ILogger<TimedHostedService> _logger)
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -2365,18 +2365,18 @@ public class DBservices
             // write to log
             throw (ex);
         }
-       
+
         cmd = CreateUpdateRequestsDeclineCommand("spUpdateMedRequestsToDecline", con);
       
         try
         {
             int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            Console.WriteLine("Change Time:" + DateTime.Now+ "Num Effected:"+ numEffected);
+            Console.WriteLine("Change Time: " + DateTime.Now+ "Num Effected: "+ numEffected);
         }
         catch (Exception ex)
         {
             // write to log
-            throw (ex);
+            _logger.LogError(ex.Message);
         }
 
         finally
