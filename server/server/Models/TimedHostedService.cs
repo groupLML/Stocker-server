@@ -11,6 +11,7 @@ namespace server.Models
         private readonly ILogger<TimedHostedService> _logger;
         private Timer? _timer = null;
 
+
         public TimedHostedService(ILogger<TimedHostedService> logger)
         {
             _logger = logger;

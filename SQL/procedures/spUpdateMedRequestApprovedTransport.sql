@@ -26,13 +26,18 @@ AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	--SET NOCOUNT ON;
+	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	DECLARE @rQty smallint, @sQty smallint
+	DECLARE @qty smallint, @sQty smallint, @depId smallint, @medId smallint
 	
-	BEGIN
-	set @rQty=(select reqQty from MedRequests
+	set @depId =(select aDep from MedRequests
+	             where reqId = @reqId);
+
+    set @medId =(select medId from MedRequests
+	             where reqId = @reqId);
+	
+	set @qty=(select reqQty from MedRequests
 	           where reqId = @reqId);
 
 	set @sQty=(select sum(stcQty)
@@ -40,11 +45,12 @@ BEGIN
 	                 on S.depId=MR.aDep and S.medId=MR.medId
 	           where reqId = @reqId);
 
-	 if(@sQty >= @rQty)
-	        UPDATE MedRequests set reqStatus='T' where reqId = @reqId  and reqStatus='A'
+	 if(@sQty >= @qty)
+	 BEGIN
+	        UPDATE MedRequests set reqStatus='T' where reqId = @reqId and reqStatus='A'
+			Exec spDeductDepStock  @depId, @medId, @qty
 	 END
 
 END
 GO
-
 
