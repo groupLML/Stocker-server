@@ -1735,7 +1735,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read Messages from the Messages table
     //--------------------------------------------------------------------------------------------------
-    public List<Message> ReadMessages()
+    public object ReadMessages()
     {
 
         SqlConnection con;
@@ -1757,18 +1757,20 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-            List<Message> list = new List<Message>();
+            List<object> listObj = new List<object>();
 
             while (dataReader.Read())
             {
-                Message msg = new Message();
-                msg.MsgId = Convert.ToInt32(dataReader["NsgId"]);
-                msg.UserId = Convert.ToInt32(dataReader["UserId"]);
-                msg.Msg = dataReader["Msg"].ToString();
-                msg.MsgDate = Convert.ToDateTime(dataReader["MsgDate"]);
-                list.Add(msg);
+                listObj.Add(new
+                {
+                    msgId = Convert.ToInt32(dataReader["MsgId"]),
+                    pharmacistName = dataReader["pharmacistName"].ToString(),
+                    msg = dataReader["msg"].ToString(),
+                    msgDate = Convert.ToDateTime(dataReader["msgDate"])
+            });
+    
             }
-            return list;
+            return listObj;
         }
         catch (Exception ex)
         {

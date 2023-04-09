@@ -42,7 +42,7 @@ namespace server.Models
             return dbs.UpdateMessage(this);
         }
 
-        public List<Message> Read()
+        public Object Read()
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMessages();

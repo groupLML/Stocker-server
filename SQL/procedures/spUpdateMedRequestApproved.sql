@@ -38,9 +38,10 @@ BEGIN
 	           where reqId = @reqId);
 
 	set @sQty=(select sum(stcQty)
-	           from Stocks as S inner join MedRequests as MR
-	                 on S.depId=MR.aDep and S.medId=MR.medId
-	           where reqId = @reqId);
+               from Stocks  
+               where depId=@aDep and medId=(select medId
+                                            from MedRequests
+                                            where reqId = @reqId));
 
 	 if(@sQty >= @rQty)
          UPDATE MedRequests set aUser=@aUser, aDep=@aDep,reqStatus='A', reqDate=getdate() where reqId = @reqId 
@@ -48,5 +49,8 @@ BEGIN
 
 END
 GO
+
+
+
 
 

@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<MessageController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public Object Get()
         {
-            return new string[] { "value1", "value2" };
+            Message m = new Message();
+            return m.Read();
         }
 
         // GET api/<MessageController>/5
