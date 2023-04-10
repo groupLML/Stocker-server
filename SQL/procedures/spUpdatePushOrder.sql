@@ -18,7 +18,7 @@ GO
 -- Create date: <28-02-2023>
 -- Description:	<Update PushOrder>
 -- =============================================
-ALTER  PROCEDURE spUpdatePushOrder
+ALTER PROCEDURE spUpdatePushOrder
 
 	@pushId int,
 	@pUser smallint,

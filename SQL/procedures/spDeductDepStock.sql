@@ -48,7 +48,7 @@ BEGIN
     
 	      if(@stcQty > @qty)
 	      BEGIN
-	           update Stocks set stcQty= stcQty-@qty where stcId=@stcId;
+	           update Stocks set stcQty= stcQty-@qty where stcId=@stcId and stcQty= @stcQty;
 	           break;
 	      END
 
