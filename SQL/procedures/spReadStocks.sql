@@ -14,13 +14,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		<LML>
+-- Create date: <27/02/2023>
+-- Description:	<Read Stocks>
 -- =============================================
-ALTER PROCEDURE spUpdateMedRequestsToDecline
-	-- Add the parameters for the stored procedure here
-	
+ALTER PROCEDURE spReadStocks
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -28,10 +27,14 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	UPDATE MedRequests set reqStatus='D'
-	where reqStatus='W' and DATEDIFF(MINUTE,reqDate,getdate())>=60;
-
+	SELECT S.depId, depName, S.medId,
+	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(stcQty) as 'stcQty'
+	FROM Medicines as M inner join Stocks as S
+	     on M.medId=S.medId inner join Departments as D
+		 on S.depId=D.depId
+	where S.depId not in (0,1,2)
+	group by S.medId, S.depId, depName, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given
+	
 
 END
 GO
-

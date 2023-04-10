@@ -1565,6 +1565,64 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method Read All Stocks from the Stocks table
+    //--------------------------------------------------------------------------------------------------
+    public List<Object> ReadStocks()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadStocks", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    depId = Convert.ToInt32(dataReader["depId"]),
+                    depName = dataReader["depName"].ToString(),
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    medName = dataReader["medName"].ToString(),
+                    stcQty = Convert.ToInt32(dataReader["stcQty"])
+
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method Read Dep's Stocks from the Stocks table by depId
     //--------------------------------------------------------------------------------------------------
     public List<Object> ReadDepStock(int depId)

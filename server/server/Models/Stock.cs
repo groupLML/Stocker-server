@@ -54,14 +54,22 @@ namespace server.Models
             return dbs.UpdateStock(this);
         }
 
-        public List<Object> ReadDepStock(int depId) //טבלת מחסן מחלקתי
+        public Object Read() //מחסני המחלקות עבור מנהל בית מרקחת
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadStocks();
+        }
+
+        public Object ReadDepStock(int depId) //טבלת מחסן מחלקתי
         {
             DBservices dbs = new DBservices();
 
             if(depId >2)
                 return dbs.ReadDepStock(depId);
             else
-                return null;
+                return new Object();
         }
+
+
     }
 }

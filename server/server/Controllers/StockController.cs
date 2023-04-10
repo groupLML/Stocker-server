@@ -11,14 +11,15 @@ namespace server.Controllers
     {
         // GET: api/<StockController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public Object Get()
         {
-            return new string[] { "value1", "value2" };
+            Stock stock = new Stock();
+            return stock.Read();
         }
 
         // GET: api/<StockController>
         [HttpGet("{depId}")]
-        public List<Object> GetDepStock(int depId)
+        public Object GetDepStock(int depId)
         {
             Stock stock = new Stock();
             return stock.ReadDepStock(depId);
