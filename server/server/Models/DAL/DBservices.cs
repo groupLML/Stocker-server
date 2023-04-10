@@ -2467,12 +2467,12 @@ public class DBservices
 
 
 
-    /*****************MedReturns*****************/
+    /*****************Returns*****************/
 
     //--------------------------------------------------------------------------------------------------
     // This method insert a MedReturn to the MedReturns table 
     //--------------------------------------------------------------------------------------------------
-    public int InsertMedReturn(MedReturn mr)
+    public int InsertMedReturn(Return mr)
     {
 
         SqlConnection con;
@@ -2514,7 +2514,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a MedReturn in the MedReturns table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateMedReturn(MedReturn mr)
+    public int UpdateMedReturn(Return mr)
     {
 
         SqlConnection con;
@@ -2556,7 +2556,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, MedReturn mr)
+    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, Return mr)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -2583,7 +2583,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read MedReturns from the MedReturns table
     //--------------------------------------------------------------------------------------------------
-    public List<MedReturn> ReadMedReturns()
+    public List<Return> ReadMedReturns()
     {
 
         SqlConnection con;
@@ -2605,11 +2605,11 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-            List<MedReturn> list = new List<MedReturn>();
+            List<Return> list = new List<Return>();
 
             while (dataReader.Read())
             {
-                MedReturn mr = new MedReturn();
+                Return mr = new Return();
                 mr.MedId = Convert.ToInt32(dataReader["MedId"]);
                 mr.DepId = Convert.ToInt32(dataReader["DepId"]);
                 mr.RtnDate = Convert.ToDateTime(dataReader["RtnDate"]);
