@@ -1050,7 +1050,6 @@ public class DBservices
 
 
 
-
     /*****************NormRequests*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -1567,7 +1566,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read All Stocks from the Stocks table
     //--------------------------------------------------------------------------------------------------
-    public List<Object> ReadStocks()
+    public Object ReadStocks()
     {
 
         SqlConnection con;
@@ -1625,7 +1624,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read Dep's Stocks from the Stocks table by depId
     //--------------------------------------------------------------------------------------------------
-    public List<Object> ReadDepStock(int depId)
+    public Object ReadDepStock(int depId)
     {
 
         SqlConnection con;
@@ -1678,6 +1677,7 @@ public class DBservices
         }
     }
    
+
 
 
     /*****************Messages*****************/
@@ -1793,7 +1793,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read Messages from the Messages table
     //--------------------------------------------------------------------------------------------------
-    public object ReadMessages()
+    public Object ReadMessages()
     {
 
         SqlConnection con;
