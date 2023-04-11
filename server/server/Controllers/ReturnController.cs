@@ -7,7 +7,7 @@ namespace server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MedReturnController : ControllerBase
+    public class ReturnController : ControllerBase
     {
         // GET: api/<MedReturnController>
         [HttpGet]

@@ -1,6 +1,6 @@
 ﻿namespace server.Models
 {
-    public class MedReturn
+    public class Return
     {
 
         //fields
@@ -20,8 +20,8 @@
         public string Reason { get => reason; set => reason = value; }
 
         //constructors
-        public MedReturn() { }
-        public MedReturn(int medId, int depId, DateTime rtnDate, int userId, float rtnQty, string reason)
+        public Return() { }
+        public Return(int medId, int depId, DateTime rtnDate, int userId, float rtnQty, string reason)
         {
             this.medId = medId;
             this.depId = depId;
@@ -45,7 +45,7 @@
             return dbs.UpdateMedReturn(this);
         }
 
-        public List<MedReturn> Read()
+        public List<Return> Read()
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMedReturns();
