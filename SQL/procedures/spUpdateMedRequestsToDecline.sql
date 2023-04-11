@@ -29,7 +29,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	UPDATE MedRequests set reqStatus='D'
-	where reqStatus='W' and DATEDIFF(MINUTE,reqDate,getdate())>=60;
+	where reqStatus='W' and DATEDIFF(MINUTE,reqDate,getdate())>=180;
 
 
 END
