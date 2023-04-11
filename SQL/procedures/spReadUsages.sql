@@ -27,6 +27,10 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT * FROM [Usages] order by [Usages].lastUpdate desc
+	SELECT U.usageId, depId, reportNum, lastUpdate, MU.usageId as 'MU.usageId',medId, useQty, chamNum
+	FROM [Usages] as U inner Join [MedUsages] as MU
+	     on U.usageId=MU.usageId
+	order by U.usageId desc, lastUpdate desc
+
 END
 GO

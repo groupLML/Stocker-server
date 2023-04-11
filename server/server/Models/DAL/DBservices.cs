@@ -1362,6 +1362,7 @@ public class DBservices
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             List<Usage> list = new List<Usage>();
+            int lastUsageId = 0;
 
             while (dataReader.Read())
             {
@@ -1370,7 +1371,33 @@ public class DBservices
                 use.DepId = Convert.ToInt32(dataReader["DepId"]);
                 use.ReportNum = dataReader["ReportNum"].ToString();
                 use.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                list.Add(use);
+                if (use.MedList == null)
+                    use.MedList = new List<MedUsage>();
+
+                if (use.UsageId == lastUsageId)
+                {
+                    if (dataReader["MU.usageId"] != DBNull.Value)
+                    {
+                        MedUsage mu = new MedUsage();
+                        mu.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mu.UseQty = (float)(dataReader["UseQty"]);
+                        mu.ChamNum = (dataReader["ChamNum"]).ToString();
+                        list[list.Count - 1].MedList.Add(mu);
+                    }
+                }
+                else
+                {
+                    if (dataReader["MU.usageId"] != DBNull.Value)
+                    {
+                        MedUsage mu = new MedUsage();
+                        mu.MedId = Convert.ToInt32(dataReader["MedId"]);
+                        mu.UseQty = (float)(dataReader["UseQty"]);
+                        mu.ChamNum = (dataReader["ChamNum"]).ToString();
+                        use.MedList.Add(mu);
+                    }
+                    list.Add(use);
+                    lastUsageId = use.UsageId;
+                }
             }
             return list;
         }

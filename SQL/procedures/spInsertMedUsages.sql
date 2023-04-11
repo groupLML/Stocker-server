@@ -32,16 +32,50 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	  DECLARE @MED varchar(10)
+	 DECLARE @MED smallint, @depId smallint
 	
 	 SET @MED= (select medId
-	 from [Medicines] as M inner join Conversions as C
-	      on M.mazNum=C.mazNum
-	 where chamNum=@chamNum);
+	            from [Medicines] as M inner join Conversions as C on M.mazNum=C.mazNum
+	            where chamNum=@chamNum);
 
 	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,@useQty,@chamNum)
+	 
+	 SET @depId= (select depId
+	              from [Usages]
+	              where usageId=@usageId);
 
-	 select @MED from [MedUsages] 
+	 Exec spDeductDepStock @depId, @MED, @useQty
+
+	 select @MED
 
 END
 GO
+
+
+  --   DECLARE @MED smallint, @depId smallint, @usageId smallint, @useQty real
+	 
+	 --INSERT INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (3,'33333', getdate())
+	 --set @usageId= (SELECT SCOPE_IDENTITY());
+
+	 --set @useQty= 3
+	 --SET @MED= (select medId
+	 --           from [Medicines] as M inner join Conversions as C on M.mazNum=C.mazNum
+	 --           where chamNum='1191302');
+
+	 --INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,@useQty,'1191302')
+	 
+	 --SET @depId= (select depId
+	 --             from [Usages]
+	 --             where usageId= @usageId);
+
+	 --Exec spDeductDepStock @depId, @MED, @useQty
+
+	 --select @MED 
+
+
+
+	 --select * from Conversions 
+	 --select * from [Usages]
+	 --select * from [MedUsages]
+	 --select * from [Stocks]
+	 --where depId=3 and medId=1
