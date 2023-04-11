@@ -1,7 +1,6 @@
 ﻿using System;
 using Accord.Statistics.Models.Regression.Linear;
 using Accord.Math.Optimization.Losses;
-using Accord.Statistics.Models.Regression;
 
 namespace server.Models
 {
