@@ -51,11 +51,12 @@ namespace server.Controllers
             int numAffected= mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
 
             if (numAffected > 0)
-                return Ok(true);
+                return Ok(true); //status 200
             else if (numAffected == -1)
-                return Unauthorized("ההזמנה כבר קיימת במערכת");
-            else 
-                return BadRequest("הפעולה נכשלה");
+                return Forbid("ההזמנה כבר קיימת במערכת"); //status 403 Lack of permission to access the requested resource
+            else
+                return BadRequest("הפעולה נכשלה"); //status 500
+        
 
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }

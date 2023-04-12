@@ -121,8 +121,6 @@ namespace server.Models
             //    return dbs.UpdateRequestTransport(reqId, kind);
             //}
             //return -1;
-
-
         }
 
         public int Delete(int reqId)
