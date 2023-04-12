@@ -50,7 +50,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
@@ -3463,5 +3463,66 @@ public class DBservices
         return cmd;
     }
 
-    
+
+
+    /*****************Prediction*****************/
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Predictions from the Predictions table
+    //--------------------------------------------------------------------------------------------------
+    public List<Prediction> ReadPrediction()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadPredictions", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Prediction> list = new List<Prediction>();
+
+            while (dataReader.Read())
+            {
+                Prediction p = new Prediction();
+                p.UsageOneMonthAgo = Convert.ToDouble(dataReader["UsageOneMonthAgo"]);
+                p.UsageTwoMonthAgo = Convert.ToDouble(dataReader["UsageTwoMonthAgo"]);
+                p.UsageOneYearAgo = Convert.ToDouble(dataReader["UsageOneYearAgo"]);
+                p.TotalReqQty = Convert.ToDouble(dataReader["TotalReqQty"]);
+                p.ThisMonth = dataReader["ThisMonth"].ToString();
+                p.Season = dataReader["Season"].ToString();
+                p.FutureUsage = Convert.ToDouble(dataReader["FutureUsage"]);
+                list.Add(p);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
 }

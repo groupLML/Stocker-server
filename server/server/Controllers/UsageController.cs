@@ -13,7 +13,6 @@ namespace server.Controllers
         [HttpGet]
         public IEnumerable<Usage> Get()
         {
-            ConsumptionPrediction.Main(); /////////למחוק
             Usage use = new Usage();
             return use.Read();
         }
@@ -25,6 +24,15 @@ namespace server.Controllers
             Usage use = new Usage();
             return use.ReadMedUsages(depId);
         }
+
+        // GET: api/<UsageController>
+        [HttpGet("/Prediction")]
+        public IEnumerable<double> GetPrediction()
+        {
+            Prediction p= new Prediction(); 
+            return p.GetPrediction();
+        }
+
 
         // POST api/<UsageController>
         [HttpPost]
