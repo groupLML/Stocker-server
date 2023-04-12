@@ -2,6 +2,7 @@
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
 using Accord.Statistics.Models.Regression.Linear;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -52,6 +53,30 @@ namespace server.Models
             //shuffled
             list = Shuffle(list);
 
+            //Normalization
+            double minReq = 1000;
+            double minOneMonth = 1000;
+            double minTwoMonth = 1000;
+            double minOneYear = 1000;
+            double maxReq = 0;
+            double maxOneMonth = 0;
+            double maxTwoMonth = 0;
+            double maxOneYear = 0;
+
+            foreach (Prediction p in list)
+            {
+                if (p.UsageOneMonthAgo < minOneMonth) minOneMonth = p.UsageOneMonthAgo;
+                if (p.UsageOneMonthAgo > maxOneMonth) maxOneMonth = p.UsageOneMonthAgo;
+                if (p.UsageTwoMonthAgo < minTwoMonth) minTwoMonth = p.UsageTwoMonthAgo;
+                if (p.UsageTwoMonthAgo > maxTwoMonth) maxTwoMonth = p.UsageTwoMonthAgo;
+                if (p.UsageOneYearAgo < minOneYear) minOneYear = p.UsageOneYearAgo;
+                if (p.UsageOneYearAgo > maxOneYear) maxOneYear = p.UsageOneYearAgo;
+                if (p.TotalReqQty < minReq) minReq = p.TotalReqQty;
+                if (p.TotalReqQty > maxReq) maxReq = p.TotalReqQty;
+            }
+
+            ////minmax(list, ref minReq, ref minOneMonth, ref  minTwoMonth, ref  minOneYear, ref  maxReq, ref maxOneMonth, ref maxTwoMonth, ref maxOneYear);
+
             //Split data into training and testing sets
             object[][] instancesTrain = new object[len70][];
             object[][] instancesTest = new object[list.Count-len70][];
@@ -60,44 +85,33 @@ namespace server.Models
 
 
             for (int i = 0; i < len70; i++) //0-69
-            {
+            {
                 instancesTrain[i] = new object[]
                 {
-                list[i].UsageOneMonthAgo,
-                list[i].UsageTwoMonthAgo,
-                list[i].UsageOneYearAgo,
-                list[i].TotalReqQty,
-                list[i].ThisMonth,
+                (list[i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
+                (list[i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
+                (list[i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneYear),
+                (list[i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
+                list[i].ThisMonth,
                 list[i].Season
                 };
-                outputsTrain.SetValue(list[i].FutureUsage, i); 
+                outputsTrain.SetValue(list[i].FutureUsage, i);
             }
 
+
             for (int i = 0; i < list.Count - len70; i++) //70-99
-            {
+            {
                 instancesTest[i] = new object[]
                 {
-                list[len70+i].UsageOneMonthAgo,
-                list[len70+i].UsageTwoMonthAgo,
-                list[len70+i].UsageOneYearAgo,
-                list[len70+i].TotalReqQty,
-                list[len70+i].ThisMonth,
+                (list[len70+i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
+                (list[len70+i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
+                (list[len70 + i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneMonth),
+                (list[len70+i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
+                list[len70+i].ThisMonth,
                 list[len70+i].Season
                 };
                 outputsTest.SetValue(list[len70 + i].FutureUsage, i);
             }
-
-            //Normalization
-            //var normalization = new Normalization();
-
-            ////Learn the normalization from the training set
-            //var normInstancesTrain = normalization.Learn(instancesTrain);
-            //var normInstancesTest = normalization.Learn(instancesTest);
-
-
-            ////Normalize 
-            //double[][] inputsTrain = normInstancesTrain.Transform(instancesTrain);
-            //double[][] inputsTest = normInstancesTrain.Transform(instancesTest);
 
 
             //use a codification filter to transform the symbolic variables into one-hot vectors
@@ -121,9 +135,10 @@ namespace server.Models
 
 
             //use Ordinary Least Squares to create a linear regression model with an intercept term
-            var ols = new OrdinaryLeastSquares()
+            var ols = new OrdinaryLeastSquares();
             {
-                UseIntercept = true
+                ols.UseIntercept = true;
+                ols.IsRobust = true;
             };
 
             //use Ordinary Least Squares to estimate a regression model:
@@ -157,6 +172,41 @@ namespace server.Models
             return shuffledList;
         }
 
+        //public static void minmax(List<Prediction> list, ref double minReq, ref double minOneMonth, ref double minTwoMonth, ref double minOneYear, ref double maxReq, ref double maxOneMonth, ref double maxTwoMonth, ref double maxOneYear) //מציאת minmax 
+        //{
+        //    //min-max normalization
+        //    // Find the minimum and maximum values of totalReqQty
+        //    double minTotalReqQty = 1000;
+        //    double minUsageOneMonthAgo = 1000; 
+        //    double minUsageTwoMonthAgo = 10000; 
+        //    double minUsageOneYearAgo = 10000; 
+        //    double maxTotalReqQty = 0;
+        //    double maxUsageOneMonthAgo = 0;
+        //    double maxUsageTwoMonthAgo = 0;
+        //    double maxUsageOneYearAgo = 0;
 
+
+        //    foreach (Prediction p in list)
+        //    {
+        //        if (p.UsageOneMonthAgo < minUsageOneMonthAgo) minUsageOneMonthAgo = p.UsageOneMonthAgo;
+        //        if (p.UsageOneMonthAgo > maxUsageOneMonthAgo) maxUsageOneMonthAgo = p.UsageOneMonthAgo;
+        //        if (p.UsageTwoMonthAgo < minUsageTwoMonthAgo) minUsageTwoMonthAgo = p.UsageTwoMonthAgo;
+        //        if (p.UsageTwoMonthAgo > maxUsageTwoMonthAgo) maxUsageTwoMonthAgo = p.UsageTwoMonthAgo;
+        //        if (p.UsageOneYearAgo < minUsageOneYearAgo) minUsageOneYearAgo = p.UsageOneYearAgo;
+        //        if (p.UsageOneYearAgo > maxUsageOneYearAgo) maxUsageOneYearAgo = p.UsageOneYearAgo;
+        //        if (p.TotalReqQty < minTotalReqQty) minTotalReqQty = p.TotalReqQty;
+        //        if (p.TotalReqQty > maxTotalReqQty) maxTotalReqQty = p.TotalReqQty;
+        //    }
+
+
+        //    minReq = minTotalReqQty;
+        //    minOneMonth = minUsageOneMonthAgo;
+        //    minTwoMonth = minUsageTwoMonthAgo;
+        //    minOneYear = minUsageOneYearAgo;
+        //    maxReq = maxTotalReqQty;
+        //    maxOneMonth = maxUsageOneMonthAgo;
+        //    maxTwoMonth = maxUsageTwoMonthAgo;
+        //    maxOneYear = maxUsageOneYearAgo;
+        //}
     }
 }
