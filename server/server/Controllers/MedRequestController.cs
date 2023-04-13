@@ -61,7 +61,7 @@ namespace server.Controllers
             if (numAffected > 0)
                 return Ok("הבקשה התווספה בהצלחה"); //status 200
             else if (numAffected == -1)
-                return Forbid("ההזמנה כבר קיימת במערכת"); //status 403 Lack of permission to access the requested resource
+                return Unauthorized("ההזמנה כבר קיימת במערכת"); //status 401 Lack of permission to access the requested resource
             else
                 return BadRequest("הפעולה נכשלה"); //status 500
         
@@ -84,7 +84,7 @@ namespace server.Controllers
             if (numAffected > 0)
                 return Ok("הבקשה עודכנה בהצלחה");
             else if (numAffected == -1)
-                return Unauthorized("הבקשה בטיפול, לא ניתן לעדכן אותה בשלב זה");
+                return Unauthorized("הבקשה בטיפול, לא ניתן לעדכן אותה בשלב זה"); //status 401 Lack of permission to access the requested resource
             else
                 return BadRequest("הפעולה נכשלה");
 
