@@ -35,7 +35,6 @@ namespace server.Controllers
             MedRequest mr = new MedRequest();
             return mr.ReadRequestsOthers(depId);
         }
-        
 
         // POST api/<MedRequestController>
         [HttpPost]
@@ -51,13 +50,12 @@ namespace server.Controllers
             int numAffected= mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
 
             if (numAffected > 0)
-                return Ok(true); //status 200
+                return Ok("הבקשה התווספה בהצלחה"); //status 200
             else if (numAffected == -1)
                 return Forbid("ההזמנה כבר קיימת במערכת"); //status 403 Lack of permission to access the requested resource
             else
                 return BadRequest("הפעולה נכשלה"); //status 500
         
-
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }
 
@@ -74,7 +72,7 @@ namespace server.Controllers
             int numAffected = mr.UpdateWaitingReq(depTypes);
 
             if (numAffected > 0)
-                return Ok(true);
+                return Ok("הבקשה עודכנה בהצלחה");
             else if (numAffected == -1)
                 return Unauthorized("הבקשה בטיפול, לא ניתן לעדכן אותה בשלב זה");
             else
@@ -97,7 +95,7 @@ namespace server.Controllers
         }
 
         // PUT api/<MedRequestController>/5
-        [HttpPut("TransportRe/{reqId}/kind/{kind}")]
+        [HttpPut("TransportReq/{reqId}/kind/{kind}")]
         public bool PutTransportReq(int reqId, char kind) //kind: A= approvedTransport, C= cancelledTransport
         {
             MedRequest mr = new MedRequest();

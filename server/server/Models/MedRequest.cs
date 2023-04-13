@@ -89,7 +89,7 @@ namespace server.Models
                 }
             }
 
-            foreach (MedRequest mr in ReqList) 
+            foreach (MedRequest mr in ReqList)
             {
                 if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W') //עדכון בקשה יתבצע רק במידה והבקשה במצב "המתנה"
                     return dbs.UpdateMedRequestWaiting(this, DepAsked);
@@ -153,5 +153,6 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.ReadDepRequestsNurseOthers(depId);
         }
+
     }
 }

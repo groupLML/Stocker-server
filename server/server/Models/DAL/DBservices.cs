@@ -2273,7 +2273,8 @@ public class DBservices
                     aUserId = Convert.ToInt32(dataReader["aUserId"]),
                     aNurseName = dataReader["aNurseName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["reqStatus"]),
-                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"])
+                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"]),
+                    DepTypes= ReadReqDepTypes(depId, Convert.ToInt32(dataReader["reqId"]))
                 });
             }
             return listObj;
@@ -2492,6 +2493,71 @@ public class DBservices
         return cmd;
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // Read MedRequests Details פונקציית עזר
+    //--------------------------------------------------------------------------------------------------
+    public List<string> ReadReqDepTypes(int depId, int reqId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadReqDepTypesCommandSP("spReadDepTypes", con, depId, reqId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<string> depTypes= new List<string>();
+
+            while (dataReader.Read())
+            {
+                depTypes.Add(dataReader["depType"].ToString());
+            }
+            return depTypes;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+    private SqlCommand CreateReadReqDepTypesCommandSP(String spName, SqlConnection con, int cDep, int reqId)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+        cmd.Parameters.AddWithValue("@cDep", cDep);
+      
+        return cmd;
+    }
 
 
     /*****************Returns*****************/
