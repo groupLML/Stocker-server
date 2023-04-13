@@ -2273,8 +2273,7 @@ public class DBservices
                     aUserId = Convert.ToInt32(dataReader["aUserId"]),
                     aNurseName = dataReader["aNurseName"].ToString(),
                     reqStatus = Convert.ToChar(dataReader["reqStatus"]),
-                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"]),
-                    DepTypes= ReadReqDepTypes(depId, Convert.ToInt32(dataReader["reqId"]))
+                    reqQty = (float)Convert.ToSingle(dataReader["reqQty"])
                 });
             }
             return listObj;

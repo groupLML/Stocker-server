@@ -36,6 +36,15 @@ namespace server.Controllers
             return mr.ReadRequestsOthers(depId);
         }
 
+        // GET: api/<MedRequestController>
+        [HttpGet("RequestDepTypes/depId/{depId}/reqId/{reqId}")]
+        public List<string> GetRequestDepTypes(int depId, int reqId)
+        {
+            MedRequest mr = new MedRequest();
+            return mr.ReadRequestDepTypes(depId, reqId);
+        }
+
+
         // POST api/<MedRequestController>
         [HttpPost]
         public IActionResult Post([FromBody] JsonElement medReq)
@@ -56,6 +65,7 @@ namespace server.Controllers
             else
                 return BadRequest("הפעולה נכשלה"); //status 500
         
+
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }
 
@@ -95,7 +105,7 @@ namespace server.Controllers
         }
 
         // PUT api/<MedRequestController>/5
-        [HttpPut("TransportReq/{reqId}/kind/{kind}")]
+        [HttpPut("TransportRe/{reqId}/kind/{kind}")]
         public bool PutTransportReq(int reqId, char kind) //kind: A= approvedTransport, C= cancelledTransport
         {
             MedRequest mr = new MedRequest();

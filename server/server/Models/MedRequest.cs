@@ -154,5 +154,11 @@ namespace server.Models
             return dbs.ReadDepRequestsNurseOthers(depId);
         }
 
+        public List<string> ReadRequestDepTypes(int depId, int reqId) //קריאת סוגי המחלקות של אותה בקשה
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadReqDepTypes(depId, reqId);
+        }
+
     }
 }
