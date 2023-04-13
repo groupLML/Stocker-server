@@ -26,11 +26,11 @@ namespace server.Controllers
         }
 
         // GET: api/<UsageController>
-        [HttpGet("/Prediction")]
-        public IEnumerable<double> GetPrediction()
+        [HttpGet("/Prediction/month/{month}/dep/{dep}/med/{med}")]
+        public int GetPrediction(int month, int dep, int med)
         {
             Prediction p= new Prediction(); 
-            return p.GetPrediction();
+            return p.GetPrediction(month,dep, med);
         }
 
 

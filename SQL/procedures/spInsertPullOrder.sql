@@ -37,7 +37,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	 Insert INTO [PullOrders] ([pUser],[nUser],[depId],[reportNum],[pullStatus],[pullDate],[lastUpdate]) 
-	 Values (0,@nUser,@depId,@reportNum,'W',@pullDate,GETDATE()) SELECT SCOPE_IDENTITY()
+	 Values (0,@nUser,@depId,@reportNum,'W',GETDATE(),GETDATE()) SELECT SCOPE_IDENTITY()
 
 	 
 END

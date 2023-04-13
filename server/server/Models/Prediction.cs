@@ -43,11 +43,11 @@ namespace server.Models
 
 
         //method
-        public double[] GetPrediction()
+        public int GetPrediction(int month, int dep, int med)
         {
             //Create a dataset
             DBservices dbs = new DBservices();
-            List<Prediction> list = dbs.ReadPrediction();
+            List<Prediction> list = dbs.ReadPrediction(month,dep,med);
             int len70= (int)(list.Count * 70 / 100);
 
             //shuffled
@@ -151,7 +151,7 @@ namespace server.Models
             double error = new SquareLoss(outputsTest).Loss(predicted);
             Console.WriteLine($"Mean squared error on testing set: {error}");
 
-            return predicted;
+            return (int)AVG(predicted);
         }
 
 
@@ -170,6 +170,16 @@ namespace server.Models
                 shuffledList[n] = value;
             }
             return shuffledList;
+        }
+
+        public static double AVG(double[] predicted) //avarage of predicted vector
+        {
+            double sum = 0.0;
+            foreach (double num in predicted)
+            {
+                sum += num;
+            }
+            return sum / predicted.Length;
         }
 
         //public static void minmax(List<Prediction> list, ref double minReq, ref double minOneMonth, ref double minTwoMonth, ref double minOneYear, ref double maxReq, ref double maxOneMonth, ref double maxTwoMonth, ref double maxOneYear) //מציאת minmax 

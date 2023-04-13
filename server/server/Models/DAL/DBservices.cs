@@ -3534,7 +3534,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read Predictions from the Predictions table
     //--------------------------------------------------------------------------------------------------
-    public List<Prediction> ReadPrediction()
+    public List<Prediction> ReadPrediction(int month, int dep, int med)
     {
 
         SqlConnection con;
