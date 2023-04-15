@@ -195,7 +195,7 @@ CREATE TABLE [PullMedOrders] (
 
 CREATE TABLE [Tokens] (
    	[userId] smallint REFERENCES [Users](userId) Primary key,
-	[token] varchar(30) 
+	[token] varchar(100) 
 )
 
 

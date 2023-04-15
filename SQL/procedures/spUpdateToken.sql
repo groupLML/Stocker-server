@@ -18,10 +18,10 @@ GO
 -- Create date: <25-02-2023>
 -- Description:	<Update Token >
 -- =============================================
-CREATE PROCEDURE spUpdateToken
+ALTER PROCEDURE spUpdateToken
 
 	@userId smallint,
-	@token varchar(30)
+	@token varchar(100)
 	
 AS
 BEGIN
