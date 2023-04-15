@@ -193,6 +193,11 @@ CREATE TABLE [PullMedOrders] (
 )
 
 
+CREATE TABLE [Tokens] (
+   	[userId] smallint REFERENCES [Users](userId) Primary key,
+	[token] varchar(30) 
+)
+
 
 Select * from [Departments]
 Select * from [Users]  
@@ -211,7 +216,7 @@ Select * from [PushOrders]
 Select * from [PullOrders]
 Select * from [PushMedOrders]
 Select * from [PullMedOrders]
-
+Select * from [Tokens]
 
 
 

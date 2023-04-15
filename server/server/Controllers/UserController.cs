@@ -60,13 +60,13 @@ namespace server.Controllers
         }
 
 
-        //// GET: api/<UserController>
-        //[HttpGet("/GetToken/userId/{userId}")]
-        //public string GetToken(int userId)
-        //{
-        //    User user = new User();
-        //    return user.ReadToken(userId);
-        //}
+        // GET: api/<UserController>
+        [HttpGet("/GetToken/depId/{depId}")]
+        public List<string> GetToken(int depId)
+        {
+            User user = new User();
+            return user.ReadToken(depId);
+        }
 
         // PUT api/<UserController>
         [HttpPut("/PutToken/userId/{userId}")]

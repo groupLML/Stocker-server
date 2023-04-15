@@ -93,11 +93,11 @@ namespace server.Models
 
 
         //**************** Token ****************//
-        //public string ReadToken(int userId)
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.ReadToken(userId);
-        //}
+        public List<string> ReadToken(int depId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadToken(depId);
+        }
 
         public int UpdateToken(int userId, string token)
         {
