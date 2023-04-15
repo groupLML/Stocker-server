@@ -59,6 +59,28 @@ namespace server.Controllers
                 return false;
         }
 
+
+        //// GET: api/<UserController>
+        //[HttpGet("/GetToken/userId/{userId}")]
+        //public string GetToken(int userId)
+        //{
+        //    User user = new User();
+        //    return user.ReadToken(userId);
+        //}
+
+        // PUT api/<UserController>
+        [HttpPut("/PutToken/userId/{userId}")]
+        public bool PutToken(int userId, [FromBody] string token)
+        {
+            User user = new User();
+            int numAffected= user.UpdateToken(userId, token);
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
+        }
+
+
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)

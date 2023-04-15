@@ -13,6 +13,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Collections;
 using System.Runtime.Intrinsics.Arm;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -1500,7 +1501,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertStockCommandSP("spInsertToStock", con, stock);    // create the command
+        cmd = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock);    // create the command
 
         try
         {
@@ -2805,9 +2806,10 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public bool UpdatePushOrder(PushOrder po)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        SqlCommand cmd3;
 
         try
         {
@@ -2819,20 +2821,49 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertPushOrderCommandSP("spUpdatePushOrder", con, po);
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            if (numEffected == 1)
-                return true;
-            else
-               return false;
+            using (cmd1 = CreateUpdateInsertPushOrderCommandSP("spUpdatePushOrder", con, po))
+            {
+                cmd1.Transaction = transaction;
+                cmd1.ExecuteNonQuery();
+            }
+            for (int i = 0; i < po.MedList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePushMedOrder", con, po.orderId, po.MedList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    cmd2.ExecuteNonQuery();
+                }
 
+                if (po.MedList[i].SupQty > 0)
+                {
+                    Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
+                   
+                    using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                    {
+                        cmd3.Transaction = transaction;
+                        cmd3.ExecuteNonQuery();
+                    }
+                }
+            }
+             // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
+            return true;
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה אחרת, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -3045,7 +3076,7 @@ public class DBservices
 
         try
         {
-            using (cmd1 = CreateInsertPullOrderCommandSP("spInsertPullOrder", con, po))
+            using (cmd1 = CreateUpdateInsertPullOrderCommandSP("spInsertPullOrder", con, po))
             {
                 cmd1.Transaction = transaction;
                 orderId = Convert.ToInt32(cmd1.ExecuteScalar());
@@ -3110,7 +3141,7 @@ public class DBservices
 
         try
         {
-            using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po))
+            using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po, 'N')) //N=Nurse P=Pharmacist
             {
                 cmd1.Transaction = transaction;
                 cmd1.ExecuteNonQuery();
@@ -3152,10 +3183,127 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a PullOrder in the PullOrders table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdatePullOrderPharmTaken(PullOrder po)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdatePullOrderCommandSP("spUpdatePullOrderPharmTaken", con, po, 'P'); //N=Nurse P=Pharmacist
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a PullOrder in the PullOrders table 
+    //--------------------------------------------------------------------------------------------------
+    public bool UpdatePullOrderPharmIssued(PullOrder po)
+    {
+        SqlConnection con;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        SqlCommand cmd3;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        SqlTransaction transaction = con.BeginTransaction();
+
+        try
+        {
+            using (cmd1 = CreateUpdateInsertPullOrderCommandSP("spUpdatePullOrderPharmIssued", con, po))
+            {
+                cmd1.Transaction = transaction;
+                cmd1.ExecuteNonQuery();
+            }
+            for (int i = 0; i < po.MedList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePullMedOrder", con, po.orderId, po.MedList[i]))
+                {
+                    cmd2.Transaction = transaction;
+                    cmd2.ExecuteNonQuery();
+                }
+
+                if (po.MedList[i].SupQty > 0)
+                {
+                    Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
+
+                    using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                    {
+                        cmd3.Transaction = transaction;
+                        cmd3.ExecuteNonQuery();
+                    }
+                }
+            }
+            // אם הכל הסתיים בהצלחה, נעשה commit
+            transaction.Commit();
+            return true;
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            // אם התרחשה כל שגיאה אחרת, נבצע rollback
+            transaction.Rollback();
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //---------------------------------------------------------------------------------
-    // Create the Insert SqlCommand
+    // Create the Insert/Update SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateInsertPullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
+    private SqlCommand CreateUpdateInsertPullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -3182,9 +3330,9 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
-    // Create the Update SqlCommand
+    // Create the UpdateNurse SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, PullOrder po)
+    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, PullOrder po, char kind) 
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -3198,7 +3346,11 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
         cmd.Parameters.AddWithValue("@pullId", po.OrderId);
-        cmd.Parameters.AddWithValue("@nUser", po.NUser);
+
+        if (kind == 'N') //N=Nurse P=Pharmacist
+            cmd.Parameters.AddWithValue("@nUser", po.NUser);
+        else
+            cmd.Parameters.AddWithValue("@pUser", po.PUser);
 
         return cmd;
 
@@ -3590,4 +3742,69 @@ public class DBservices
     }
 
 
+    /*****************Token*****************/
+    //--------------------------------------------------------------------------------------------------
+    // This method Update Token from the Tokens table
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateToken(int userId, string token)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertTokenCommandSP("spUpdateToken", con, userId, token);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertTokenCommandSP(String spName, SqlConnection con, int userId, string token)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@userId", userId);
+        cmd.Parameters.AddWithValue("@token", token);
+
+        return cmd;
+
+    }
 }

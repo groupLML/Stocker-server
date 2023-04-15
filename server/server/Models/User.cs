@@ -1,4 +1,6 @@
-﻿namespace server.Models
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace server.Models
 {
     public class User
     {
@@ -87,6 +89,20 @@
                 }
             }
             return userEmpty;
+        }
+
+
+        //**************** Token ****************//
+        //public string ReadToken(int userId)
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.ReadToken(userId);
+        //}
+
+        public int UpdateToken(int userId, string token)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateToken(userId, token);
         }
     }
 }
