@@ -44,13 +44,18 @@ namespace server.Controllers
 
         }
 
-        // PUT api/<PushOrderController>/5
-        [HttpPut("{pushId}")]
-        public bool Put(int pushId, [FromBody] PushOrder po)
+        // PUT api/<PullOrderController>/5
+        [HttpPut("UpdatePharmIssued/pushId/{pushId}")]
+        public bool PutPharmIssued(int pushId, [FromBody] JsonElement pushOrder) // Status = I
         {
+            string json = pushOrder.GetProperty("pushOrder").ToString();
+            PushOrder po = JsonConvert.DeserializeObject<PushOrder>(json);
+            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pushOrder.GetProperty("medList").GetRawText());
             po.OrderId = pushId;
-            return po.Update();
+
+            return po.UpdatePharmIssued();
         }
+
 
         // DELETE api/<PushOrderController>/5
         [HttpDelete("orderId/{orderId}/type/{type}")]

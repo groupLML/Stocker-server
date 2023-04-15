@@ -15,28 +15,24 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <28-02-2023>
--- Description:	<Update PushOrder>
+-- Create date: <27/02/2023>
+-- Description:	<Insert Stock>
 -- =============================================
-ALTER PROCEDURE spUpdatePushOrder
+CREATE PROCEDURE spInsertIntoStock
 
-	@pushId int,
-	@pUser smallint,
+	@stcId smallint,
+	@medId smallint,
 	@depId smallint,
-	@reportNum varchar (10),
-	@pushStatus char(1),
-	@pushDate datetime,
-	@lastUpdate datetime
-
+	@stcQty real,
+	@entryDate datetime
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	-- SET NOCOUNT ON;
+	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE [PushOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
-	 [pushStatus]='I',[lastUpdate]=GETDATE()
-	 where pushId=@pushId
+	Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@stcQty,@entryDate)
 END
 GO
+

@@ -18,14 +18,15 @@ GO
 -- Create date: <28-02-2023>
 -- Description:	<Update PushOrder>
 -- =============================================
-ALTER PROCEDURE spUpdatePushOrder
+CREATE PROCEDURE spUpdatePullOrderPharmIssued
 
-	@pushId int,
+	@pullId int,
 	@pUser smallint,
+	@nUser smallint,
 	@depId smallint,
 	@reportNum varchar (10),
-	@pushStatus char(1),
-	@pushDate datetime,
+	@pullStatus char(1),
+	@pullDate datetime,
 	@lastUpdate datetime
 
 AS
@@ -35,8 +36,8 @@ BEGIN
 	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE [PushOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
-	 [pushStatus]='I',[lastUpdate]=GETDATE()
-	 where pushId=@pushId
+	 UPDATE [PullOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
+	 [pullStatus]='I',[lastUpdate]=GETDATE()
+	 where pullId=@pullId
 END
 GO

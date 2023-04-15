@@ -59,6 +59,34 @@ namespace server.Controllers
             return po.UpdateNurse();
         }
 
+        // PUT api/<PullOrderController>/5
+        [HttpPut("UpdatePharmIssued/pullId/{pullId}")]
+        public bool PutPharmIssued(int pullId, [FromBody] JsonElement pullOrder) // Status = I
+        {
+            string json = pullOrder.GetProperty("pullOrder").ToString();
+            PullOrder po = JsonConvert.DeserializeObject<PullOrder>(json);
+            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pullOrder.GetProperty("medList").GetRawText());
+            po.OrderId = pullId;
+
+            return po.UpdatePharmIssued();
+        }
+
+        // PUT api/<PullOrderController>/5
+        [HttpPut("UpdatePharmTaken/pullId/{pullId}/pUser/{pUser}")] 
+        public bool PutPharmTaken(int pullId, int pUser) // Status = T
+        {
+            PullOrder po = new PullOrder();
+            po.OrderId = pullId;
+            po.PUser = pUser;
+            int numAffected= po.UpdatePharmTaken();
+
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
+        }
+
+
         // DELETE api/<PullOrderController>/5
         [HttpDelete("orderId/{orderId}/type/{type}")]
         public IActionResult Delete(int orderId, int type)

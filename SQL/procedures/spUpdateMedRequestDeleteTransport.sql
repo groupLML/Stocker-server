@@ -29,7 +29,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE MedRequests set reqStatus='W'
+	 UPDATE MedRequests set reqStatus='W', aUser=0, aDep=''
 	 where reqId = @reqId and reqStatus='A'
 
 

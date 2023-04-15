@@ -30,6 +30,18 @@ namespace server.Models
             return dbs.UpdatePullOrderNurse(this);
         }
 
+        public bool UpdatePharmIssued()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdatePullOrderPharmIssued(this);
+        }
+
+        public int UpdatePharmTaken()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdatePullOrderPharmTaken(this);
+        }
+
         public List<PullOrder> Read()
         {
             DBservices dbs = new DBservices();
