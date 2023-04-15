@@ -69,6 +69,10 @@ namespace server.Controllers
             po.OrderId = pullId;
 
             return po.UpdatePharmIssued();
+
+        //   { "pullOrder": {"nUser": 4,"orderId": 92,"depId": 3, "pUser": 5,  "reportNum": "11111", "status": "T", "orderDate": "2023-04-15T12:15:32.323", "lastUpdate": "2023-04-15T14:03:00.633", "medList": []
+        //   }, "medList": [ { "medId": 1, "poQty": 3, "supQty": 1,  "mazNum": "M1191300"} ] }
+
         }
 
         // PUT api/<PullOrderController>/5
@@ -76,9 +80,7 @@ namespace server.Controllers
         public bool PutPharmTaken(int pullId, int pUser) // Status = T
         {
             PullOrder po = new PullOrder();
-            po.OrderId = pullId;
-            po.PUser = pUser;
-            int numAffected= po.UpdatePharmTaken();
+            int numAffected= po.UpdatePharmTaken(pullId, pUser);
 
             if (numAffected == 1)
                 return true;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathNet.Numerics;
+using System;
 
 namespace server.Models
 {
@@ -36,10 +37,10 @@ namespace server.Models
             return dbs.UpdatePullOrderPharmIssued(this);
         }
 
-        public int UpdatePharmTaken()
+        public int UpdatePharmTaken(int pullId, int pUser)
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdatePullOrderPharmTaken(this);
+            return dbs.UpdatePullOrderPharmTaken(pullId, pUser);
         }
 
         public List<PullOrder> Read()

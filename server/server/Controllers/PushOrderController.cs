@@ -54,6 +54,9 @@ namespace server.Controllers
             po.OrderId = pushId;
 
             return po.UpdatePharmIssued();
+
+            //   { "pushOrder": {"orderId": 92,"depId": 3, "pUser": 5,  "reportNum": "11111", "status": "T", "orderDate": "2023-04-15T12:15:32.323", "lastUpdate": "2023-04-15T14:03:00.633", "medList": []
+            //   }, "medList": [ { "medId": 1, "poQty": 3, "supQty": 1,  "mazNum": "M1191300"} ] }
         }
 
 

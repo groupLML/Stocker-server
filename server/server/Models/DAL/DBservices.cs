@@ -2327,6 +2327,7 @@ public class DBservices
                 listObj.Add(new
                 {
                     reqId = Convert.ToInt32(dataReader["reqId"]),
+                    cDepId = Convert.ToInt32(dataReader["cDepId"]),
                     depName = dataReader["depName"].ToString(),
                     cNurseName = dataReader["cNurseName"].ToString(),
                     reqDate = Convert.ToDateTime(dataReader["reqDate"]),
@@ -2558,6 +2559,7 @@ public class DBservices
       
         return cmd;
     }
+
 
 
     /*****************Returns*****************/
@@ -3141,7 +3143,7 @@ public class DBservices
 
         try
         {
-            using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po, 'N')) //N=Nurse P=Pharmacist
+            using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po.OrderId, po.NUser, 'N')) //N=Nurse P=Pharmacist
             {
                 cmd1.Transaction = transaction;
                 cmd1.ExecuteNonQuery();
@@ -3186,7 +3188,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a PullOrder in the PullOrders table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdatePullOrderPharmTaken(PullOrder po)
+    public int UpdatePullOrderPharmTaken(int pullId, int pUser)
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -3201,7 +3203,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdatePullOrderCommandSP("spUpdatePullOrderPharmTaken", con, po, 'P'); //N=Nurse P=Pharmacist
+        cmd = CreateUpdatePullOrderCommandSP("spUpdatePullOrderPharmTaken", con, pullId, pUser, 'P'); //N=Nurse P=Pharmacist
 
         try
         {
@@ -3332,7 +3334,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the UpdateNurse SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, PullOrder po, char kind) 
+    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, int pullId, int userId, char kind) 
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -3345,12 +3347,12 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@pullId", po.OrderId);
+        cmd.Parameters.AddWithValue("@pullId", pullId);
 
         if (kind == 'N') //N=Nurse P=Pharmacist
-            cmd.Parameters.AddWithValue("@nUser", po.NUser);
+            cmd.Parameters.AddWithValue("@nUser", userId);
         else
-            cmd.Parameters.AddWithValue("@pUser", po.PUser);
+            cmd.Parameters.AddWithValue("@pUser", userId);
 
         return cmd;
 
