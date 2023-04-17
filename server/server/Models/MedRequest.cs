@@ -99,9 +99,9 @@ namespace server.Models
                     return dbs.UpdateMedRequestWaiting(this, DepAsked);
             }
             if (counter == 1)
-                return 0;
-            else
                 return -1;
+            else
+                return 0;
         }   
 
         public int UpdateApprovedReq(int reqId, int aUser, int aDep) //עדכון סטטוס לבקשה מאושרת 
