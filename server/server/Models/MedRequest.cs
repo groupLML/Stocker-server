@@ -73,7 +73,7 @@ namespace server.Models
             return dbs.InsertMedRequest(medReq, DepAsked);
         }
 
-        public int UpdateWaitingReq(string[] depTypes)
+        public int UpdateWaitingReq(string[] depTypes) //עדכון בקשה ע"י האחות המבקשת כל עוד היא בסטטוס
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
@@ -95,21 +95,21 @@ namespace server.Models
                     return dbs.UpdateMedRequestWaiting(this, DepAsked);
             }
             return -1;
-        }
+        }  
 
-        public int UpdateApprovedReq(int reqId, int aUser, int aDep)
+        public int UpdateApprovedReq(int reqId, int aUser, int aDep) //עדכון סטטוס לבקשה מאושרת 
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateMedRequestApproved(reqId, aUser, aDep);
-        }
+        } 
 
-        public int UpdateTransportReq(int reqId, char kind)
+        public int UpdateTransportReq(int reqId, char kind) //עדכון סטטוס תרופה מועברת או ביטול העברת תרופה
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateRequestTransport(reqId, kind);
-        }
+        } 
 
-        public int Delete(int reqId)
+        public int Delete(int reqId) //מחיקת בקשה לתרופה
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();
@@ -120,7 +120,7 @@ namespace server.Models
                     return dbs.DeleteMedRequest(reqId);
             }
             return 0;
-        }
+        } 
 
         public List<MedRequest> Read()
         {
@@ -128,7 +128,7 @@ namespace server.Models
             return dbs.ReadMedRequests();
         }
 
-        public Object ReadRequestsMine(int depId) //טבלה בקשות ממחלקות עבור המחלקה של אותה אחות מחוברת
+        public Object ReadRequestsMine(int depId) //טבלה בקשות עבור המחלקה של אותה אחות מחוברת ממחלקות אחרות
         {
             DBservices dbs = new DBservices();
             return dbs.ReadMedRequestsNurseMine(depId);
@@ -140,7 +140,7 @@ namespace server.Models
             return dbs.ReadDepRequestsNurseOthers(depId);
         }
 
-        public List<string> ReadRequestDepTypes(int depId, int reqId) //קריאת סוגי המחלקות של אותה בקשה
+        public List<string> ReadRequestDepTypes(int depId, int reqId) //קריאת סוגי המחלקות שביקשו מהם עבור אותה בקשה
         {
             DBservices dbs = new DBservices();
             return dbs.ReadReqDepTypes(depId, reqId);

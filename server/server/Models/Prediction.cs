@@ -47,22 +47,24 @@ namespace server.Models
         {
             //Create a dataset
             DBservices dbs = new DBservices();
-            List<Prediction> list = dbs.ReadPrediction(month,dep,med);
-            int len70= (int)(list.Count * 70 / 100);
+            List<Prediction> list = dbs.ReadPrediction(month, dep, med);
+
+            int len70 = (int)(list.Count * 70 / 100);//הגדרת כמות המייצגת את ה-70% מהדאטה כולו
 
             //shuffled
             list = Shuffle(list);
 
             //Normalization
-            double minReq = 1000;
-            double minOneMonth = 1000;
-            double minTwoMonth = 1000;
-            double minOneYear = 1000;
+            double minReq = 10000;
+            double minOneMonth = 10000;
+            double minTwoMonth = 10000;
+            double minOneYear = 10000;
             double maxReq = 0;
             double maxOneMonth = 0;
             double maxTwoMonth = 0;
             double maxOneYear = 0;
 
+            //מציאת מינימום מקסימום עבור כל פיצ'ר
             foreach (Prediction p in list)
             {
                 if (p.UsageOneMonthAgo < minOneMonth) minOneMonth = p.UsageOneMonthAgo;
@@ -74,8 +76,6 @@ namespace server.Models
                 if (p.TotalReqQty < minReq) minReq = p.TotalReqQty;
                 if (p.TotalReqQty > maxReq) maxReq = p.TotalReqQty;
             }
-
-            ////minmax(list, ref minReq, ref minOneMonth, ref  minTwoMonth, ref  minOneYear, ref  maxReq, ref maxOneMonth, ref maxTwoMonth, ref maxOneYear);
 
             //Split data into training and testing sets
             object[][] instancesTrain = new object[len70][];
@@ -114,7 +114,7 @@ namespace server.Models
             }
 
 
-            //use a codification filter to transform the symbolic variables into one-hot vectors
+            //use a codification filter to transform the symbolic variables into one-hot vectors (encoding)
             var codebook = new Codification<object>()
             {
                 { "usageOneMonthAgo", CodificationVariable.Continuous },
@@ -155,7 +155,7 @@ namespace server.Models
         }
 
 
-        public static List<Prediction> Shuffle<Prediction>(List<Prediction> list) //עירבוב איברים עבור רנדומליות 
+        public static List<Prediction> Shuffle<Prediction>(List<Prediction> list) //עירבוב רשומות עבור רנדומליות 
         {
             Random random = new Random();
             List<Prediction> shuffledList = new List<Prediction>(list);
@@ -182,41 +182,6 @@ namespace server.Models
             return sum / predicted.Length;
         }
 
-        //public static void minmax(List<Prediction> list, ref double minReq, ref double minOneMonth, ref double minTwoMonth, ref double minOneYear, ref double maxReq, ref double maxOneMonth, ref double maxTwoMonth, ref double maxOneYear) //מציאת minmax 
-        //{
-        //    //min-max normalization
-        //    // Find the minimum and maximum values of totalReqQty
-        //    double minTotalReqQty = 1000;
-        //    double minUsageOneMonthAgo = 1000; 
-        //    double minUsageTwoMonthAgo = 10000; 
-        //    double minUsageOneYearAgo = 10000; 
-        //    double maxTotalReqQty = 0;
-        //    double maxUsageOneMonthAgo = 0;
-        //    double maxUsageTwoMonthAgo = 0;
-        //    double maxUsageOneYearAgo = 0;
 
-
-        //    foreach (Prediction p in list)
-        //    {
-        //        if (p.UsageOneMonthAgo < minUsageOneMonthAgo) minUsageOneMonthAgo = p.UsageOneMonthAgo;
-        //        if (p.UsageOneMonthAgo > maxUsageOneMonthAgo) maxUsageOneMonthAgo = p.UsageOneMonthAgo;
-        //        if (p.UsageTwoMonthAgo < minUsageTwoMonthAgo) minUsageTwoMonthAgo = p.UsageTwoMonthAgo;
-        //        if (p.UsageTwoMonthAgo > maxUsageTwoMonthAgo) maxUsageTwoMonthAgo = p.UsageTwoMonthAgo;
-        //        if (p.UsageOneYearAgo < minUsageOneYearAgo) minUsageOneYearAgo = p.UsageOneYearAgo;
-        //        if (p.UsageOneYearAgo > maxUsageOneYearAgo) maxUsageOneYearAgo = p.UsageOneYearAgo;
-        //        if (p.TotalReqQty < minTotalReqQty) minTotalReqQty = p.TotalReqQty;
-        //        if (p.TotalReqQty > maxTotalReqQty) maxTotalReqQty = p.TotalReqQty;
-        //    }
-
-
-        //    minReq = minTotalReqQty;
-        //    minOneMonth = minUsageOneMonthAgo;
-        //    minTwoMonth = minUsageTwoMonthAgo;
-        //    minOneYear = minUsageOneYearAgo;
-        //    maxReq = maxTotalReqQty;
-        //    maxOneMonth = maxUsageOneMonthAgo;
-        //    maxTwoMonth = maxUsageTwoMonthAgo;
-        //    maxOneYear = maxUsageOneYearAgo;
-        //}
     }
 }
