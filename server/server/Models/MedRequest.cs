@@ -79,6 +79,7 @@ namespace server.Models
             List<MedRequest> ReqList = dbs.ReadMedRequests();
             List<Department> DepList = dbs.ReadDeps();
             List<int> DepAsked = new List<int>();
+            int counter = 0;
 
             foreach (Department dep in DepList) //יצירת רשימת מספרי מחלקות שאליהן נשלחת הבקשה
             {
@@ -91,11 +92,17 @@ namespace server.Models
 
             foreach (MedRequest mr in ReqList)
             {
+                if (this.ReqId == mr.ReqId) //בדיקה האם מספר הבקשה קיים ברשימת הבקשות
+                    counter++;
+
                 if (this.ReqId == mr.ReqId && mr.ReqStatus == 'W') //עדכון בקשה יתבצע רק במידה והבקשה במצב "המתנה"
                     return dbs.UpdateMedRequestWaiting(this, DepAsked);
             }
-            return -1;
-        }  
+            if (counter == 1)
+                return 0;
+            else
+                return -1;
+        }   
 
         public int UpdateApprovedReq(int reqId, int aUser, int aDep) //עדכון סטטוס לבקשה מאושרת 
         {
