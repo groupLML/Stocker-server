@@ -52,7 +52,7 @@ namespace server.Models
             return dbs.UpdateStock(this);
         }
 
-        public Object Read() //מחסני המחלקות עבור מנהל בית מרקחת
+        public Object Read() //כל מחסני המחלקות עבור מנהל בית מרקחת
         {
             DBservices dbs = new DBservices();
             return dbs.ReadStocks();

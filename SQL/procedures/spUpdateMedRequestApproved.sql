@@ -44,7 +44,7 @@ BEGIN
                                             where reqId = @reqId));
 
 	 if(@sQty >= @rQty)
-         UPDATE MedRequests set aUser=@aUser, aDep=@aDep,reqStatus='A', reqDate=getdate() where reqId = @reqId 
+         UPDATE MedRequests set aUser=@aUser, aDep=@aDep,reqStatus='A' where reqId = @reqId 
      END
 
 END

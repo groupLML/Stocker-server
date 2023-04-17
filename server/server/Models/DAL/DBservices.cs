@@ -665,563 +665,6 @@ public class DBservices
 
 
 
-    /*****************Norms*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method inserts a Norm to the Norms table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertNorm(Norm norm)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertNormCommandSP("spInsertNorm", con, norm);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a Norm in the Norms table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateNorm(Norm norm)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertNormCommandSP(String spName, SqlConnection con, Norm norm)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@normId", norm.NormId);
-        cmd.Parameters.AddWithValue("@depId", norm.DepId);
-        cmd.Parameters.AddWithValue("@lastUpdate", norm.LastUpdate);
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read Norms from the Norms table
-    //--------------------------------------------------------------------------------------------------
-    public List<Norm> ReadNorms()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadNorms", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<Norm> list = new List<Norm>();
-
-            while (dataReader.Read())
-            {
-                Norm norm = new Norm();
-                norm.NormId = Convert.ToInt32(dataReader["NormId"]);
-                norm.DepId = Convert.ToInt32(dataReader["DepId"]);
-                norm.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                list.Add(norm);
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
-    /*****************MedNorms*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method inserts a MedNorm to the MedNorms table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMedNorm(MedNorm mn)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedNormCommandSP("spInsertMedNorm", con, mn);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a MedNorm in the MedNorms table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMedNorm(MedNorm mn)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedNormCommandSP("spUpdateMedNorm", con, mn);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedNormCommandSP(String spName, SqlConnection con, MedNorm mn)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@normId", mn.NormId);
-        cmd.Parameters.AddWithValue("@medId", mn.MedId);
-        cmd.Parameters.AddWithValue("@normQty", mn.NormQty);
-        cmd.Parameters.AddWithValue("@mazNum", mn.MazNum);
-        cmd.Parameters.AddWithValue("@inNorm", mn.InNorm);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read MedNorms from the MedNorms table
-    //--------------------------------------------------------------------------------------------------
-    public List<MedNorm> ReadMedNorms()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMedNorms", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<MedNorm> list = new List<MedNorm>();
-
-            while (dataReader.Read())
-            {
-                MedNorm mn = new MedNorm();
-                mn.NormId = Convert.ToInt32(dataReader["NormId"]);
-                mn.MedId = Convert.ToInt32(dataReader["MedId"]);
-                mn.NormQty = (float)Convert.ToSingle(dataReader["NormQty"]);
-                mn.MazNum = dataReader["MazNum"].ToString();
-                mn.InNorm = Convert.ToBoolean(dataReader["InNorm"]);
-                list.Add(mn);
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read DepMedNorms from the MedNorms table by depId
-    //--------------------------------------------------------------------------------------------------
-    public Object ReadDepMedNorms(int depId)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadDepObjectCommandSP("spReadDepMedNorms", con, depId);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<Object> listObj = new List<Object>();
-
-            while (dataReader.Read())
-            {
-
-                listObj.Add(new
-                {
-                    medId = Convert.ToInt32(dataReader["medId"]),
-                    genName = dataReader["genName"].ToString(),
-                    comName = dataReader["comName"].ToString(),
-                    normQty = Convert.ToInt32(dataReader["normQty"])
-
-                });
-            }
-            return listObj;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
-    /*****************NormRequests*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method inserts a NormRequest to the NormRequests table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertNormRequest(NormRequest nr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertNormRequestCommandSP("spInsertNormRequest", con, nr);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a NormRequest in the NormRequests table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateNormRequest(NormRequest nr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequest", con, nr);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertNormRequestCommandSP(String spName, SqlConnection con, NormRequest nr)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@normId", nr.NormId);
-        cmd.Parameters.AddWithValue("@medId", nr.MedId);
-        cmd.Parameters.AddWithValue("@ncrDate", nr.NcrDate);
-        cmd.Parameters.AddWithValue("@userId", nr.UserId);
-        cmd.Parameters.AddWithValue("@ncrQty", nr.NcrQty);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read NormRequests from the NormRequests table
-    //--------------------------------------------------------------------------------------------------
-    public List<NormRequest> ReadNormRequests()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadNormRequests", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<NormRequest> list = new List<NormRequest>();
-
-            while (dataReader.Read())
-            {
-                NormRequest nr = new NormRequest();
-                nr.NormId = Convert.ToInt32(dataReader["NormId"]);
-                nr.MedId = Convert.ToInt32(dataReader["MedId"]);
-                nr.NcrDate = Convert.ToDateTime(dataReader["NcrDate"]);
-                nr.UserId = Convert.ToInt32(dataReader["UserId"]);
-                nr.NcrQty = (float)Convert.ToSingle(dataReader["NcrQty"]);
-                list.Add(nr);
-
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
 
     /*****************Usages*****************/
 
@@ -1756,174 +1199,6 @@ public class DBservices
 
 
 
-    /*****************Messages*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a Message to the Messages table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMessage(Message msg)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMessageCommandSP("spInsertMessage", con,msg);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a Message in the Messages table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMessage(Message msg)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMessageCommandSP("spUpdateMessage", con, msg);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMessageCommandSP(String spName, SqlConnection con, Message msg)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@msgId", msg.MsgId);
-        cmd.Parameters.AddWithValue("@userId", msg.UserId);
-        cmd.Parameters.AddWithValue("@msg", msg.Msg);
-        cmd.Parameters.AddWithValue("@msgDate", msg.MsgDate);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read Messages from the Messages table
-    //--------------------------------------------------------------------------------------------------
-    public Object ReadMessages()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMessages", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<object> listObj = new List<object>();
-
-            while (dataReader.Read())
-            {
-                listObj.Add(new
-                {
-                    msgId = Convert.ToInt32(dataReader["MsgId"]),
-                    pharmacistName = dataReader["pharmacistName"].ToString(),
-                    msg = dataReader["msg"].ToString(),
-                    msgDate = Convert.ToDateTime(dataReader["msgDate"])
-            });
-    
-            }
-            return listObj;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-
-
     /*****************MedRequests*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -2092,6 +1367,131 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedRequest in the MedRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedRequestApproved(int reqId, int aUser, int aDep)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        cmd = CreateUpdateMedRequestCommandSP("spUpdateMedRequestApproved", con, reqId, aUser, aDep);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update Approved Transport MedRequest in the MedRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateRequestTransport(int reqId, char kind)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        if (kind == 'A') //A meanes the transport was approved
+            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestApprovedTransport", con, reqId);
+        else //C meanes the transport was cancelled
+            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestDeleteTransport", con, reqId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // This method Delete MewRequest by reqId
+    //--------------------------------------------------------------------
+    public int DeleteMedRequest(int reqId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateDeleteUpdateMedRequestCommand("spDeleteMedRequests", con, reqId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
@@ -2146,46 +1546,6 @@ public class DBservices
 
     }
 
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a MedRequest in the MedRequests table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMedRequestApproved(int reqId, int aUser, int aDep)
-    {
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-        cmd = CreateUpdateMedRequestCommandSP("spUpdateMedRequestApproved", con, reqId, aUser, aDep);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
     //---------------------------------------------------------------------------------
     // Create the Update SqlCommand
     //---------------------------------------------------------------------------------
@@ -2211,48 +1571,27 @@ public class DBservices
 
     }
 
-    //--------------------------------------------------------------------------------------------------
-    // This method Update Approved Transport MedRequest in the MedRequests table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateRequestTransport(int reqId, char kind)
+    //--------------------------------------------------------------------
+    // Create the Delete or Uupdate MedRequest SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteUpdateMedRequestCommand(String spName, SqlConnection con, int reqId)
     {
-        SqlConnection con;
-        SqlCommand cmd;
 
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-        if (kind == 'A') //A meanes the transport was approved
-            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestApprovedTransport", con, reqId);
-        else //C meanes the transport was cancelled
-            cmd = CreateDeleteUpdateMedRequestCommand("spUpdateMedRequestDeleteTransport", con, reqId);
+        SqlCommand cmd = new SqlCommand(); // create the command object
 
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
+        cmd.Connection = con;              // assign the connection to the command object
 
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+
+        return cmd;
     }
+
 
     //--------------------------------------------------------------------------------------------------
     // This method Read MedRequests from the MedRequests table
@@ -2519,68 +1858,6 @@ public class DBservices
         return cmd;
     }
 
-    //--------------------------------------------------------------------
-    // This method Delete MewRequest by reqId
-    //--------------------------------------------------------------------
-    public int DeleteMedRequest(int reqId)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateDeleteUpdateMedRequestCommand("spDeleteMedRequests", con, reqId);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------
-    // Create the Delete or Uupdate MedRequest SqlCommand
-    //--------------------------------------------------------------------
-    private SqlCommand CreateDeleteUpdateMedRequestCommand(String spName, SqlConnection con, int reqId)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
-
-        cmd.Parameters.AddWithValue("@reqId", reqId);
-
-        return cmd;
-    }
 
     //--------------------------------------------------------------------------------------------------
     // This method Update MedRequest do decline status in the MedRequests table 
@@ -2601,11 +1878,11 @@ public class DBservices
         }
 
         cmd = CreateUpdateRequestsDeclineCommand("spUpdateMedRequestsToDecline", con);
-      
+
         try
         {
             int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            Console.WriteLine("Change Time: " + DateTime.Now+ "Num Effected: "+ numEffected);
+            Console.WriteLine("Change Time: " + DateTime.Now + "Num Effected: " + numEffected);
         }
         catch (Exception ex)
         {
@@ -2639,180 +1916,6 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
         return cmd;
-    }
-
-   
-
-
-
-    /*****************Returns*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a MedReturn to the MedReturns table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMedReturn(Return mr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedReturnCommandSP("spInsertMedReturn", con, mr);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a MedReturn in the MedReturns table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMedReturn(Return mr)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMedReturnCommandSP("spUpdateMedReturn", con, mr);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, Return mr)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@medId", mr.MedId);
-        cmd.Parameters.AddWithValue("@depId", mr.DepId);
-        cmd.Parameters.AddWithValue("@rtnDate", mr.RtnDate);
-        cmd.Parameters.AddWithValue("@userId", mr.UserId);
-        cmd.Parameters.AddWithValue("@rtnQty", mr.RtnQty);
-        cmd.Parameters.AddWithValue("@reason", mr.Reason);
-
-        return cmd;
-
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read MedReturns from the MedReturns table
-    //--------------------------------------------------------------------------------------------------
-    public List<Return> ReadMedReturns()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMedReturns", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<Return> list = new List<Return>();
-
-            while (dataReader.Read())
-            {
-                Return mr = new Return();
-                mr.MedId = Convert.ToInt32(dataReader["MedId"]);
-                mr.DepId = Convert.ToInt32(dataReader["DepId"]);
-                mr.RtnDate = Convert.ToDateTime(dataReader["RtnDate"]);
-                mr.UserId = Convert.ToInt32(dataReader["UserId"]);
-                mr.RtnQty = (float)Convert.ToSingle(dataReader["RtnQty"]);
-                mr.Reason = dataReader["Reason"].ToString(); ;
-                list.Add(mr);
-
-            }
-            return list;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
     }
 
 
@@ -2862,7 +1965,7 @@ public class DBservices
 
             if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
             {
-                transaction.Commit(); //commit לטרנזקציה
+                transaction.Commit(); 
                 return true;
             }
             else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
@@ -3284,7 +2387,6 @@ public class DBservices
                 {
                     for (int i = 0; i < po.MedList.Count; i++)
                     {
-                        numEffected = 0;
                         using (cmd3 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, po.OrderId, po.MedList[i]))
                         {
                             cmd3.Transaction = transaction;
@@ -3570,17 +2672,17 @@ public class DBservices
 
                 if (po.OrderId == lastOrderId) //בדיקה האם מדובר באותה הזמנה
                 {
-                    if (dataReader["MO.PullId"] != DBNull.Value)
+                    if (dataReader["MO.PullId"] != DBNull.Value) //נכניס תרופה להזמנה כל עוד פרטי התרופה לא null
                     {
                         MedOrder mo = new MedOrder();
                         mo.MedId = Convert.ToInt32(dataReader["MedId"]);
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
                         mo.MazNum = (dataReader["MazNum"]).ToString();
-                        list[list.Count-1].MedList.Add(mo);
+                        list[list.Count-1].MedList.Add(mo); //תרופה נכנסת לאותה הזמנה
                     }
                 }
-                else
+                else //הכנסת תרופה בתוך הזמנה חדשה 
                 {
                     if (dataReader["MO.PullId"] != DBNull.Value)
                     {
@@ -3589,10 +2691,10 @@ public class DBservices
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
                         mo.MazNum = (dataReader["MazNum"]).ToString();
-                        po.MedList.Add(mo);
+                        po.MedList.Add(mo); //תרופה נכנסת להזמנה חדשה
                     }
-                    list.Add(po);
-                    lastOrderId = po.OrderId;
+                    list.Add(po); //הכנסת הזמנה חדשה לרשימת הזמנות
+                    lastOrderId = po.OrderId; //קביעת מספר ההזמנה האחרון שנכנס לרשימת ההזמנות
                 }
             }
             return list;
@@ -3853,8 +2955,7 @@ public class DBservices
 
 
 
-
-    /*****************Prediction*****************/
+    /***************** Prediction *****************/
     //--------------------------------------------------------------------------------------------------
     // This method Read Predictions from the Predictions table
     //--------------------------------------------------------------------------------------------------
@@ -3915,7 +3016,7 @@ public class DBservices
 
 
 
-    /*****************Token*****************/
+    /***************** Token React *****************/
     //--------------------------------------------------------------------------------------------------
     // This method Update Token from the Tokens table
     //--------------------------------------------------------------------------------------------------
@@ -4045,5 +3146,747 @@ public class DBservices
 
         return cmd;
     }
+
+
+
+
+
+    /*********************************************** תשתית בלבד - בבקשה לא לבדוק ***********************************************/
+
+
+
+    /*****************Returns*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method insert a MedReturn to the MedReturns table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMedReturn(Return mr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedReturnCommandSP("spInsertMedReturn", con, mr);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a MedReturn in the MedReturns table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMedReturn(Return mr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMedReturnCommandSP("spUpdateMedReturn", con, mr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, Return mr)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@medId", mr.MedId);
+        cmd.Parameters.AddWithValue("@depId", mr.DepId);
+        cmd.Parameters.AddWithValue("@rtnDate", mr.RtnDate);
+        cmd.Parameters.AddWithValue("@userId", mr.UserId);
+        cmd.Parameters.AddWithValue("@rtnQty", mr.RtnQty);
+        cmd.Parameters.AddWithValue("@reason", mr.Reason);
+
+        return cmd;
+
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read MedReturns from the MedReturns table
+    //--------------------------------------------------------------------------------------------------
+    public List<Return> ReadMedReturns()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedReturns", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Return> list = new List<Return>();
+
+            while (dataReader.Read())
+            {
+                Return mr = new Return();
+                mr.MedId = Convert.ToInt32(dataReader["MedId"]);
+                mr.DepId = Convert.ToInt32(dataReader["DepId"]);
+                mr.RtnDate = Convert.ToDateTime(dataReader["RtnDate"]);
+                mr.UserId = Convert.ToInt32(dataReader["UserId"]);
+                mr.RtnQty = (float)Convert.ToSingle(dataReader["RtnQty"]);
+                mr.Reason = dataReader["Reason"].ToString(); ;
+                list.Add(mr);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
+
+
+    /*****************Norms*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method inserts a Norm to the Norms table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertNorm(Norm norm)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertNormCommandSP("spInsertNorm", con, norm);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a Norm in the Norms table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateNorm(Norm norm)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertNormCommandSP(String spName, SqlConnection con, Norm norm)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@normId", norm.NormId);
+        cmd.Parameters.AddWithValue("@depId", norm.DepId);
+        cmd.Parameters.AddWithValue("@lastUpdate", norm.LastUpdate);
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Norms from the Norms table
+    //--------------------------------------------------------------------------------------------------
+    public List<Norm> ReadNorms()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadNorms", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Norm> list = new List<Norm>();
+
+            while (dataReader.Read())
+            {
+                Norm norm = new Norm();
+                norm.NormId = Convert.ToInt32(dataReader["NormId"]);
+                norm.DepId = Convert.ToInt32(dataReader["DepId"]);
+                norm.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
+                list.Add(norm);
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read DepMedNorms from the MedNorms table by depId
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadDepMedsNorm(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadDepMedNorms", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+
+                listObj.Add(new
+                {
+                    medId = Convert.ToInt32(dataReader["medId"]),
+                    genName = dataReader["genName"].ToString(),
+                    comName = dataReader["comName"].ToString(),
+                    normQty = Convert.ToInt32(dataReader["normQty"])
+
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
+ 
+
+
+    /*****************NormRequests*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method inserts a NormRequest to the NormRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertNormRequest(NormRequest nr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertNormRequestCommandSP("spInsertNormRequest", con, nr);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a NormRequest in the NormRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateNormRequest(NormRequest nr)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequest", con, nr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertNormRequestCommandSP(String spName, SqlConnection con, NormRequest nr)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@normId", nr.NormId);
+        cmd.Parameters.AddWithValue("@medId", nr.MedId);
+        cmd.Parameters.AddWithValue("@ncrDate", nr.NcrDate);
+        cmd.Parameters.AddWithValue("@userId", nr.UserId);
+        cmd.Parameters.AddWithValue("@ncrQty", nr.NcrQty);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read NormRequests from the NormRequests table
+    //--------------------------------------------------------------------------------------------------
+    public List<NormRequest> ReadNormRequests()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadNormRequests", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<NormRequest> list = new List<NormRequest>();
+
+            while (dataReader.Read())
+            {
+                NormRequest nr = new NormRequest();
+                nr.NormId = Convert.ToInt32(dataReader["NormId"]);
+                nr.MedId = Convert.ToInt32(dataReader["MedId"]);
+                nr.NcrDate = Convert.ToDateTime(dataReader["NcrDate"]);
+                nr.UserId = Convert.ToInt32(dataReader["UserId"]);
+                nr.NcrQty = (float)Convert.ToSingle(dataReader["NcrQty"]);
+                list.Add(nr);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
+
+
+    /*****************Messages*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method insert a Message to the Messages table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMessage(Message msg)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMessageCommandSP("spInsertMessage", con, msg);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a Message in the Messages table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMessage(Message msg)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMessageCommandSP("spUpdateMessage", con, msg);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMessageCommandSP(String spName, SqlConnection con, Message msg)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@msgId", msg.MsgId);
+        cmd.Parameters.AddWithValue("@userId", msg.UserId);
+        cmd.Parameters.AddWithValue("@msg", msg.Msg);
+        cmd.Parameters.AddWithValue("@msgDate", msg.MsgDate);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Messages from the Messages table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadMessages()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMessages", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<object> listObj = new List<object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    msgId = Convert.ToInt32(dataReader["MsgId"]),
+                    pharmacistName = dataReader["pharmacistName"].ToString(),
+                    msg = dataReader["msg"].ToString(),
+                    msgDate = Convert.ToDateTime(dataReader["msgDate"])
+                });
+
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+
+
 
 }

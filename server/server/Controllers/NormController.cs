@@ -23,6 +23,14 @@ namespace server.Controllers
             return "value";
         }
 
+        // GET api/<NormController>/5
+        [HttpGet("{depId}")]
+        public Object GetMedsNorm(int depId)
+        {
+            Norm mn = new Norm();
+            return mn.ReadDepMedsNorm(depId);
+        }
+
         // POST api/<NormController>
         [HttpPost]
         public IActionResult Post([FromBody] Norm norm)

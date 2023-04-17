@@ -39,5 +39,12 @@ BEGIN
 	 UPDATE [PullOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
 	 [pullStatus]='I',[lastUpdate]=GETDATE()
 	 where pullId=@pullId and [pullStatus]='T'
+
 END
 GO
+
+ --UPDATE [PullOrders] set [pUser]=5,[reportNum]='222222',
+	-- [pullStatus]='I',[lastUpdate]=GETDATE()
+	-- where pullId=68 and [pullStatus]='T'
+
+

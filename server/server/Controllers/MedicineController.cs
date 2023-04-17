@@ -28,8 +28,13 @@ namespace server.Controllers
 
         // POST api/<MedicineController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Medicine med)
         {
+            int numAffected = med.Insert();
+            if (numAffected == 1)
+                return true;
+            else
+                return false; 
         }
 
 

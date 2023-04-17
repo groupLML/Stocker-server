@@ -8,11 +8,14 @@ namespace server.Models
         int normId;
         int depId;
         DateTime lastUpdate;
+        private List<MedNorm> medList;
 
         //properties
         public int NormId { get => normId; set => normId = value; }
         public int DepId { get => depId; set => depId = value; }
         public DateTime LastUpdate { get => lastUpdate; set => lastUpdate = value; }
+
+        public List<MedNorm> MedList { get => medList; set => medList = value; }
 
         //constructors
         public Norm() { }
@@ -22,6 +25,7 @@ namespace server.Models
             this.normId = normId;
             this.depId = depId;
             this.lastUpdate = lastUpdate;
+            this.MedList = new List<MedNorm>();
         }
 
 
@@ -44,5 +48,10 @@ namespace server.Models
             return dbs.ReadNorms();
         }
 
+        public Object ReadDepMedsNorm(int depId) //קריאת פרטי תרופות של תקן מחלקתי
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepMedsNorm(depId);
+        }
     }
 }
