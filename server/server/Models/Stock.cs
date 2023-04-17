@@ -33,7 +33,7 @@ namespace server.Models
 
 
         //methodes
-        public bool Insert()
+        public int Insert()
         {
             DBservices dbs = new DBservices();
             List<Medicine> MedList = dbs.ReadMeds();
@@ -41,14 +41,12 @@ namespace server.Models
             foreach (Medicine med in MedList) //בדיקה אם התרופה המבוקשת פעילה
             {
                 if (this.MedId == med.MedId && med.MedStatus == false)
-                    return false;
+                    return -1;
             }
-
-            dbs.InsertToStock(this);
-            return true;
+            return dbs.InsertToStock(this); ;
         }
 
-        public int Update()
+        public bool Update()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateStock(this);

@@ -18,7 +18,7 @@ GO
 -- Create date: <04-04-2023>
 -- Description:	<Update UpdatePullOrderNurse>
 -- =============================================
-CREATE PROCEDURE spUpdatePullOrderNurse
+ALTER PROCEDURE spUpdatePullOrderNurse
 
 	@pullId int,
 	@nUser smallint
@@ -32,7 +32,6 @@ BEGIN
     -- Insert statements for procedure here
 	 UPDATE [PullOrders] set [nUser]=@nUser,[lastUpdate]=GETDATE()
 	 where pullId=@pullId and pullStatus= 'W'
-
-	 delete from [PullMedOrders] where orderId= @pullId
 END
 GO
+

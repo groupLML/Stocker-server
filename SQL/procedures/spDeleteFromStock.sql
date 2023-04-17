@@ -14,41 +14,54 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<LML>
--- Create date: <27/02/2023>
--- Description:	<update  Stock>
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
 -- =============================================
-ALTER PROCEDURE spUpdateStock
+ALTER PROCEDURE spDeleteFromStock
 	-- Add the parameters for the stored procedure here
-	@stcId smallint,
-	@medId smallint,
 	@depId smallint,
-	@stcQty real,
-	@entryDate datetime
+	@medId smallint,
+    @qty real
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	--SET NOCOUNT ON;
+	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	DECLARE @OldQty real
+    DECLARE @res smallint
 
-	SET @OldQty= (select sum(stcQty)
-	              from Stocks
-	              where medId=@medId and depId=@depId);
+	SET @res= 0;
 	
-	if(@stcQty > @OldQty)
-	    BEGIN
-	    SET @OldQty= @stcQty- @OldQty;
-		Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@OldQty,@entryDate)
-		END
-	if(@stcQty < @OldQty)
-	 BEGIN
-	    SET @OldQty= @OldQty- @stcQty
-		Exec spDeductDepStock @depId, @medId, @OldQty;
-		END      
- 
+	if(@qty <= (select sum(stcQty)
+	            from Stocks
+	            where medId=@medId and depId=@depId))
+      BEGIN
+	      Exec spDeductDepStock @depId, @medId, @qty;
+	      SET @res= 1;
+	  END
+
+    select @res
+
 END
 GO
+
+
+--BEGIN
+-- DECLARE @res smallint
+
+--	SET @res= 0;
+	
+--	if(89 <= (select sum(stcQty)
+--	               from Stocks
+--	               where medId=1 and depId=3))
+--      BEGIN
+--	      Exec spDeductDepStock 3,1,89;
+--	      SET @res= 2;
+--	  END
+
+--	 select @res
+--END
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System.Runtime.ConstrainedExecution;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,22 +28,24 @@ namespace server.Controllers
 
         // POST api/<StockController>
         [HttpPost]
-        public bool Post([FromBody] Stock stock)
+        public IActionResult Post([FromBody] Stock stock)
         {
-            return stock.Insert();
+            int numAffected = stock.Insert();
+            if (numAffected == 1)
+                return Ok("התרופה התוספה בהצלחה");
+            else if (numAffected == -1)
+                return Unauthorized("התרופה המבוקשת לא פעילה, לא ניתן להשלים את הפעולה"); //status 401 Lack of permission to access the requested resource
+            else
+                return BadRequest("הפעולה נכשלה");
         }
 
 
         // PUT api/<StockController>/5
-        [HttpPut("{stcId}")]
-        public bool Put(int stcId, [FromBody] Stock stock)
+        [HttpPut("medId/{medId}/depId/{depId}/qty/{qty}")]
+        public bool Put(int medId, int depId, float qty)
         {
-            stock.StcId = stcId;
-            int numAffected = stock.Update();
-            if (numAffected == 1)
-                return true;
-            else
-                return false;
+            Stock stock = new Stock(0, medId, depId, qty, DateTime.Now);
+            return stock.Update();
         }
 
 

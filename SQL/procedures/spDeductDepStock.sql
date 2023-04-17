@@ -78,3 +78,43 @@ GO
 
 			--UPDATE MedRequests set reqStatus='A' where reqId = 4
 			--Select * from [MedRequests]
+
+
+--	BEGIN
+
+--	DECLARE @stcId smallint, @stcQty smallint, @qty smallint
+
+--	set @qty= 55;
+--    DECLARE stock_Cursor CURSOR FOR 
+--            select stcId, stcQty
+--            from Stocks 
+--            where medId = 1 and depId=4
+--            order by entryDate
+
+--    OPEN stock_Cursor 
+
+--    FETCH NEXT FROM stock_Cursor INTO @stcId, @stcQty
+
+--    WHILE @@FETCH_STATUS = 0
+--    BEGIN
+    
+--	      if(@stcQty > @qty)
+--	      BEGIN
+--	           update Stocks set stcQty= stcQty-@qty where stcId=@stcId and stcQty= @stcQty;
+--	           break;
+--	      END
+
+--	      delete Stocks where stcId=@stcId;
+--	      set @qty= @qty-@stcQty;
+--	      if(@qty=0)
+--	          break;
+
+--          FETCH NEXT FROM stock_Cursor INTO @stcId, @stcQty
+--    END
+
+--    CLOSE stock_Cursor
+--    DEALLOCATE stock_Cursor
+
+--END
+
+

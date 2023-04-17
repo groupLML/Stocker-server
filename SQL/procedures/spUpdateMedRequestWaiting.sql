@@ -42,9 +42,6 @@ BEGIN
 	        medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=@reqDate
 	 where reqId = @reqId 
 
-	 delete from [DepRequests] where reqId= @reqId
-
-
 END
 GO
 

@@ -15,16 +15,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <27/02/2023>
--- Description:	<update  Stock>
+-- Create date: <25/02/2023>
+-- Description:	<Delete Deps from DepRequest>
 -- =============================================
-ALTER PROCEDURE spUpdateStock
-	-- Add the parameters for the stored procedure here
-	@stcId smallint,
-	@medId smallint,
-	@depId smallint,
-	@stcQty real,
-	@entryDate datetime
+Create PROCEDURE spDeleteDepsRequest
+
+    @reqId smallint
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -32,23 +29,9 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	DECLARE @OldQty real
 
-	SET @OldQty= (select sum(stcQty)
-	              from Stocks
-	              where medId=@medId and depId=@depId);
-	
-	if(@stcQty > @OldQty)
-	    BEGIN
-	    SET @OldQty= @stcQty- @OldQty;
-		Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@OldQty,@entryDate)
-		END
-	if(@stcQty < @OldQty)
-	 BEGIN
-	    SET @OldQty= @OldQty- @stcQty
-		Exec spDeductDepStock @depId, @medId, @OldQty;
-		END      
- 
+	 delete from [DepRequests] where reqId= @reqId
+
 END
 GO
 

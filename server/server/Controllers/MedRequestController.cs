@@ -58,7 +58,7 @@ namespace server.Controllers
             MedRequest mr = new MedRequest();
             int numAffected= mr.InsertReq(cUser, cDep, medId, reqQty, depTypes);
 
-            if (numAffected > 0)
+            if (numAffected == 1)
                 return Ok("הבקשה התווספה בהצלחה"); //status 200
             else if (numAffected == -1)
                 return Unauthorized("ההזמנה כבר קיימת במערכת"); //status 401 Lack of permission to access the requested resource
@@ -81,7 +81,7 @@ namespace server.Controllers
 
             int numAffected = mr.UpdateWaitingReq(depTypes);
 
-            if (numAffected > 0)
+            if (numAffected == 1)
                 return Ok("הבקשה עודכנה בהצלחה");
             else if (numAffected == -1)
                 return Unauthorized("הבקשה בטיפול, לא ניתן לעדכן אותה בשלב זה"); //status 401 Lack of permission to access the requested resource

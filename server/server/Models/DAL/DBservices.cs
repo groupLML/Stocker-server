@@ -14,6 +14,8 @@ using System.Collections;
 using System.Runtime.Intrinsics.Arm;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MathNet.Numerics;
+using System.Diagnostics.Metrics;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -1231,7 +1233,9 @@ public class DBservices
         SqlConnection con;
         SqlCommand cmd1;
         SqlCommand cmd2;
+        SqlCommand cmd3;
         int usageId;
+        int numEffected = 0;
 
         try
         {
@@ -1254,16 +1258,37 @@ public class DBservices
             }
             for (int i = 0; i < use.MedList.Count; i++)
             {
+                numEffected = 0;
                 using (cmd2 = CreateInsertMedUsageCommandSP("spInsertMedUsages", con, usageId, use.MedList[i]))
                 {
                     cmd2.Transaction = transaction;
-                    use.MedList[i].MedId = Convert.ToInt32(cmd2.ExecuteScalar());
+                    numEffected = cmd2.ExecuteNonQuery();
                 }
+                if (numEffected != 0)
+                {
+                    numEffected = -1;
+                    using (cmd3 = CreateDeleteFromStockCommandSP("spDeleteFromStock", con, use.DepId, use.MedList[i].MedId, use.MedList[i].UseQty))
+                    {
+                        cmd2.Transaction = transaction;
+                        numEffected = Convert.ToInt32(cmd3.ExecuteScalar());
+                    }
+                    if (numEffected == 0) //Not enough quantity in stock
+                        break;
+                }
+                else
+                    break;
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+            if (numEffected==1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל השינויים הנדרשים נשמרו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -1325,7 +1350,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 20;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
@@ -1527,7 +1552,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a Stock in the Stocks table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateStock(Stock stock)
+    public bool UpdateStock(Stock stock)
     {
 
         SqlConnection con;
@@ -1547,8 +1572,8 @@ public class DBservices
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            cmd.ExecuteNonQuery(); // execute the command
+            return true;
         }
         catch (Exception ex)
         {
@@ -1704,7 +1729,30 @@ public class DBservices
             }
         }
     }
-   
+
+    //--------------------------------------------------------------------
+    // Create the DeleteStock SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteFromStockCommandSP(String spName, SqlConnection con, int depId, int medId, float qty)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@depId", depId);
+        cmd.Parameters.AddWithValue("@medId", medId);
+        cmd.Parameters.AddWithValue("@qty", qty);
+
+        return cmd;
+    }
+
 
 
 
@@ -1887,7 +1935,8 @@ public class DBservices
         SqlCommand cmd1;
         SqlCommand cmd2;
         int reqId;
-        int numEffected = 1;
+        int numEffected = 0;
+        int MedListCount = depList.Count;
 
         try
         {
@@ -1917,9 +1966,16 @@ public class DBservices
                 }
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return numEffected;
+            if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return 1;
+            }
+            else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback();
+                return 0;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -1953,6 +2009,7 @@ public class DBservices
         SqlConnection con;
         SqlCommand cmd1;
         SqlCommand cmd2;
+        SqlCommand cmd3;
         int numEffected = 0;
 
         try
@@ -1972,20 +2029,44 @@ public class DBservices
             using (cmd1 = CreateUpdateInsertMedRequestCommandSP("spUpdateMedRequestWaiting", con, mr))
             {
                 cmd1.Transaction = transaction;
-                numEffected += cmd1.ExecuteNonQuery();
+                numEffected = cmd1.ExecuteNonQuery();
             }
-            for (int i = 0; i < depList.Count; i++)
+            if (numEffected != 0)
             {
-                using (cmd2 = CreateUpdateInsertDepRequestCommandSP("spInsertDepRequest", con, mr.ReqId, depList[i]))
+                numEffected = 0;
+                using (cmd2 = CreateDeleteUpdateMedRequestCommand("spDeleteDepsRequest", con, mr.ReqId)) 
                 {
                     cmd2.Transaction = transaction;
-                    numEffected += cmd2.ExecuteNonQuery();
+                    numEffected = cmd2.ExecuteNonQuery();
+                }
+                if (numEffected != 0)
+                {
+                    for (int i = 0; i < depList.Count; i++)
+                    {
+                        numEffected = 0;
+                        using (cmd3 = CreateUpdateInsertDepRequestCommandSP("spInsertDepRequest", con, mr.ReqId, depList[i]))
+                        {
+                            cmd3.Transaction = transaction;
+                            numEffected = cmd3.ExecuteNonQuery();
+                        }
+                        if (numEffected == 1)
+                            numEffected= -1;
+                        else
+                            break;
+                    }
                 }
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return numEffected;
+            if (numEffected == -1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return 1;
+            }
+            else //אם לא כל 3 הפרוצדורות החזירו ערך שינוי, נעשה rollback 
+            {
+                transaction.Rollback();
+                return 0;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -2746,6 +2827,8 @@ public class DBservices
         SqlCommand cmd1;
         SqlCommand cmd2;
         int orderId;
+        int numEffected = 0;
+        int MedListCount = po.MedList.Count;
 
         try
         {
@@ -2771,13 +2854,20 @@ public class DBservices
                 using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPushMedOrders", con, orderId, po.MedList[i]))
                 {
                     cmd2.Transaction = transaction;
-                    cmd2.ExecuteNonQuery();
+                    numEffected += cmd2.ExecuteNonQuery();
                 }
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+            if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -2812,6 +2902,7 @@ public class DBservices
         SqlCommand cmd1;
         SqlCommand cmd2;
         SqlCommand cmd3;
+        int numEffected = 0;
 
         try
         {
@@ -2830,30 +2921,49 @@ public class DBservices
             using (cmd1 = CreateUpdateInsertPushOrderCommandSP("spUpdatePushOrder", con, po))
             {
                 cmd1.Transaction = transaction;
-                cmd1.ExecuteNonQuery();
+                numEffected = cmd1.ExecuteNonQuery();
             }
-            for (int i = 0; i < po.MedList.Count; i++)
-            {
-                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePushMedOrder", con, po.orderId, po.MedList[i]))
-                {
-                    cmd2.Transaction = transaction;
-                    cmd2.ExecuteNonQuery();
-                }
 
-                if (po.MedList[i].SupQty > 0)
+            if (numEffected != 0)
+            {
+                numEffected = 0;
+                for (int i = 0; i < po.MedList.Count; i++)
                 {
-                    Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
-                   
-                    using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                    using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePushMedOrder", con, po.orderId, po.MedList[i]))
                     {
-                        cmd3.Transaction = transaction;
-                        cmd3.ExecuteNonQuery();
+                        cmd2.Transaction = transaction;
+                        numEffected = cmd2.ExecuteNonQuery();
                     }
+
+                    if (numEffected != 0)
+                    {
+                        if (po.MedList[i].SupQty > 0)
+                        {
+                            Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
+
+                            using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                            {
+                                cmd3.Transaction = transaction;
+                                cmd3.ExecuteNonQuery();
+                            }
+                        }
+                        numEffected = -1;
+                    }
+                    else
+                        break;                
                 }
             }
-             // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+      
+            if (numEffected ==-1) //כל שלושת הפרוצדורות החזירו ערך שינוי
+            {
+                transaction.Commit();   // אם הכל הסתיים בהצלחה, נעשה commit
+                return true; 
+            }
+            else 
+            {
+                transaction.Rollback();  //כאשר אחת או יותר מהפרוצדורות לא לא החזירו ערך שינוי rollback נבצע
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -3063,6 +3173,8 @@ public class DBservices
         SqlCommand cmd1;
         SqlCommand cmd2;
         int orderId;
+        int numEffected = 0;
+        int MedListCount = po.MedList.Count;
 
         try
         {
@@ -3083,18 +3195,26 @@ public class DBservices
                 cmd1.Transaction = transaction;
                 orderId = Convert.ToInt32(cmd1.ExecuteScalar());
             }
-            for (int i = 0; i < po.MedList.Count; i++)
+
+            for (int i = 0; i < MedListCount; i++)
             {
                 using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, orderId, po.MedList[i]))
                 {
                     cmd2.Transaction = transaction;
-                    int numEffected = cmd2.ExecuteNonQuery();
+                    numEffected += cmd2.ExecuteNonQuery();
                 }
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+            if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -3128,6 +3248,8 @@ public class DBservices
         SqlConnection con;
         SqlCommand cmd1;
         SqlCommand cmd2;
+        SqlCommand cmd3;
+        int numEffected = 0;
 
         try
         {
@@ -3146,20 +3268,44 @@ public class DBservices
             using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po.OrderId, po.NUser, 'N')) //N=Nurse P=Pharmacist
             {
                 cmd1.Transaction = transaction;
-                cmd1.ExecuteNonQuery();
+                numEffected=cmd1.ExecuteNonQuery();
             }
-            for (int i = 0; i < po.MedList.Count; i++)
+            if (numEffected !=0)
             {
-                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, po.OrderId, po.MedList[i]))
+                numEffected = 0;
+                using (cmd2 = CreateDeleteOrderCommand("spDeleteMedsPullOrder", con, po.OrderId, 2)) // 1=pushOrder, 2=pullOrder 
                 {
                     cmd2.Transaction = transaction;
-                    cmd2.ExecuteNonQuery();
+                    numEffected = cmd2.ExecuteNonQuery();
+                }
+                if (numEffected !=0)
+                {
+                    for (int i = 0; i < po.MedList.Count; i++)
+                    {
+                        numEffected = 0;
+                        using (cmd3 = CreateUpdateInsertMedOrderCommandSP("spInsertPullMedOrders", con, po.OrderId, po.MedList[i]))
+                        {
+                            cmd3.Transaction = transaction;
+                            numEffected = cmd3.ExecuteNonQuery();
+                        }
+                        if (numEffected == 1)
+                            numEffected = -1;
+                        else
+                            break;
+                    }
                 }
             }
 
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+            if (numEffected==-1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל 3 הפרוצדורות החזירו ערך שינוי, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -3235,6 +3381,7 @@ public class DBservices
         SqlCommand cmd1;
         SqlCommand cmd2;
         SqlCommand cmd3;
+        int numEffected = 0;
 
         try
         {
@@ -3253,30 +3400,49 @@ public class DBservices
             using (cmd1 = CreateUpdateInsertPullOrderCommandSP("spUpdatePullOrderPharmIssued", con, po))
             {
                 cmd1.Transaction = transaction;
-                cmd1.ExecuteNonQuery();
+                numEffected = cmd1.ExecuteNonQuery();
             }
-            for (int i = 0; i < po.MedList.Count; i++)
+
+            if (numEffected != 0)
             {
-                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePullMedOrder", con, po.orderId, po.MedList[i]))
+                numEffected = 0;
+                for (int i = 0; i < po.MedList.Count; i++)
                 {
-                    cmd2.Transaction = transaction;
-                    cmd2.ExecuteNonQuery();
-                }
-
-                if (po.MedList[i].SupQty > 0)
-                {
-                    Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
-
-                    using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                    using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spUpdatePullMedOrder", con, po.orderId, po.MedList[i]))
                     {
-                        cmd3.Transaction = transaction;
-                        cmd3.ExecuteNonQuery();
+                        cmd2.Transaction = transaction;
+                        numEffected = cmd2.ExecuteNonQuery();
                     }
+
+                    if (numEffected != 0)
+                    {
+                        if (po.MedList[i].SupQty > 0)
+                        {
+                            Stock stock = new Stock(0, po.MedList[i].MedId, po.depId, po.MedList[i].SupQty, DateTime.Now);
+
+                            using (cmd3 = CreateUpdateInsertStockCommandSP("spInsertIntoStock", con, stock))
+                            {
+                                cmd3.Transaction = transaction;
+                                cmd3.ExecuteNonQuery();
+                            }
+                        }
+                        numEffected = -1;
+                    }
+                    else
+                        break;
                 }
             }
-            // אם הכל הסתיים בהצלחה, נעשה commit
-            transaction.Commit();
-            return true;
+
+            if (numEffected == -1) //כל שלושת הפרוצדורות החזירו ערך שינוי
+            {
+                transaction.Commit();   // אם הכל הסתיים בהצלחה, נעשה commit
+                return true;
+            }
+            else
+            {
+                transaction.Rollback();  //כאשר אחת או יותר מהפרוצדורות לא לא החזירו ערך שינוי rollback נבצע
+                return false;
+            }
         }
         catch (SqlException sqlEx)
         {
@@ -3684,6 +3850,8 @@ public class DBservices
 
 
 
+
+
     /*****************Prediction*****************/
     //--------------------------------------------------------------------------------------------------
     // This method Read Predictions from the Predictions table
@@ -3742,6 +3910,7 @@ public class DBservices
             }
         }
     }
+
 
 
     /*****************Token*****************/

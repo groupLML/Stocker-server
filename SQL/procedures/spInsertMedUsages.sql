@@ -32,45 +32,47 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 DECLARE @MED smallint, @depId smallint
+	 DECLARE @MED smallint
 	
 	 SET @MED= (select medId
 	            from [Medicines] as M inner join Conversions as C on M.mazNum=C.mazNum
 	            where chamNum=@chamNum);
 
 	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,@useQty,@chamNum)
-	 
-	 SET @depId= (select depId
-	              from [Usages]
-	              where usageId=@usageId);
-
-	 Exec spDeductDepStock @depId, @MED, @useQty
-
-	 select @MED
 
 END
 GO
 
 
-  --   DECLARE @MED smallint, @depId smallint, @usageId smallint, @useQty real
+
+--BEGIN
+--	 DECLARE @MED smallint, @depId smallint, @usageId smallint, @useQty real,  @res smallint
 	 
-	 --INSERT INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (3,'33333', getdate())
-	 --set @usageId= (SELECT SCOPE_IDENTITY());
+--	 INSERT INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (3,'44444', getdate())
+--	 set @usageId= (SELECT SCOPE_IDENTITY());
+	
+--	 SET @MED= (select medId
+--	            from [Medicines] as M inner join Conversions as C on M.mazNum=C.mazNum
+--	            where chamNum='1191304');
 
-	 --set @useQty= 3
-	 --SET @MED= (select medId
-	 --           from [Medicines] as M inner join Conversions as C on M.mazNum=C.mazNum
-	 --           where chamNum='1191302');
-
-	 --INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,@useQty,'1191302')
+--	 INSERT INTO [MedUsages] ([medId],[usageId],[useQty],[chamNum]) Values (@MED,@usageId,1,'1191304')
 	 
-	 --SET @depId= (select depId
-	 --             from [Usages]
-	 --             where usageId= @usageId);
+--	 SET @depId= (select depId
+--	              from [Usages]
+--	              where usageId=@usageId);
 
-	 --Exec spDeductDepStock @depId, @MED, @useQty
+--    SET @res= 0;
 
-	 --select @MED 
+--	if(1 <= (select sum(stcQty)
+--	           from Stocks
+--	           where medId=@MED and depId=@depId))
+--      BEGIN
+--	      Exec spDeductDepStock @depId, @MED, @useQty;
+--	      SET @res= 2;
+--	  END
+
+--	select @res
+--END
 
 
 
@@ -79,3 +81,6 @@ GO
 	 --select * from [MedUsages]
 	 --select * from [Stocks]
 	 --where depId=3 and medId=1
+	 --order by medId, depId
+
+	
