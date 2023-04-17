@@ -77,14 +77,15 @@ namespace server.Models
                 if (p.TotalReqQty > maxReq) maxReq = p.TotalReqQty;
             }
 
-            //Split data into training and testing sets
+            //הגדרת מטריצת פיצרים מבחן ואימון
             object[][] instancesTrain = new object[len70][];
-            object[][] instancesTest = new object[list.Count-len70][];
+            object[][] instancesTest = new object[list.Count - len70][];
+            //הגדרת ווקטור תוצאות מבחן ואימון
             double[] outputsTrain = new double[len70];
             double[] outputsTest = new double[list.Count-len70];
 
-
-            for (int i = 0; i < len70; i++) //0-69
+            //Split data into training and testing sets and normalization
+            for (int i = 0; i < len70; i++) 
             {
                 instancesTrain[i] = new object[]
                 {
@@ -99,7 +100,7 @@ namespace server.Models
             }
 
 
-            for (int i = 0; i < list.Count - len70; i++) //70-99
+            for (int i = 0; i < list.Count - len70; i++) 
             {
                 instancesTest[i] = new object[]
                 {
