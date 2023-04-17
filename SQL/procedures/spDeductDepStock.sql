@@ -54,6 +54,7 @@ BEGIN
 
 	      delete Stocks where stcId=@stcId;
 	      set @qty= @qty-@stcQty;
+
 	      if(@qty=0)
 	          break;
 

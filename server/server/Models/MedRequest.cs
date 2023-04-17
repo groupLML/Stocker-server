@@ -47,7 +47,7 @@ namespace server.Models
         }
 
         //methodes
-        public int InsertReq(int cUser, int cDep, int medId, float reqQty, string[] depTypes)
+        public int InsertReq(int cUser, int cDep, int medId, float reqQty, string[] depTypes) //הכנסת בקשה לתרופה חדשה
         {
             DBservices dbs = new DBservices();
             List<MedRequest> ReqList = dbs.ReadMedRequests();

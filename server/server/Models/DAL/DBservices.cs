@@ -2840,32 +2840,32 @@ public class DBservices
             throw (ex);
         }
 
-        SqlTransaction transaction = con.BeginTransaction();
+        SqlTransaction transaction = con.BeginTransaction(); //פתיחת טרנזקציה
 
         try
         {
-            using (cmd1 = CreateUpdateInsertPushOrderCommandSP("spInsertPushOrder", con, po))
+            using (cmd1 = CreateUpdateInsertPushOrderCommandSP("spInsertPushOrder", con, po)) //יצירת command
             {
-                cmd1.Transaction = transaction;
-                orderId = Convert.ToInt32(cmd1.ExecuteScalar());
+                cmd1.Transaction = transaction; //הפעלת טרנזקציה על הcommand
+                orderId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
             }
             for (int i = 0; i < po.MedList.Count; i++)
             {
-                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPushMedOrders", con, orderId, po.MedList[i]))
+                using (cmd2 = CreateUpdateInsertMedOrderCommandSP("spInsertPushMedOrders", con, orderId, po.MedList[i]))//יצירת command
                 {
-                    cmd2.Transaction = transaction;
-                    numEffected += cmd2.ExecuteNonQuery();
+                    cmd2.Transaction = transaction;//הפעלת טרנזקציה על הcommand
+                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
                 }
             }
 
             if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
             {
-                transaction.Commit();
+                transaction.Commit(); //commit לטרנזקציה
                 return true;
             }
             else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
             {
-                transaction.Rollback();
+                transaction.Rollback(); //ביטול כל הפעולות הקודמות
                 return false;
             }
         }
@@ -2914,13 +2914,13 @@ public class DBservices
             throw (ex);
         }
 
-        SqlTransaction transaction = con.BeginTransaction();
+        SqlTransaction transaction = con.BeginTransaction(); //פתיחת טרנזקציה
 
         try
         {
             using (cmd1 = CreateUpdateInsertPushOrderCommandSP("spUpdatePushOrder", con, po))
             {
-                cmd1.Transaction = transaction;
+                cmd1.Transaction = transaction; //הפעלת טרנזקציה על הcommand
                 numEffected = cmd1.ExecuteNonQuery();
             }
 
@@ -2961,7 +2961,7 @@ public class DBservices
             }
             else 
             {
-                transaction.Rollback();  //כאשר אחת או יותר מהפרוצדורות לא לא החזירו ערך שינוי rollback נבצע
+                transaction.Rollback();  //כאשר אחת או יותר מהפרוצדורות לא החזירו ערך שינוי rollback נבצע
                 return false;
             }
         }
@@ -3055,22 +3055,22 @@ public class DBservices
                 po.Status = Convert.ToChar(dataReader["PushStatus"]);
                 po.OrderDate = Convert.ToDateTime(dataReader["PushDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                if (po.MedList == null)
+                if (po.MedList == null) //במידה ואין תרופות בהזמנה, ניצור רשימה ריקה
                     po.MedList = new List<MedOrder>();
 
-                if (po.OrderId == lastOrderId)
+                if (po.OrderId == lastOrderId) //בדיקה האם מדובר באותה הזמנה
                 {
-                    if (dataReader["MO.PushId"] != DBNull.Value)
+                    if (dataReader["MO.PushId"] != DBNull.Value) //נכניס תרופה להזמנה כל עוד פרטי התרופה לא null
                     {
                         MedOrder mo = new MedOrder();  
                         mo.MedId = Convert.ToInt32(dataReader["MedId"]);
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
                         mo.MazNum = (dataReader["MazNum"]).ToString();
-                        list[list.Count - 1].MedList.Add(mo);
+                        list[list.Count - 1].MedList.Add(mo); //תרופה נכנסת לאותה הזמנה
                     }
                 }
-                else
+                else //הכנסת תרופה בתוך הזמנה חדשה 
                 {
                     if (dataReader["MO.PushId"] != DBNull.Value)
                     {
@@ -3079,13 +3079,13 @@ public class DBservices
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
                         mo.MazNum = (dataReader["MazNum"]).ToString();
-                        po.MedList.Add(mo);
+                        po.MedList.Add(mo); //תרופה נכנסת להזמנה חדשה
                     }
-                    list.Add(po);
-                    lastOrderId = po.OrderId;
+                    list.Add(po); //הכנסת הזמנה חדשה לרשימת הזמנות
+                    lastOrderId = po.OrderId; //קביעת מספר ההזמנה האחרון שנכנס לרשימת ההזמנות
                 }
             }
-                return list;
+            return list;
         }
         catch (Exception ex)
         {
@@ -3276,7 +3276,7 @@ public class DBservices
                 using (cmd2 = CreateDeleteOrderCommand("spDeleteMedsPullOrder", con, po.OrderId, 2)) // 1=pushOrder, 2=pullOrder 
                 {
                     cmd2.Transaction = transaction;
-                    numEffected = cmd2.ExecuteNonQuery();
+                    numEffected = cmd2.ExecuteNonQuery();//מוחזר כמות התרופות שנמחקו מאותה הזמנה
                 }
                 if (numEffected !=0)
                 {
@@ -3563,10 +3563,10 @@ public class DBservices
                 po.Status = Convert.ToChar(dataReader["PullStatus"]);
                 po.OrderDate = Convert.ToDateTime(dataReader["PullDate"]);
                 po.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                if (po.MedList == null)
+                if (po.MedList == null) //במידה ואין תרופות בהזמנה, ניצור רשימה ריקה
                     po.MedList = new List<MedOrder>();
 
-                if (po.OrderId == lastOrderId)
+                if (po.OrderId == lastOrderId) //בדיקה האם מדובר באותה הזמנה
                 {
                     if (dataReader["MO.PullId"] != DBNull.Value)
                     {

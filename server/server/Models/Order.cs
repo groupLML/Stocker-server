@@ -37,13 +37,13 @@
             this.MedList = new List<MedOrder>();
         }
 
-        public Object ReadMedsOrder(int depId, int orderId, int type) //טבלת פרטי הזמנה עבור המחלקה שנשלחה
+        public Object ReadMedsOrder(int depId, int orderId, int type) //קריאת פרטי התרופות עבור הזמנה ספציפית 
         {
             DBservices dbs = new DBservices();
             return dbs.ReadOrderDetails(depId, orderId, type);
         }
 
-        public int Delete(int orderId, int type)
+        public int Delete(int orderId, int type) // מחיקת הזמנה עבור שני סוגי ההזמנות
         {
             DBservices dbs = new DBservices();
 
