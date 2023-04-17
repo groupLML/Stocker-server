@@ -18,7 +18,7 @@ GO
 -- Create date: <27/02/2023>
 -- Description:	<Insert Stock>
 -- =============================================
-CREATE PROCEDURE spInsertIntoStock
+ALTER PROCEDURE spInsertIntoStock
 
 	@stcId smallint,
 	@medId smallint,
@@ -32,7 +32,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@stcQty,@entryDate)
+	Insert INTO [Stocks] ([medId],[depId],[stcQty],[entryDate]) Values (@medId,@depId,@stcQty,getdate())
 END
 GO
 
