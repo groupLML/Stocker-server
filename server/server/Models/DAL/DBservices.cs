@@ -3106,7 +3106,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read PushOrders from the PushOrders table
     //--------------------------------------------------------------------------------------------------
-    public Object ReadPushOrders(int depId)
+    public Object ReadDepPushOrders(int depId)
     {
 
         SqlConnection con;
@@ -3614,7 +3614,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read PullOrders from the PullOrders table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadPullOrders(int depId)
+    public Object ReadDepPullOrders(int depId)
     {
 
         SqlConnection con;

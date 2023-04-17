@@ -47,7 +47,7 @@
         {
             DBservices dbs = new DBservices();
 
-            if (type == 2) //pushOrder
+            if (type == 2) //pullOrder
             {
                 List<PullOrder> OredrsList = dbs.ReadPullOrders();
 
@@ -58,13 +58,13 @@
                 }
                 return -1;
             }
-            else //pullOrder
+            else //pushOrder
             {
                 List<PushOrder> OredrsList = dbs.ReadPushOrders();
 
                 foreach (PushOrder push in OredrsList)
                 {
-                    if (orderId == push.OrderId && push.Status == 'R') //מחיקת הזמנה תתבצע רק במידה וההזמנה במצב "הנפקה"
+                    if (orderId == push.OrderId && push.Status == 'R') //מחיקת הזמנה תתבצע רק במידה וההזמנה במצב "שוריין"
                         return dbs.DeleteOrder(orderId, type);
                 }
                 return -1;

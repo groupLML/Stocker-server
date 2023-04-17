@@ -31,7 +31,7 @@ namespace server.Models
         public Object ReadPushOrders(int depId) //טבלת הזמנות דחיפה עבור המחלקה שנשלחה
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadPushOrders(depId);
+            return dbs.ReadDepPushOrders(depId);
         }
 
     }

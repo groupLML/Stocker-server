@@ -52,7 +52,7 @@ namespace server.Models
         public Object ReadPullOrders(int depId) //טבלת הזמנות משיכה עבור המחלקה שנשלחה
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadPullOrders(depId);
+            return dbs.ReadDepPullOrders(depId);
         }
 
 
