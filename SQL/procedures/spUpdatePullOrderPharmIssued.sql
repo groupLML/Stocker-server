@@ -18,7 +18,7 @@ GO
 -- Create date: <28-02-2023>
 -- Description:	<Update PushOrder>
 -- =============================================
-CREATE PROCEDURE spUpdatePullOrderPharmIssued
+ALTER PROCEDURE spUpdatePullOrderPharmIssued
 
 	@pullId int,
 	@pUser smallint,
@@ -38,6 +38,6 @@ BEGIN
     -- Insert statements for procedure here
 	 UPDATE [PullOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
 	 [pullStatus]='I',[lastUpdate]=GETDATE()
-	 where pullId=@pullId
+	 where pullId=@pullId and [pullStatus]='T'
 END
 GO

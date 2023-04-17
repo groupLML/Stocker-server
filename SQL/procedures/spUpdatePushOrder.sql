@@ -37,6 +37,19 @@ BEGIN
     -- Insert statements for procedure here
 	 UPDATE [PushOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
 	 [pushStatus]='I',[lastUpdate]=GETDATE()
-	 where pushId=@pushId
+	 where pushId=@pushId and [pushStatus]='R'
 END
 GO
+
+	
+	 --UPDATE [PushOrders] set [pUser]=5,[reportNum]='',
+	 --[pushStatus]='R',[lastUpdate]=GETDATE()
+	 --where pushId=9
+
+	 --UPDATE [PushMedOrders] set supQty=0
+	 --where medId=2 and orderId=9
+
+
+	 --select * from [PushOrders]
+	 --select * from [PushMedOrders]
+	 --select * from Stocks
