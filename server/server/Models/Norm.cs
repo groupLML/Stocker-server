@@ -30,7 +30,7 @@ namespace server.Models
 
 
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
             return dbs.InsertNorm(this);
