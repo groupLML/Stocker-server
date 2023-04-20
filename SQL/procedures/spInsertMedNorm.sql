@@ -23,7 +23,7 @@ ALTER PROCEDURE spInsertMedNorm
     @normId smallint,
 	@medId smallint,
 	@normQty real,
-	@mazNum varchar, 
+	@mazNum varchar(10), 
     @inNorm bit
 
 AS
@@ -31,9 +31,14 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
+	 DECLARE @MAZ varchar(10)
+	
+	 SET @MAZ= (select mazNum
+	 from [Medicines]
+	 where medId=@medId);
 
     -- Insert statements for procedure here
-	insert into [MedNorms] ([normId], [medId],[normQty], [mazNum], [inNorm]) values (@normId, @medId,@normQty, @mazNum,1)
+	insert into [MedNorms] ([normId], [medId],[normQty], [mazNum], [inNorm]) values (@normId, @medId,@normQty, @MAZ,1)
 
 END
 GO

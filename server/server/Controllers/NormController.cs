@@ -40,7 +40,10 @@ namespace server.Controllers
                 return Ok();
             else
                 return BadRequest();
+            //   { "pushOrder": {"orderId": 14,"depId": 3, "pUser": 5,  "reportNum": "11111", "status": "I", "orderDate": "2023-04-15T12:15:32.323", "lastUpdate": "2023-04-15T14:03:00.633", "medList": []
+            //   }, "medList": [ { "medId": 1, "poQty": 3, "supQty": 1,  "mazNum": "M1191300"} ] }
         }
+
 
         // PUT api/<NormController>/5
         [HttpPut("{normId}")]

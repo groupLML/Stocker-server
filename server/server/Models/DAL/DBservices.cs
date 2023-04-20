@@ -3204,7 +3204,6 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public int UpdateMedReturn(Return mr)
     {
-
         SqlConnection con;
         SqlCommand cmd;
 
@@ -3246,7 +3245,6 @@ public class DBservices
     //---------------------------------------------------------------------------------
     private SqlCommand CreateUpdateInsertMedReturnCommandSP(String spName, SqlConnection con, Return mr)
     {
-
         SqlCommand cmd = new SqlCommand(); // create the command object
 
         cmd.Connection = con;              // assign the connection to the command object
@@ -3273,7 +3271,6 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public List<Return> ReadMedReturns()
     {
-
         SqlConnection con;
         SqlCommand cmd;
 
@@ -3325,40 +3322,70 @@ public class DBservices
         }
     }
 
-
-
-
     /*****************Norms*****************/
 
     //--------------------------------------------------------------------------------------------------
     // This method inserts a Norm to the Norms table 
     //--------------------------------------------------------------------------------------------------
-    public int InsertNorm(Norm norm)
+    public bool InsertNorm(Norm norm)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        int normId;
+        int numEffected = 0;
+        int MedListCount = norm.MedList.Count;
 
         try
         {
             con = connect("myProjDB"); // create the connection
-        }
+        }
         catch (Exception ex)
         {
-            // write to log
-            throw (ex);
+            // write to log
+            throw (ex);
         }
 
-        cmd = CreateUpdateInsertNormCommandSP("spInsertNorm", con, norm);    // create the command
+        SqlTransaction transaction = con.BeginTransaction(); //פתיחת טרנזקציה
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            using (cmd1 = CreateUpdateInsertNormCommandSP("spInsertNorm", con, norm)) //יצירת command
+            {
+                cmd1.Transaction = transaction; //הפעלת טרנזקציה על הcommand
+                normId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
+            }
+            for (int i = 0; i < norm.MedList.Count; i++)
+            {
+                using (cmd2 = CreateUpdateInsertMedNormCommandSP("spInsertMedNorm", con, normId, norm.MedList[i]))//יצירת command
+                {
+                    cmd2.Transaction = transaction;//הפעלת טרנזקציה על הcommand
+                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
+                }
+            }
+
+            if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback(); //ביטול כל הפעולות הקודמות
+                return false;
+            }
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -3366,8 +3393,8 @@ public class DBservices
         {
             if (con != null)
             {
-                // close the db connection
-                con.Close();
+                // close the db connection
+                con.Close();
             }
         }
     }
@@ -3377,7 +3404,6 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     public int UpdateNorm(Norm norm)
     {
-
         SqlConnection con;
         SqlCommand cmd;
 
@@ -3419,7 +3445,6 @@ public class DBservices
     //---------------------------------------------------------------------------------
     private SqlCommand CreateUpdateInsertNormCommandSP(String spName, SqlConnection con, Norm norm)
     {
-
         SqlCommand cmd = new SqlCommand(); // create the command object
 
         cmd.Connection = con;              // assign the connection to the command object
@@ -3433,6 +3458,29 @@ public class DBservices
         cmd.Parameters.AddWithValue("@normId", norm.NormId);
         cmd.Parameters.AddWithValue("@depId", norm.DepId);
         cmd.Parameters.AddWithValue("@lastUpdate", norm.LastUpdate);
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand for norm
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedNormCommandSP(String spName, SqlConnection con, int normId, MedNorm medNorm)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@normId", normId);
+        cmd.Parameters.AddWithValue("@medId", medNorm.MedId);
+        cmd.Parameters.AddWithValue("@normQty", medNorm.NormQty);
+        cmd.Parameters.AddWithValue("@mazNum", medNorm.MazNum);
+        cmd.Parameters.AddWithValue("@inNorm", medNorm.InNorm);
         return cmd;
     }
 

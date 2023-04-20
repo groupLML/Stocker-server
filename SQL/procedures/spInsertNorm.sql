@@ -31,6 +31,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	Insert INTO [Norms] ([depId],[lastUpdate]) Values (@depId, GETDATE())
+	Insert INTO [Norms] ([depId],[lastUpdate]) Values (@depId, GETDATE()) SELECT SCOPE_IDENTITY()
 END
 GO
