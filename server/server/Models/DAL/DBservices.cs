@@ -298,7 +298,7 @@ public class DBservices
                     });
                 }
             }
-                return listObj;
+            return listObj;
         }
         catch (Exception ex)
         {
@@ -722,7 +722,7 @@ public class DBservices
                     break;
             }
 
-            if (numEffected==1)// אם הכל הסתיים בהצלחה, נעשה commit
+            if (numEffected == 1)// אם הכל הסתיים בהצלחה, נעשה commit
             {
                 transaction.Commit();
                 return true;
@@ -1309,7 +1309,7 @@ public class DBservices
             if (numEffected != 0)
             {
                 numEffected = 0;
-                using (cmd2 = CreateDeleteUpdateMedRequestCommand("spDeleteDepsRequest", con, mr.ReqId)) 
+                using (cmd2 = CreateDeleteUpdateMedRequestCommand("spDeleteDepsRequest", con, mr.ReqId))
                 {
                     cmd2.Transaction = transaction;
                     numEffected = cmd2.ExecuteNonQuery();
@@ -1325,7 +1325,7 @@ public class DBservices
                             numEffected = cmd3.ExecuteNonQuery();
                         }
                         if (numEffected == 1)
-                            numEffected= -1;
+                            numEffected = -1;
                         else
                             break;
                     }
@@ -1965,7 +1965,7 @@ public class DBservices
 
             if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
             {
-                transaction.Commit(); 
+                transaction.Commit();
                 return true;
             }
             else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
@@ -2055,16 +2055,16 @@ public class DBservices
                         numEffected = -1;
                     }
                     else
-                        break;                
+                        break;
                 }
             }
-      
-            if (numEffected ==-1) //כל שלושת הפרוצדורות החזירו ערך שינוי
+
+            if (numEffected == -1) //כל שלושת הפרוצדורות החזירו ערך שינוי
             {
                 transaction.Commit();   // אם הכל הסתיים בהצלחה, נעשה commit
-                return true; 
+                return true;
             }
-            else 
+            else
             {
                 transaction.Rollback();  //כאשר אחת או יותר מהפרוצדורות לא החזירו ערך שינוי rollback נבצע
                 return false;
@@ -2167,7 +2167,7 @@ public class DBservices
                 {
                     if (dataReader["MO.PushId"] != DBNull.Value) //נכניס תרופה להזמנה כל עוד פרטי התרופה לא null
                     {
-                        MedOrder mo = new MedOrder();  
+                        MedOrder mo = new MedOrder();
                         mo.MedId = Convert.ToInt32(dataReader["MedId"]);
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
@@ -2325,7 +2325,7 @@ public class DBservices
         {
             // אם התרחשה שגיאת sql, נבצע rollback
             transaction.Rollback();
-            Console.WriteLine("SqlException:"+ sqlEx.Message);
+            Console.WriteLine("SqlException:" + sqlEx.Message);
             return false;
         }
         catch (Exception ex)
@@ -2373,9 +2373,9 @@ public class DBservices
             using (cmd1 = CreateUpdatePullOrderCommandSP("spUpdatePullOrderNurse", con, po.OrderId, po.NUser, 'N')) //N=Nurse P=Pharmacist
             {
                 cmd1.Transaction = transaction;
-                numEffected=cmd1.ExecuteNonQuery();
+                numEffected = cmd1.ExecuteNonQuery();
             }
-            if (numEffected !=0)
+            if (numEffected != 0)
             {
                 numEffected = 0;
                 using (cmd2 = CreateDeleteOrderCommand("spDeleteMedsPullOrder", con, po.OrderId, 2)) // 1=pushOrder, 2=pullOrder 
@@ -2383,7 +2383,7 @@ public class DBservices
                     cmd2.Transaction = transaction;
                     numEffected = cmd2.ExecuteNonQuery();//מוחזר כמות התרופות שנמחקו מאותה הזמנה
                 }
-                if (numEffected !=0)
+                if (numEffected != 0)
                 {
                     for (int i = 0; i < po.MedList.Count; i++)
                     {
@@ -2400,7 +2400,7 @@ public class DBservices
                 }
             }
 
-            if (numEffected==-1)// אם הכל הסתיים בהצלחה, נעשה commit
+            if (numEffected == -1)// אם הכל הסתיים בהצלחה, נעשה commit
             {
                 transaction.Commit();
                 return true;
@@ -2604,7 +2604,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the UpdateNurse SqlCommand
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, int pullId, int userId, char kind) 
+    private SqlCommand CreateUpdatePullOrderCommandSP(String spName, SqlConnection con, int pullId, int userId, char kind)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -2679,7 +2679,7 @@ public class DBservices
                         mo.PoQty = (float)(dataReader["PoQty"]);
                         mo.SupQty = (float)(dataReader["SupQty"]);
                         mo.MazNum = (dataReader["MazNum"]).ToString();
-                        list[list.Count-1].MedList.Add(mo); //תרופה נכנסת לאותה הזמנה
+                        list[list.Count - 1].MedList.Add(mo); //תרופה נכנסת לאותה הזמנה
                     }
                 }
                 else //הכנסת תרופה בתוך הזמנה חדשה 
@@ -2754,7 +2754,7 @@ public class DBservices
                     orderDate = Convert.ToDateTime(dataReader["orderDate"]),
                     orderStatus = Convert.ToChar(dataReader["orderStatus"]),
                     lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
-                }); 
+                });
             }
             return listObj;
         }
@@ -3510,6 +3510,7 @@ public class DBservices
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             List<Norm> list = new List<Norm>();
+            int lastNormId = 0;
 
             while (dataReader.Read())
             {
@@ -3517,7 +3518,31 @@ public class DBservices
                 norm.NormId = Convert.ToInt32(dataReader["NormId"]);
                 norm.DepId = Convert.ToInt32(dataReader["DepId"]);
                 norm.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
-                list.Add(norm);
+
+                if (norm.MedList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
+                    norm.MedList = new List<MedNorm>();
+
+                if (norm.NormId == lastNormId) //בדיקה האם מדובר באותו תקן
+                {
+                    MedNorm med = new MedNorm();
+                    med.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    med.NormQty = (float)(dataReader["NormQty"]);
+                    med.MazNum = (dataReader["MazNum"]).ToString();
+                    med.InNorm = (bool)(dataReader["InNorm"]);
+
+                    list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
+                }
+                else //הכנסת תרופה בתוך תקן חדש 
+                {
+                    MedNorm med = new MedNorm();
+                    med.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    med.NormQty = (float)(dataReader["NormQty"]);
+                    med.MazNum = (dataReader["MazNum"]).ToString();
+                    med.InNorm = (bool)(dataReader["InNorm"]);
+                    norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
+                    list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
+                    lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
+                }
             }
             return list;
         }
@@ -3595,7 +3620,7 @@ public class DBservices
     }
 
 
- 
+
 
 
     /*****************NormRequests*****************/

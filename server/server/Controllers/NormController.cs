@@ -11,9 +11,10 @@ namespace server.Controllers
     {
         // GET: api/<NormController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Norm> Get()
         {
-            return new string[] { "value1", "value2" };
+            Norm mednorm = new Norm();
+            return mednorm.Read();
         }
 
         // GET api/<NormController>/5
