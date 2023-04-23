@@ -48,5 +48,10 @@ namespace server.Models
             return dbs.ReadMessages();
         }
 
+        public int Delete(int msgId)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.DeleteMessage(msgId);
+        }
     }
 }

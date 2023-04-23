@@ -26,20 +26,37 @@ namespace server.Controllers
 
         // POST api/<MessageController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] Message msg)
         {
+            int numAffected = msg.Insert();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // PUT api/<MessageController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{msgId}")]
+        public bool Put(int msgId, [FromBody] Message msg)
         {
+            msg.MsgId = msgId;  
+            int numAffected = msg.Update();
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
 
         // DELETE api/<MessageController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{msgId}")]
+        public bool Delete(int msgId)
         {
+            Message m = new Message();
+            int numAffected = m.Delete(msgId); 
+            if (numAffected == 1)
+                return true;
+            else
+                return false;
         }
     }
 }

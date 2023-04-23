@@ -666,6 +666,239 @@ public class DBservices
 
 
 
+    /*****************Messages*****************/
+
+    //--------------------------------------------------------------------------------------------------
+    // This method insert a Message to the Messages table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertMessage(Message msg)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMessageCommandSP("spInsertMessage", con, msg);    // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a Message in the Messages table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateMessage(Message msg)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertMessageCommandSP("spUpdateMessage", con, msg);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMessageCommandSP(String spName, SqlConnection con, Message msg)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@msgId", msg.MsgId);
+        cmd.Parameters.AddWithValue("@userId", msg.UserId);
+        cmd.Parameters.AddWithValue("@msg", msg.Msg);
+        cmd.Parameters.AddWithValue("@msgDate", msg.MsgDate);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Messages from the Messages table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadMessages()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMessages", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<object> listObj = new List<object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    msgId = Convert.ToInt32(dataReader["MsgId"]),
+                    pharmacistName = dataReader["pharmacistName"].ToString(),
+                    msg = dataReader["msg"].ToString(),
+                    msgDate = Convert.ToDateTime(dataReader["msgDate"])
+                });
+
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // This method Delete Message by msgId
+    //--------------------------------------------------------------------
+    public int DeleteMessage(int msgId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateDeleteMessageCommandSP("spDeleteMessage", con, msgId);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Create the Delete Message SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteMessageCommandSP(String spName, SqlConnection con, int msgId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", msgId);
+
+        return cmd;
+    }
+
+
+
+
+
     /*****************Usages*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -3789,176 +4022,6 @@ public class DBservices
             }
         }
     }
-
-
-
-
-    /*****************Messages*****************/
-
-    //--------------------------------------------------------------------------------------------------
-    // This method insert a Message to the Messages table 
-    //--------------------------------------------------------------------------------------------------
-    public int InsertMessage(Message msg)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMessageCommandSP("spInsertMessage", con, msg);    // create the command
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Update a Message in the Messages table 
-    //--------------------------------------------------------------------------------------------------
-    public int UpdateMessage(Message msg)
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateUpdateInsertMessageCommandSP("spUpdateMessage", con, msg);
-
-        try
-        {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMessageCommandSP(String spName, SqlConnection con, Message msg)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@msgId", msg.MsgId);
-        cmd.Parameters.AddWithValue("@userId", msg.UserId);
-        cmd.Parameters.AddWithValue("@msg", msg.Msg);
-        cmd.Parameters.AddWithValue("@msgDate", msg.MsgDate);
-
-        return cmd;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // This method Read Messages from the Messages table
-    //--------------------------------------------------------------------------------------------------
-    public Object ReadMessages()
-    {
-
-        SqlConnection con;
-        SqlCommand cmd;
-
-        try
-        {
-            con = connect("myProjDB"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        cmd = CreateReadCommandSP("spReadMessages", con);
-
-        try
-        {
-            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-            List<object> listObj = new List<object>();
-
-            while (dataReader.Read())
-            {
-                listObj.Add(new
-                {
-                    msgId = Convert.ToInt32(dataReader["MsgId"]),
-                    pharmacistName = dataReader["pharmacistName"].ToString(),
-                    msg = dataReader["msg"].ToString(),
-                    msgDate = Convert.ToDateTime(dataReader["msgDate"])
-                });
-
-            }
-            return listObj;
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        finally
-        {
-            if (con != null)
-            {
-                // close the db connection
-                con.Close();
-            }
-        }
-    }
-
 
 
 
