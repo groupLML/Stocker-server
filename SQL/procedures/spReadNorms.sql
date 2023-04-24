@@ -18,7 +18,7 @@ GO
 -- Create date: <20/04/2023>
 -- Description:	<Read Norm>
 -- =============================================
-create PROCEDURE spReadNorms
+ALTER PROCEDURE spReadNorms
 
 AS
 BEGIN
@@ -26,10 +26,13 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-	SELECT N.normId, depId, lastUpdate, MN.medId, normQty, mazNum,inNorm
-	 FROM [Norms] as N inner join [MedNorms] as MN
-	 on N.normId= MN.normId
+	SELECT N.normId as 'NormId', depId, N.lastUpdate as 'LastUpdate', MN.medId, normQty, MN.mazNum,inNorm,
+	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName'
+	 FROM [Norms] as N 
+	 inner join [MedNorms] as MN on N.normId= MN.normId
+	 inner join [Medicines] as M on MN.medId=M.medId
+	 where MN.inNorm=1
 	 order by N.normId desc, lastUpdate desc
-
+	 
 END
 GO

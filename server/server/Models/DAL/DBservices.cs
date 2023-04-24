@@ -3762,7 +3762,7 @@ public class DBservices
                     med.NormQty = (float)(dataReader["NormQty"]);
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.InNorm = (bool)(dataReader["InNorm"]);
-
+                    med.MedName = (dataReader["medName"]).ToString();
                     list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -3772,6 +3772,7 @@ public class DBservices
                     med.NormQty = (float)(dataReader["NormQty"]);
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.InNorm = (bool)(dataReader["InNorm"]);
+                    med.MedName = (dataReader["medName"]).ToString();
                     norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
                     list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
                     lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -3798,7 +3799,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read DepMedNorms from the MedNorms table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadDepMedsNorm(int depId)
+    public List<Norm> ReadDepNorm(int depId)
     {
 
         SqlConnection con;
@@ -3814,27 +3815,49 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadDepObjectCommandSP("spReadDepMedNorms", con, depId);
+        cmd = CreateReadDepObjectCommandSP("spReadDepNorm", con, depId);
 
         try
         {
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-            List<Object> listObj = new List<Object>();
+            List<Norm> list = new List<Norm>();
+            int lastNormId = 0;
 
             while (dataReader.Read())
             {
+                Norm norm = new Norm();
+                norm.NormId = Convert.ToInt32(dataReader["NormId"]);
+                norm.DepId = Convert.ToInt32(dataReader["DepId"]);
+                norm.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
 
-                listObj.Add(new
+                if (norm.MedList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
+                    norm.MedList = new List<MedNorm>();
+
+                if (norm.NormId == lastNormId) //בדיקה האם מדובר באותו תקן
                 {
-                    medId = Convert.ToInt32(dataReader["medId"]),
-                    genName = dataReader["genName"].ToString(),
-                    comName = dataReader["comName"].ToString(),
-                    normQty = Convert.ToInt32(dataReader["normQty"])
-
-                });
+                    MedNorm med = new MedNorm();
+                    med.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    med.NormQty = (float)(dataReader["NormQty"]);
+                    med.MazNum = (dataReader["MazNum"]).ToString();
+                    med.InNorm = (bool)(dataReader["InNorm"]);
+                    med.MedName = (dataReader["medName"]).ToString();
+                    list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
+                }
+                else //הכנסת תרופה בתוך תקן חדש 
+                {
+                    MedNorm med = new MedNorm();
+                    med.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    med.NormQty = (float)(dataReader["NormQty"]);
+                    med.MazNum = (dataReader["MazNum"]).ToString();
+                    med.InNorm = (bool)(dataReader["InNorm"]);
+                    med.MedName = (dataReader["medName"]).ToString();
+                    norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
+                    list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
+                    lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
+                }
             }
-            return listObj;
+            return list;
         }
         catch (Exception ex)
         {

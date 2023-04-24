@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ConstrainedExecution;
 
 namespace server.Models
 {
@@ -28,12 +29,18 @@ namespace server.Models
             this.MedList = new List<MedNorm>();
         }
 
-
         //methodes
         public bool Insert()
         {
             DBservices dbs = new DBservices();
-            return dbs.InsertNorm(this);
+            List<Norm> NormList = dbs.ReadNorms();
+
+            foreach (Norm norm in NormList) //בדיקה אם תקן למחלקה מסויימת לא קיימת כבר
+            {
+                if (this.depId == norm.depId)
+                    return false;
+            }
+            return dbs.InsertNorm(this); 
         }
 
         public int Update()
@@ -42,16 +49,22 @@ namespace server.Models
             return dbs.UpdateNorm(this);
         }
 
-        public List<Norm> Read()
+        public List<Norm> Read() //קריאה של התקנים עם פרטי התרופות בכל תקן
         {
             DBservices dbs = new DBservices();
             return dbs.ReadNorms();
         }
 
-        public Object ReadDepMedsNorm(int depId) //קריאת פרטי תרופות של תקן מחלקתי
+        public List<Norm> ReadDepNorm(int depId) //קריאת פרטי התקן
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadDepMedsNorm(depId);
+            return dbs.ReadDepNorm(depId);
         }
+
+        //public Object ReadDepMedsNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים  
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.ReadDepMedsNorm(depId);
+        //}
     }
 }

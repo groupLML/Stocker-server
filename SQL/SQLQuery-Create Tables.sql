@@ -198,7 +198,6 @@ CREATE TABLE [Tokens] (
 	[token] varchar(100) 
 )
 
-
 Select * from [Departments]
 Select * from [Users]  
 Select * from [Medicines]
@@ -217,9 +216,6 @@ Select * from [PushMedOrders]
 Select * from [PullOrders]
 Select * from [PullMedOrders]
 Select * from [Tokens]
-
-
-
 
 --CREATE TABLE [Returns] (
 --    [rtnId] smallint IDENTITY (1,1),

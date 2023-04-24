@@ -18,7 +18,7 @@ GO
 -- Create date: <27/02/2023>
 -- Description:	<Read Dep MedNorms>
 -- =============================================
-ALTER PROCEDURE spReadDepMedNorms
+create PROCEDURE spReadDepNorm
      @depId smallint
 
 AS
@@ -27,13 +27,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
-	SELECT [MedNorms].medId,genName,comName, normQty
-	FROM [MedNorms] inner join [Norms]  
-	     on [MedNorms].normId=[Norms].normId inner join [Medicines]
-	     on [MedNorms].medId=[Medicines].medId
-	where [Norms].depId=@depId and [MedNorms].inNorm=1
-
-
+	SELECT N.normId as 'NormId', depId, N.lastUpdate as 'LastUpdate', MN.medId, normQty, MN.mazNum,inNorm,
+	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName'
+	 FROM [Norms] as N 
+	 inner join [MedNorms] as MN on N.normId= MN.normId
+	 inner join [Medicines] as M on MN.medId=M.medId
+	 where N.depId=@depId and MN.inNorm=1
+	 order by N.normId desc, lastUpdate desc
 END
 GO

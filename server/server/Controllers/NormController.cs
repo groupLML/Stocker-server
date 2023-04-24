@@ -9,28 +9,30 @@ namespace server.Controllers
     [ApiController]
     public class NormController : ControllerBase
     {
+        //כרגע אין שימוש, מחיקה////////////////////////////////////////////////////////
         // GET: api/<NormController>
         [HttpGet]
-        public IEnumerable<Norm> Get()
+        public IEnumerable<Norm> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן
         {
             Norm mednorm = new Norm();
             return mednorm.Read();
         }
 
         // GET api/<NormController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("MedsNorm/depId/{depId}")] 
+        public List<Norm> GetMedsNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים 
         {
-            return "value";
+            Norm mednorm = new Norm();
+            return mednorm.ReadDepNorm(depId);
         }
 
-        // GET api/<NormController>/5
-        [HttpGet("{depId}")]
-        public Object GetMedsNorm(int depId)
-        {
-            Norm mn = new Norm();
-            return mn.ReadDepMedsNorm(depId);
-        }
+        //// GET api/<NormController>/5
+        //[HttpGet("Norm/depId/{depId}")]
+        //public Object GetNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים 
+        //{
+        //    Norm mednorm = new Norm();
+        //    return mednorm.ReadDepNorm(depId);
+        //}
 
         // POST api/<NormController>
         [HttpPost]
@@ -52,10 +54,10 @@ namespace server.Controllers
                 return false;
         }
 
-        // DELETE api/<NormController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/<NormController>/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }
