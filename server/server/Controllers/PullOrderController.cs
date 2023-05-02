@@ -29,6 +29,14 @@ namespace server.Controllers
         }
 
         // GET api/<PullOrderController>/5
+        [HttpGet("GetPullOrdersPharm")]
+        public Object GetPullOrdersPharm()
+        {
+            PullOrder po = new PullOrder();
+            return po.ReadPullOrdersPharm();
+        }
+
+        // GET api/<PullOrderController>/5
         [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}/type/{type}")]
         public Object GetOrderDetails(int depId, int orderId, int type) //type: 1=push, 2=pull
         {

@@ -55,6 +55,10 @@ namespace server.Models
             return dbs.ReadDepPullOrders(depId);
         }
 
-
+        public Object ReadPullOrdersPharm() //קריאה של רשימת כל הזמנות משיכה הקיימות
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadPullOrdersPharm();
+        }
     }
 }

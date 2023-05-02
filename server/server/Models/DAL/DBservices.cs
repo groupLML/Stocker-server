@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MathNet.Numerics;
 using System.Diagnostics.Metrics;
+using Microsoft.VisualBasic;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -3007,6 +3008,68 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read PullOrders from the PullOrders table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPullOrdersPharm()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadPullOrdersPharm", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    orderId = Convert.ToInt32(dataReader["pullId"]),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]).ToShortDateString(),
+                    orderTime = Convert.ToDateTime(dataReader["orderTime"]).TimeOfDay,
+                    depId = Convert.ToInt32(dataReader["depId"]),
+                    depName = dataReader["depName"].ToString(),
+                    nurseId = Convert.ToInt32(dataReader["nUser"]),
+                    nurseName = dataReader["nurseName"].ToString(),
+                    pharmId = Convert.ToInt32(dataReader["pUser"]),
+                    pharmName = dataReader["pharmName"].ToString(),
+                    reportNum = dataReader["reportNum"].ToString(),
+                    status = dataReader["pullStatus"].ToString(),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    } 
 
 
     /*****************Global for PullOrders and PushOrders*****************/
