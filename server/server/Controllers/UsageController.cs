@@ -27,7 +27,7 @@ namespace server.Controllers
 
         // GET: api/<UsageController>
         [HttpGet("/Prediction/month/{month}/dep/{dep}/med/{med}")]
-        public int GetPrediction(int month, int dep, int med)
+        public double[] GetPrediction(int month, int dep, int med)
         {
             Prediction p= new Prediction(); 
             return p.GetPrediction(month,dep, med);

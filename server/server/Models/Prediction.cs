@@ -43,7 +43,7 @@ namespace server.Models
 
 
         //method
-        public int GetPrediction(int month, int dep, int med)
+        public double[] GetPrediction(int month, int dep, int med)
         {
             //Create a dataset
             DBservices dbs = new DBservices();
@@ -92,9 +92,9 @@ namespace server.Models
                 (list[i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
                 (list[i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
                 (list[i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneYear),
-                (list[i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
-                list[i].ThisMonth,
-                list[i].Season
+                (list[i].TotalReqQty - minReq) / (maxReq - minReq) // normalize the totalReqQty column
+                //list[i].ThisMonth,
+                //list[i].Season
                 };
                 outputsTrain.SetValue(list[i].FutureUsage, i);
             }
@@ -107,9 +107,9 @@ namespace server.Models
                 (list[len70+i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
                 (list[len70+i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
                 (list[len70 + i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneMonth),
-                (list[len70+i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
-                list[len70+i].ThisMonth,
-                list[len70+i].Season
+                (list[len70+i].TotalReqQty - minReq) / (maxReq - minReq) // normalize the totalReqQty column
+                //list[len70+i].ThisMonth,
+                //list[len70+i].Season
                 };
                 outputsTest.SetValue(list[len70 + i].FutureUsage, i);
             }
@@ -122,8 +122,8 @@ namespace server.Models
                 { "usageTwoMonthAgo", CodificationVariable.Continuous },
                 { "UsageOneYearAgo", CodificationVariable.Continuous },
                 { "totalReqQty", CodificationVariable.Continuous },
-                { "thisMonth", CodificationVariable.Categorical },
-                { "season", CodificationVariable.Categorical },
+                //{ "thisMonth", CodificationVariable.Categorical },
+                //{ "season", CodificationVariable.Categorical },
             };
             // Learn the codebook
             codebook.Learn(instancesTrain);
@@ -145,6 +145,24 @@ namespace server.Models
             //use Ordinary Least Squares to estimate a regression model:
             MultipleLinearRegression regression = ols.Learn(inputsTrain, outputsTrain);
 
+            //double a = regression.Weights[0]; // a = 0
+            //double b = regression.Weights[1]; // b = 0
+            //double c = regression.Weights[2];
+            //double d = regression.Weights[3];
+            //double e = regression.Weights[4];
+            //double f = regression.Weights[5];
+            //double g = regression.Weights[6];
+            //double h = regression.Intercept;
+
+            Console.WriteLine("cofficients");
+            for (int i = 0; i < 4; i++)
+            {
+                Console.WriteLine(regression.Weights[i]);
+            }
+            Console.WriteLine("intercept:");
+            Console.WriteLine(regression.Intercept);
+
+
             //compute the predicted points using:
             double[] predicted = regression.Transform(inputsTest);
 
@@ -152,7 +170,8 @@ namespace server.Models
             double error = new SquareLoss(outputsTest).Loss(predicted);
             Console.WriteLine($"Mean squared error on testing set: {error}");
 
-            return (int)AVG(predicted);
+            return predicted;
+            //return (int)AVG(predicted);
         }
 
 
@@ -173,15 +192,15 @@ namespace server.Models
             return shuffledList;
         }
 
-        public static double AVG(double[] predicted) //avarage of predicted vector
-        {
-            double sum = 0.0;
-            foreach (double num in predicted)
-            {
-                sum += num;
-            }
-            return sum / predicted.Length;
-        }
+        //public static double AVG(double[] predicted) //avarage of predicted vector
+        //{
+        //    double sum = 0.0;
+        //    foreach (double num in predicted)
+        //    {
+        //        sum += num;
+        //    }
+        //    return sum / predicted.Length;
+        //}
 
 
     }
