@@ -2499,6 +2499,67 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read PushOrders from the PushOrders table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPushOrdersPharm()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadPushOrdersPharm", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    orderId = Convert.ToInt32(dataReader["pushId"]),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]),
+                    orderTime = Convert.ToDateTime(dataReader["orderTime"]).TimeOfDay,
+                    depId = Convert.ToInt32(dataReader["depId"]),
+                    depName = dataReader["depName"].ToString(),
+                    pharmId = Convert.ToInt32(dataReader["pUser"]),
+                    pharmName = dataReader["pharmName"].ToString(),
+                    reportNum = dataReader["reportNum"].ToString(),
+                    status = dataReader["pushStatus"].ToString(),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
 
 
     /*****************PullOrders*****************/
@@ -3040,7 +3101,7 @@ public class DBservices
                 listObj.Add(new
                 {
                     orderId = Convert.ToInt32(dataReader["pullId"]),
-                    orderDate = Convert.ToDateTime(dataReader["orderDate"]).ToShortDateString(),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]),
                     orderTime = Convert.ToDateTime(dataReader["orderTime"]).TimeOfDay,
                     depId = Convert.ToInt32(dataReader["depId"]),
                     depName = dataReader["depName"].ToString(),
@@ -3069,7 +3130,7 @@ public class DBservices
                 con.Close();
             }
         }
-    } 
+    }
 
 
     /*****************Global for PullOrders and PushOrders*****************/
@@ -3077,7 +3138,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read OrderDetails from the Push/PullOrders and MedPush/PullOrders tables
     //--------------------------------------------------------------------------------------------------
-    public Object ReadOrderDetails(int depId, int orderId, int type)
+    public Object ReadOrderDetails(int orderId, int type)
     {
 
         SqlConnection con;
@@ -3094,9 +3155,9 @@ public class DBservices
         }
 
         if (type == 1) // if the order type is push 
-            cmd = CreateReadOrdersObjectCommandSP("spReadPushOrderDetails", con, depId, orderId);
+            cmd = CreateReadOrdersObjectCommandSP("spReadPushOrderDetails", con, orderId);
         else // if the order type is pull 
-            cmd = CreateReadOrdersObjectCommandSP("spReadPullOrderDetails", con, depId, orderId);
+            cmd = CreateReadOrdersObjectCommandSP("spReadPullOrderDetails", con, orderId);
 
         try
         {
@@ -3135,7 +3196,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Read Order Object SqlCommand for both pull and push order
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateReadOrdersObjectCommandSP(String spName, SqlConnection con, int depId, int orderId)
+    private SqlCommand CreateReadOrdersObjectCommandSP(String spName, SqlConnection con, int orderId)
     {
         SqlCommand cmd = new SqlCommand(); // create the command object
 
@@ -3147,7 +3208,6 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@depId", depId);
         cmd.Parameters.AddWithValue("@orderId", orderId);
 
         return cmd;

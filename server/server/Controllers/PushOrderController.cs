@@ -29,11 +29,19 @@ namespace server.Controllers
         }
 
         // GET api/<PushOrderController>/5
-        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}/type/{type}")]
-        public Object GetOrderDetails(int depId, int orderId, int type) //type: 1=push, 2=pull
+        [HttpGet("GetOrderDetails/orderId/{orderId}")]
+        public Object GetOrderDetails(int orderId)
         {
             Order po = new Order();
-            return po.ReadMedsOrder(depId, orderId, type);
+            return po.ReadMedsOrder(orderId, 1); //type: 1=push, 2=pull
+        }
+
+        // GET api/<PushOrderController>/5
+        [HttpGet("GetPushOrdersPharm")]
+        public Object GetPushOrdersPharm()
+        {
+            PushOrder po = new PushOrder();
+            return po.ReadPushOrdersPharm();
         }
 
         // POST api/<PushOrderController>

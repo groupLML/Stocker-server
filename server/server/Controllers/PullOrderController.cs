@@ -36,12 +36,13 @@ namespace server.Controllers
             return po.ReadPullOrdersPharm();
         }
 
+
         // GET api/<PullOrderController>/5
-        [HttpGet("GetOrderDetails/depId/{depId}/orderId/{orderId}/type/{type}")]
-        public Object GetOrderDetails(int depId, int orderId, int type) //type: 1=push, 2=pull
+        [HttpGet("GetOrderDetails/orderId/{orderId}")]
+        public Object GetOrderDetails(int orderId) 
         {
             Order po = new Order();
-            return po.ReadMedsOrder(depId, orderId, type);
+            return po.ReadMedsOrder(orderId,2); //type: 1=push, 2=pull
         }
 
         // POST api/<PullOrderController>

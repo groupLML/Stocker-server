@@ -33,6 +33,8 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [Department] ([depName],[depPhone],[depType]) Values (@depName,@depPhone,@depType)
+	 Insert INTO [Departments] ([depName],[depPhone],[depType]) Values (@depName,@depPhone,@depType)
 END
 GO
+
+
