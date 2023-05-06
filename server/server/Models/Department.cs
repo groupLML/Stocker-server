@@ -35,7 +35,7 @@
 
             foreach (Department dep in List) //בדיקה אם המחלקה לא קיימת כבר
             {
-                if (this.DepName == dep.DepName)
+                if (this.DepName == dep.DepName || this.DepPhone == dep.DepPhone)
                     return false;
             }
             dbs.InsertDep(this);
@@ -45,6 +45,13 @@
         public int Update()
         {
             DBservices dbs = new DBservices();
+            List<Department> List = dbs.ReadDeps();
+
+            foreach (Department dep in List) //בדיקה אם שם המחלקה לא קיימת כבר במחלקה אחרת
+            {
+                if ((this.DepName == dep.DepName || this.DepPhone == dep.DepPhone) && dep.DepId != this.DepId)
+                    return -1;
+            }
             return dbs.UpdateDep(this);
         }
 

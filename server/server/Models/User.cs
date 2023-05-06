@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Intrinsics.Arm;
 
 namespace server.Models
 {
@@ -54,9 +55,9 @@ namespace server.Models
             DBservices dbs = new DBservices();
             List<User> UsersList = dbs.ReadUsers();
 
-            foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר
+            foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר במשתמש אחר
             {
-                if (this.Username == user.Username)
+                if ((this.Username == user.Username || this.Phone == user.Phone) && user.UserId != this.UserId)
                     return false;
             }
             dbs.InsertUser(this);
@@ -66,6 +67,13 @@ namespace server.Models
         public int Update()
         {
             DBservices dbs = new DBservices();
+            List<User> UsersList = dbs.ReadUsers();
+
+            foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר
+            {
+                if (this.Username == user.Username || this.Phone == user.Phone)
+                    return -1;
+            }
             return dbs.UpdateUser(this);
         }
 
