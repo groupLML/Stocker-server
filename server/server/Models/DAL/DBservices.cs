@@ -437,9 +437,9 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method Read user from the users table
+    // This method Read users from the users table
     //--------------------------------------------------------------------------------------------------
-    public List<User> ReadUsers()
+    public List<User> ReadUsersList()
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -497,6 +497,70 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read objectss from the users table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadUsersPharm()
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadUsersPharm", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<object> listObj = new List<object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    userId = Convert.ToInt32(dataReader["UserId"]),
+                    username = dataReader["Username"].ToString(),
+                    firstName = dataReader["FirstName"].ToString(),
+                    lastName = dataReader["LastName"].ToString(),
+                    email = dataReader["Email"].ToString(),
+                    password = dataReader["Password"].ToString(),
+                    phone = dataReader["Phone"].ToString(),
+                    position = dataReader["Position"].ToString(),
+                    jobType = Convert.ToChar(dataReader["JobType"]),
+                    jobTypeName = dataReader["jobTypeName"].ToString(),
+                    depId = Convert.ToInt32(dataReader["DepId"]),
+                    depName = dataReader["depName"].ToString(),
+                    isActive = Convert.ToBoolean(dataReader["IsActive"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    
 
 
     /*****************Departments*****************/
@@ -3505,12 +3569,6 @@ public class DBservices
 
 
 
-
-
-    /*********************************************** תשתית בלבד - בבקשה לא לבדוק ***********************************************/
-
-
-
     /*****************Returns*****************/
 
     //--------------------------------------------------------------------------------------------------
@@ -3677,6 +3735,8 @@ public class DBservices
             }
         }
     }
+
+
 
     /*****************Norms*****************/
 
@@ -3997,7 +4057,6 @@ public class DBservices
             }
         }
     }
-
 
 
 
