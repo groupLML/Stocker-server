@@ -32,8 +32,13 @@ namespace server.Models
         //methodes
         public int Insert()
         {
-            DBservices dbs = new DBservices();
-            return dbs.InsertMessage(this);
+            if (this.Msg == "")
+                return 0;
+            else
+            {
+                DBservices dbs = new DBservices();
+                return dbs.InsertMessage(this);
+            }
         }
 
         public int Update()
