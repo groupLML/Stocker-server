@@ -50,7 +50,7 @@ namespace server.Models
         }
 
         //methodes
-        public bool Insert()
+        public int Insert()
         {
             DBservices dbs = new DBservices();
             List<User> UsersList = dbs.ReadUsersList();
@@ -58,10 +58,9 @@ namespace server.Models
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר במשתמש אחר
             {
                 if ((this.Username == user.Username || this.Phone == user.Phone) && user.UserId != this.UserId)
-                    return false;
+                    return -1;
             }
-            dbs.InsertUser(this);
-            return true;
+            return dbs.InsertUser(this);
         }
 
         public int Update()

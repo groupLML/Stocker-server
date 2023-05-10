@@ -18,13 +18,6 @@ namespace server.Controllers
             return user.Read();
         }
 
-        // GET: api/<UserController>
-        [HttpGet("GetUsers")]
-        public Object GetUsers()
-        {
-            User user = new User();
-            return user.ReadUsers();
-        }
 
         [HttpPost]
         [Route("Login")]
@@ -39,9 +32,16 @@ namespace server.Controllers
         }
 
 
+        // GET api/<UserController>/5
+        [HttpGet("{id}")]
+        public string Get(int id)
+        {
+            return "value";
+        }
+
         // POST api/<UserController>
         [HttpPost]
-        public bool Post([FromBody] User user)
+        public int Post([FromBody] User user)
         {
             return user.Insert();
         }
