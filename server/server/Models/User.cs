@@ -57,7 +57,7 @@ namespace server.Models
 
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר במשתמש אחר
             {
-                if ((this.Username == user.Username || this.Phone == user.Phone) && user.UserId != this.UserId)
+                if (this.Username == user.Username || this.Phone == user.Phone)
                     return -1;
             }
             return dbs.InsertUser(this);
