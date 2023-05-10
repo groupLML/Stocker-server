@@ -53,7 +53,7 @@ namespace server.Models
         public bool Insert()
         {
             DBservices dbs = new DBservices();
-            List<User> UsersList = dbs.ReadUsers();
+            List<User> UsersList = dbs.ReadUsersList();
 
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר במשתמש אחר
             {
@@ -67,11 +67,11 @@ namespace server.Models
         public int Update()
         {
             DBservices dbs = new DBservices();
-            List<User> UsersList = dbs.ReadUsers();
+            List<User> UsersList = dbs.ReadUsersList();
 
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר
             {
-                if (this.Username == user.Username || this.Phone == user.Phone)
+                if ((this.Username == user.Username || this.Phone == user.Phone) && user.UserId != this.UserId)
                     return -1;
             }
             return dbs.UpdateUser(this);
@@ -80,13 +80,19 @@ namespace server.Models
         public List<User> Read()
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadUsers();
+            return dbs.ReadUsersList();
+        }
+
+        public Object ReadUsers()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadUsersPharm();
         }
 
         public User Login(string username, string password) //בדיקה האם המשתמש loged in
         {
             DBservices dbs = new DBservices();
-            List<User> UserList = dbs.ReadUsers();
+            List<User> UserList = dbs.ReadUsersList();
             User userEmpty = new User();
 
             foreach (User user in UserList)
