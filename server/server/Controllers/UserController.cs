@@ -14,10 +14,17 @@ namespace server.Controllers
         [HttpGet]
         public IEnumerable<User> Get()
         {
-            User user= new User();
+            User user = new User();
             return user.Read();
         }
 
+        // GET: api/<UserController>
+        [HttpGet("GetUsers")]
+        public Object GetUsers()
+        {
+            User user = new User();
+            return user.ReadUsers();
+        }
 
         [HttpPost]
         [Route("Login")]
@@ -31,13 +38,6 @@ namespace server.Controllers
             //{"Username": "string", "Password": "string"}
         }
 
-
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         // POST api/<UserController>
         [HttpPost]
@@ -73,7 +73,7 @@ namespace server.Controllers
         public bool PutToken(int userId, [FromBody] string token)
         {
             User user = new User();
-            int numAffected= user.UpdateToken(userId, token);
+            int numAffected = user.UpdateToken(userId, token);
             if (numAffected == 1)
                 return true;
             else
