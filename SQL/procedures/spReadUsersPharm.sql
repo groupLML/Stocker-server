@@ -19,7 +19,7 @@ GO
 -- Description:	<Description>
 -- =============================================
 
-CREATE PROCEDURE spReadUsersPharm
+ALTER PROCEDURE spReadUsersPharm
 
 AS
 BEGIN
@@ -30,9 +30,9 @@ BEGIN
     -- Insert statements for procedure here
 
 	SELECT U.*, D.depName,
-			CASE WHEN (jobType like 'N') THEN N'אחות'
-				 WHEN (jobType like 'P') THEN N'רוקח'
-				 WHEN (jobType like 'M') THEN N'מנהל בית מרקחת'
+			CASE WHEN (jobType like 'N') THEN N'אח/ות'
+				 WHEN (jobType like 'P') THEN N'רוקח/ת'
+				 WHEN (jobType like 'M') THEN N'מנהל/ת בית מרקחת'
 				 WHEN (jobType like 'A') THEN N'אדמין'
 				 end as jobTypeName
 	 FROM [Users] as U INNER JOIN [Departments] as D
