@@ -3818,10 +3818,13 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a Norm in the Norms table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateNorm(Norm norm)
+    public bool UpdateNorm(Norm norm)
     {
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        SqlCommand cmd3;
+        int numEffected = 0;
 
         try
         {
@@ -3833,16 +3836,62 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm);
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            using (cmd1 = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm))
+            {
+                cmd1.Transaction = transaction;
+                numEffected = cmd1.ExecuteNonQuery();
+            }
+            if (numEffected != 0)
+            {
+                numEffected = 0;
+                using (cmd2 = CreateDeleteMedNormCommand("spDeleteMedsNorm", con, norm.NormId)) 
+                {
+                    cmd2.Transaction = transaction;
+                    numEffected = cmd2.ExecuteNonQuery();//מוחזר כמות התרופות שנמחקו מאותה הזמנה
+                }
+                if (numEffected != 0)
+                {
+                    for (int i = 0; i < norm.MedList.Count; i++)
+                    {
+                        using (cmd3 = CreateUpdateInsertMedNormCommandSP("spInsertMedNorm", con, norm.NormId, norm.MedList[i]))
+                        {
+                            cmd3.Transaction = transaction;
+                            numEffected = cmd3.ExecuteNonQuery();
+                        }
+                        if (numEffected == 1)
+                            numEffected = -1;
+                        else
+                            break;
+                    }
+                }
+            }
+
+            if (numEffected == -1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל 3 הפרוצדורות החזירו ערך שינוי, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -3855,6 +3904,7 @@ public class DBservices
             }
         }
     }
+
 
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
@@ -3873,7 +3923,7 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@normId", norm.NormId);
         cmd.Parameters.AddWithValue("@depId", norm.DepId);
-        cmd.Parameters.AddWithValue("@lastUpdate", norm.LastUpdate);
+      
         return cmd;
     }
 
@@ -3897,6 +3947,27 @@ public class DBservices
         cmd.Parameters.AddWithValue("@normQty", medNorm.NormQty);
         cmd.Parameters.AddWithValue("@mazNum", medNorm.MazNum);
         cmd.Parameters.AddWithValue("@inNorm", medNorm.InNorm);
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------
+    // Create the DeleteMedNorm SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteMedNormCommand(String spName, SqlConnection con, int normId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@normId", normId);
+
         return cmd;
     }
 

@@ -47,11 +47,7 @@ namespace server.Controllers
         public bool Put(int normId, [FromBody] Norm norm)
         {
             norm.NormId = normId;
-            int numAffected = norm.Update();
-            if (numAffected == 1)
-                return true;
-            else
-                return false;
+            return norm.Update();
         }
 
         //// DELETE api/<NormController>/5

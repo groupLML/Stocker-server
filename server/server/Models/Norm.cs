@@ -43,7 +43,7 @@ namespace server.Models
             return dbs.InsertNorm(this); 
         }
 
-        public int Update()
+        public bool Update()
         {
             DBservices dbs = new DBservices();
             return dbs.UpdateNorm(this);
