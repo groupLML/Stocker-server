@@ -1951,8 +1951,62 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // 3 methods bellow: Read MedRequestsObjects by depId and Create read command 
+    // 4 methods bellow: Read MedRequestsObjects and Create read command 
     //--------------------------------------------------------------------------------------------------
+    public Object ReadMedRequestsManager()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedRequestsManager", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    reqDate = Convert.ToDateTime(dataReader["reqDate"]),
+                    mazNum = dataReader["mazNum"].ToString(),
+                    medName = dataReader["medName"].ToString(),
+                    cDepName = dataReader["cDepName"].ToString(),
+                    aDepName = dataReader["aDepName"].ToString(),
+                    reqQty = Convert.ToInt32(dataReader["reqQty"]),
+                    reqStatus = dataReader["reqStatus"].ToString(),
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
     public Object ReadMedRequestsNurseMine(int depId)
     {
 
@@ -2215,7 +2269,6 @@ public class DBservices
 
         return cmd;
     }
-
 
 
 

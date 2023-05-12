@@ -21,6 +21,14 @@ namespace server.Controllers
         }
 
         // GET: api/<MedRequestController>
+        [HttpGet("RequestsManager")]
+        public Object GetAllRequests()
+        {
+            MedRequest mr = new MedRequest();
+            return mr.ReadRequestsManager();
+        }
+
+        // GET: api/<MedRequestController>
         [HttpGet("RequestsMine/{depId}")]
         public Object GetRequestsMine(int depId)
         {

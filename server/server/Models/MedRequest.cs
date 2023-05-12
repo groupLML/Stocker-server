@@ -153,5 +153,11 @@ namespace server.Models
             return dbs.ReadReqDepTypes(depId, reqId);
         }
 
+        public Object ReadRequestsManager() //טבלת כל הבקשות של המחלקות עבטור מנהל בית המרקחת 
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadMedRequestsManager();
+        }
+
     }
 }
