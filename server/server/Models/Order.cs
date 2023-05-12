@@ -25,7 +25,7 @@
 
         //constructors
         public Order() { }
-        public Order(int orderId, int depId, int pUser, string reportNum, char status, DateTime orderDate, DateTime lastUpdate)
+        public Order(int orderId, int depId, int pUser, string reportNum, char status, DateTime orderDate, DateTime lastUpdate, List<MedOrder> medList)
         {
             this.orderId = orderId;
             this.depId = depId;
@@ -34,7 +34,10 @@
             this.status = status;
             this.orderDate = orderDate;
             this.lastUpdate = lastUpdate;
-            this.MedList = new List<MedOrder>();
+            if (medList != null)
+                this.MedList = medList;
+            else
+                this.MedList = new List<MedOrder>();
         }
 
         public Object ReadMedsOrder(int orderId, int type) //קריאת פרטי התרופות עבור הזמנה ספציפית 

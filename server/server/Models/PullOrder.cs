@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics;
 using System;
+using System.Runtime.ConstrainedExecution;
 
 namespace server.Models
 {
@@ -15,7 +16,7 @@ namespace server.Models
         public PullOrder() : base()
         { }
         public PullOrder(int orderId, int depId, int nUser, int pUser, string reportNum, char status, DateTime orderDate,
-                         DateTime lastUpdate) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate)
+                         DateTime lastUpdate, List<MedOrder> medList) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate, medList)
         { this.nUser = nUser; }
 
         //methodes
@@ -34,7 +35,8 @@ namespace server.Models
         public bool UpdatePharmIssued() //עדכון פרטי הזמנה ומעבר לסטטוס הונפק ע"י הרוקח
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdatePullOrderPharmIssued(this);
+            PullOrder po = new PullOrder(this.OrderId, 0, 0, this.PUser, this.ReportNum, 'I', DateTime.Now, DateTime.Now, this.MedList);
+            return dbs.UpdatePullOrderPharmIssued(po);
         }
 
         public int UpdatePharmTaken(int pullId, int pUser) //עדכון הזמנה ומעבר לסטטוס בטיפול ע"י הרוקח

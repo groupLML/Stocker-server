@@ -3,6 +3,7 @@ using server.Models;
 using System.Text.Json;
 using Newtonsoft.Json;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.Intrinsics.Arm;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,16 +73,26 @@ namespace server.Controllers
         [HttpPut("UpdatePharmIssued/pullId/{pullId}")]
         public bool PutPharmIssued(int pullId, [FromBody] JsonElement pullOrder) // Status = I
         {
-            string json = pullOrder.GetProperty("pullOrder").ToString();
-            PullOrder po = JsonConvert.DeserializeObject<PullOrder>(json);
-            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pullOrder.GetProperty("medList").GetRawText());
+            PullOrder po = new PullOrder();
             po.OrderId = pullId;
-
+            po.PUser = pullOrder.GetProperty("pUser").GetInt32();
+            po.ReportNum = pullOrder.GetProperty("reportNum").GetString();
+            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pullOrder.GetProperty("medList").GetRawText());
+       
             return po.UpdatePharmIssued();
 
-        //   { "pullOrder": {"nUser": 4,"orderId": 92,"depId": 3, "pUser": 5,  "reportNum": "11111", "status": "T", "orderDate": "2023-04-15T12:15:32.323", "lastUpdate": "2023-04-15T14:03:00.633", "medList": []
-        //   }, "medList": [ { "medId": 1, "poQty": 3, "supQty": 1,  "mazNum": "M1191300"} ] }
+  // {"pUser": 5,
+  //  "reportNum": "353535",
+  //  "medList": [
+  //    {
+  //      "medId": 5,
+  //      "poQty": 1,
+  //      "supQty": 0,
+  //      "mazNum": "M1191304"
+  //    }]}
 
+            //   { "pullOrder": {"nUser": 4,"orderId": 92,"depId": 3, "pUser": 5,  "reportNum": "11111", "status": "T", "orderDate": "2023-04-15T12:15:32.323", "lastUpdate": "2023-04-15T14:03:00.633", "medList": []
+            //   }, "medList": [ { "medId": 1, "poQty": 3, "supQty": 1,  "mazNum": "M1191300"} ] }
         }
 
         // PUT api/<PullOrderController>/5

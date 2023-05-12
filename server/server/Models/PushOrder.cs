@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace server.Models
 {
@@ -7,7 +8,7 @@ namespace server.Models
         //constructors
         public PushOrder() : base() { }
         public PushOrder(int orderId, int depId, int pUser, string reportNum, char status, DateTime orderDate,
-                         DateTime lastUpdate) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate) { }
+                         DateTime lastUpdate, List<MedOrder> medList) : base(orderId, depId, pUser, reportNum, status, orderDate, lastUpdate, medList) { }
 
         //methodes
         public bool Insert()
@@ -19,7 +20,8 @@ namespace server.Models
         public bool UpdatePharmIssued() // עדכון פרטי הזמנה ומעבר לסטטוס הונפק ע"י הרוקח
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdatePushOrder(this);
+            PushOrder po = new PushOrder(this.OrderId, 0, this.PUser, this.ReportNum, 'I', DateTime.Now, DateTime.Now, this.MedList);
+            return dbs.UpdatePushOrder(po);
         }
 
         public List<PushOrder> Read() //קריאה של הזמנות דחיפה עם פרטי התרופות בכל הזמנה

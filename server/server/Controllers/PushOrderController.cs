@@ -3,6 +3,7 @@ using server.Models;
 using System.Text.Json;
 using Newtonsoft.Json;
 using System.Runtime.Intrinsics.X86;
+using MathNet.Numerics;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -55,10 +56,11 @@ namespace server.Controllers
         [HttpPut("UpdatePharmIssued/pushId/{pushId}")]
         public bool PutPharmIssued(int pushId, [FromBody] JsonElement pushOrder) // Status = I
         {
-            string json = pushOrder.GetProperty("pushOrder").ToString();
-            PushOrder po = JsonConvert.DeserializeObject<PushOrder>(json);
-            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pushOrder.GetProperty("medList").GetRawText());
+            PushOrder po = new PushOrder();
             po.OrderId = pushId;
+            po.PUser = pushOrder.GetProperty("pUser").GetInt32();
+            po.ReportNum = pushOrder.GetProperty("reportNum").GetString();
+            po.MedList = JsonConvert.DeserializeObject<List<MedOrder>>(pushOrder.GetProperty("medList").GetRawText());
 
             return po.UpdatePharmIssued();
 
