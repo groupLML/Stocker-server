@@ -19,7 +19,7 @@ namespace server.Controllers
         }
 
         // GET api/<NormController>/5
-        [HttpGet("MedsNorm/depId/{depId}")] 
+        [HttpGet("depId/{depId}")] 
         public List<Norm> GetMedsNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים 
         {
             Norm mednorm = new Norm();

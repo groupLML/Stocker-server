@@ -9,11 +9,13 @@ namespace server.Controllers
     [ApiController]
     public class NormRequestController : ControllerBase
     {
+        //כרגע אין שימוש, מחיקה////////////////////////////////////////////////////////
         // GET: api/<NormRequestController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Norm> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן
         {
-            return new string[] { "value1", "value2" };
+            Norm mednorm = new Norm();
+            return mednorm.Read();
         }
 
         // GET api/<NormRequestController>/5
