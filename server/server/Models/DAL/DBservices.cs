@@ -1218,8 +1218,7 @@ public class DBservices
                 {
                     medId = Convert.ToInt32(dataReader["medId"]),
                     mazNum = dataReader["mazNum"].ToString(),
-                    genName = dataReader["genName"].ToString(),
-                    comName = dataReader["comName"].ToString(),
+                    medName = dataReader["medName"].ToString(),
                     useQty = Convert.ToInt32(dataReader["useQty"])
 
                 });

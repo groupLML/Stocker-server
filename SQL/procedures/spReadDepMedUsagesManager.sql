@@ -27,14 +27,23 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-    SELECT [MedUsages].medId,mazNum, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(useQty) as 'useQty'
+	SELECT [MedUsages].medId,mazNum, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(useQty) as 'useQty'
 	FROM [MedUsages] inner join [Medicines]
 	     on [MedUsages].medId=[Medicines].medId inner join [Usages]
 	     on [MedUsages].usageId=[Usages].usageId
-	where [Usages].depId=@depId
+	where [Usages].depId= @depId
 	group by [MedUsages].medId,mazNum,genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given
 
 
 END
 GO
 
+--select U.usageId, reportNum, MU.medId, mazNum, 
+--       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', MU.useQty, U.lastUpdate
+--FROM [Usages] U inner join [MedUsages] MU
+--	 on U.usageId=MU.usageId inner join [Medicines] M
+--	 on MU.medId=M.medId 
+--where U.depId= @depId
+--order by U.lastUpdate desc
+
+	
