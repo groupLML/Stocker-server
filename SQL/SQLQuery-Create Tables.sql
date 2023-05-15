@@ -61,18 +61,26 @@ CREATE TABLE [MedNorms] (
    	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
 	[normQty] real check(normQty>=0) NOT NULL,
 	[mazNum] varchar(10) NOT NULL, 
-    [inNorm] bit default 'true',
 	Primary key (normId, medId)
 )
 
 
 CREATE TABLE [NormRequests](
+    [reqId] smallint IDENTITY (1,1),
    	[normId] smallint REFERENCES [Norms](normId) NOT NULL,
-	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
-	[ncrDate] datetime default GETDATE(),
 	[userId] smallint REFERENCES [Users](userId) NOT NULL,
-	[ncrQty] real check(ncrQty>=0) NOT NULL,
-	Primary key (normId,medId,ncrDate)
+	[reqDate] datetime default GETDATE(),
+	[reqStatus] char(1) check(reqStatus in('W','C')) default 'W', 
+	Primary key (reqId)
+) 
+
+--C=completed, W=waiting
+
+CREATE TABLE [MedNormRequests](
+   	[reqId] smallint REFERENCES [NormRequests](reqId) NOT NULL,
+	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
+	[reqQty] real check(reqQty>=0) NOT NULL,
+	Primary key (reqId,medId)
 ) 
 
 
