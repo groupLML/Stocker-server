@@ -12,10 +12,10 @@ namespace server.Controllers
         //כרגע אין שימוש, מחיקה////////////////////////////////////////////////////////
         // GET: api/<NormRequestController>
         [HttpGet]
-        public IEnumerable<Norm> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן
+        public IEnumerable<NormRequest> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן
         {
-            Norm normReq = new Norm();
-            return normReq.Read();
+            NormRequest nr = new NormRequest();
+            return nr.Read();
         }
 
         // GET api/<NormRequestController>/5

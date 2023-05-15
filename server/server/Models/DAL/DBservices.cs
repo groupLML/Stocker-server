@@ -4338,9 +4338,7 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@reqId", nr.ReqId);
         cmd.Parameters.AddWithValue("@normId", nr.NormId);
-        cmd.Parameters.AddWithValue("@ncrDate", nr.NcrDate);
         cmd.Parameters.AddWithValue("@userId", nr.UserId);
-        cmd.Parameters.AddWithValue("@reqStatus", nr.ReqStatus);
         
         return cmd;
     }
@@ -4380,7 +4378,7 @@ public class DBservices
                 nr.NormId = Convert.ToInt32(dataReader["NormId"]);
                 nr.DepId = Convert.ToInt32(dataReader["depId"]);
                 nr.UserId = Convert.ToInt32(dataReader["userId"]);
-                nr.NcrDate = Convert.ToDateTime(dataReader["reqDate"]);
+                nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
                 nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
 
                 if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
