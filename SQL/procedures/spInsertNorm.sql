@@ -21,8 +21,7 @@ GO
 ALTER PROCEDURE spInsertNorm
 	
     @normId smallint,
-	@depId smallint,
-	@lastUpdate datetime
+	@depId smallint
 
 AS
 BEGIN

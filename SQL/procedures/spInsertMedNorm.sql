@@ -23,8 +23,7 @@ ALTER PROCEDURE spInsertMedNorm
     @normId smallint,
 	@medId smallint,
 	@normQty real,
-	@mazNum varchar(10), 
-    @inNorm bit
+	@mazNum varchar(10)
 
 AS
 BEGIN
@@ -34,11 +33,11 @@ BEGIN
 	 DECLARE @MAZ varchar(10)
 	
 	 SET @MAZ= (select mazNum
-	 from [Medicines]
-	 where medId=@medId);
+	            from [Medicines]
+	            where medId=@medId);
 
     -- Insert statements for procedure here
-	insert into [MedNorms] ([normId], [medId],[normQty], [mazNum], [inNorm]) values (@normId, @medId,@normQty, @MAZ,1)
+	insert into [MedNorms] ([normId], [medId],[normQty], [mazNum]) values (@normId, @medId,@normQty, @MAZ)
 
 END
 GO

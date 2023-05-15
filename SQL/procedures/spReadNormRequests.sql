@@ -15,10 +15,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <20/04/2023>
--- Description:	<Read Norm>
+-- Create date: <14/05/2023>
+-- Description:	<Read Norm Requests>
 -- =============================================
-ALTER PROCEDURE spReadNorms
+create PROCEDURE spReadNormRequests
 
 AS
 BEGIN
@@ -26,12 +26,15 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-	SELECT N.normId as 'NormId', depId, N.lastUpdate as 'LastUpdate', MN.medId, normQty, MN.mazNum,
-	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName'
-	 FROM [Norms] as N 
-	 inner join [MedNorms] as MN on N.normId= MN.normId
-	 inner join [Medicines] as M on MN.medId=M.medId
-	 order by N.normId desc, lastUpdate desc
+	select NR.reqId as 'ReqId',N.normId as 'NormId', depId,userId, reqDate, reqStatus, MNR.medId as 'MedId', 
+	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'MedName',reqQty
+	 from [Norms] as N 
+	 inner join [NormRequests] as NR on N.normId= NR.normId
+	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
+	 inner join [Medicines] as M on MNR.medId=M.medId
+	 order by NR.reqId desc, reqDate desc
 	 
 END
 GO
+
+

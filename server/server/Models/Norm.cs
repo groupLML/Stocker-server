@@ -60,11 +60,5 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.ReadDepNorm(depId);
         }
-
-        //public Object ReadDepMedsNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים  
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.ReadDepMedsNorm(depId);
-        //}
     }
 }

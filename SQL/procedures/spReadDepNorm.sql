@@ -15,10 +15,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <20/04/2023>
--- Description:	<Read Norm>
+-- Create date: <27/02/2023>
+-- Description:	<Read Dep MedNorms>
 -- =============================================
-ALTER PROCEDURE spReadNorms
+create PROCEDURE spReadDepNorm
+     @depId smallint
 
 AS
 BEGIN
@@ -26,12 +27,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-	SELECT N.normId as 'NormId', depId, N.lastUpdate as 'LastUpdate', MN.medId, normQty, MN.mazNum,
+	SELECT N.normId as 'NormId', depId, N.lastUpdate as 'LastUpdate', MN.medId, normQty, MN.mazNum,inNorm,
 	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName'
 	 FROM [Norms] as N 
 	 inner join [MedNorms] as MN on N.normId= MN.normId
 	 inner join [Medicines] as M on MN.medId=M.medId
+	 where N.depId=@depId and MN.inNorm=1
 	 order by N.normId desc, lastUpdate desc
-	 
 END
 GO

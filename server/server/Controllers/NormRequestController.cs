@@ -14,21 +14,23 @@ namespace server.Controllers
         [HttpGet]
         public IEnumerable<Norm> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן
         {
-            Norm mednorm = new Norm();
-            return mednorm.Read();
+            Norm normReq = new Norm();
+            return normReq.Read();
         }
 
         // GET api/<NormRequestController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("depId/{depId}")]
+        public List<NormRequest> GetMedsNormReq(int depId)
         {
-            return "value";
+            NormRequest nr = new NormRequest();
+            return nr.ReadDepNormReq(depId);
         }
 
         // POST api/<NormRequestController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public bool Post([FromBody] NormRequest nr)
         {
+            return nr.Insert();
         }
 
         // PUT api/<NormRequestController>/5

@@ -4,35 +4,47 @@ namespace server.Models
     public class NormRequest
     {
         //fields
+        int reqId;
         int normId;
-        int medId;
         DateTime ncrDate;
         int userId;
-        float ncrQty;
+        int depId;
+        char reqStatus;
+        private List<MedNormRequest> medReqList;
 
         //properties
+        public int ReqId { get => reqId; set => reqId = value; }
         public int NormId { get => normId; set => normId = value; }
-        public int MedId { get => medId; set => medId = value; }
         public DateTime NcrDate { get => ncrDate; set => ncrDate = value; }
         public int UserId { get => userId; set => userId = value; }
-        public float NcrQty { get => ncrQty; set => ncrQty = value; }
+        public List<MedNormRequest> MedReqList { get => medReqList; set => medReqList = value; }
+        public int DepId { get => depId; set => depId = value; }
+        public char ReqStatus { get => reqStatus; set => reqStatus = value; }
 
         //constructors
         public NormRequest() { }
-        public NormRequest(int normId, int medId, DateTime ncrDate, int userId, float ncrQty)
+        public NormRequest(int reqId,int normId, DateTime ncrDate, int userId, int depId, char reqStatus)
         {
+            this.reqId = reqId;
             this.normId = normId;
-            this.medId = medId;
-            this.userId = userId;
+            this.userId = userId; 
+            this.depId = depId;
             this.ncrDate = ncrDate;
-            this.ncrQty = ncrQty;
+            this.reqStatus = reqStatus;
+            this.medReqList = new List<MedNormRequest>();
         }
 
-
         //methodes
-        public int Insert()
+        public bool Insert()
         {
             DBservices dbs = new DBservices();
+            List<NormRequest> NormReqList = dbs.ReadNormRequests();
+            /////////////////////////////////////////////////////////////////////
+            //foreach (NormRequest normReq in NormReqList) 
+            //{
+            //    if (this.depId == normReq.depId)
+            //        return false;
+            //}
             return dbs.InsertNormRequest(this);
         }
 
@@ -45,6 +57,13 @@ namespace server.Models
         public List<NormRequest> Read()
         {
             DBservices dbs = new DBservices();
+            return dbs.ReadNormRequests();
+        }
+
+        public List<NormRequest> ReadDepNormReq(int depId)
+        {
+            DBservices dbs = new DBservices();
+            //return dbs.ReadDepNormReq(depId);
             return dbs.ReadNormRequests();
         }
     }
