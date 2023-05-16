@@ -19,7 +19,9 @@ GO
 -- Description:	<Read Dep MedUsages Manager>
 -- =============================================
 ALTER PROCEDURE spReadDepMedUsagesManager
-     @depId smallint
+     @depId smallint,
+	 @startDate datetime,
+	 @endDate datetime
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -27,12 +29,12 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT [MedUsages].medId,mazNum, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(useQty) as 'useQty'
-	FROM [MedUsages] inner join [Medicines]
-	     on [MedUsages].medId=[Medicines].medId inner join [Usages]
-	     on [MedUsages].usageId=[Usages].usageId
-	where [Usages].depId= @depId
-	group by [MedUsages].medId,mazNum,genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given
+	SELECT MU.medId,mazNum, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName', sum(useQty) as 'useQty'
+	FROM [Usages] U inner join [MedUsages] MU
+         on U.usageId=MU.usageId inner join [Medicines] M
+         on MU.medId=M.medId 
+	where U.depId= @depId and (U.lastUpdate>=@startDate and U.lastUpdate<=@endDate)
+	group by MU.medId,mazNum,genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given
 
 
 END
@@ -43,7 +45,7 @@ GO
 --FROM [Usages] U inner join [MedUsages] MU
 --	 on U.usageId=MU.usageId inner join [Medicines] M
 --	 on MU.medId=M.medId 
---where U.depId= @depId
+--where U.depId= 3 
 --order by U.lastUpdate desc
 
 	

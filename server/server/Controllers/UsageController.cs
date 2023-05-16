@@ -18,11 +18,11 @@ namespace server.Controllers
         }
 
         // GET api/<UsageController>/5
-        [HttpGet("{depId}")]
-        public Object GetMedUsages(int depId)
+        [HttpGet("/GetDepUsage/dep/{dep}/start/{start}/end/{end}")]
+        public Object GetMedUsages(int dep, DateTime start, DateTime end)
         {
             Usage use = new Usage();
-            return use.ReadMedUsages(depId);
+            return use.ReadMedUsages(dep, start,end);
         }
 
         // GET: api/<UsageController>

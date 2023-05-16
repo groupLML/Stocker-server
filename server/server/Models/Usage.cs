@@ -44,10 +44,10 @@ namespace server.Models
             return dbs.ReadUsages();
         }
 
-        public Object ReadMedUsages(int depId) //טבלה צריכה של מחלקה ספציפית עבור מנהל בית המרקחת
+        public Object ReadMedUsages(int depId, DateTime startDate, DateTime endDate) //טבלה צריכה של מחלקה ספציפית עבור מנהל בית המרקחת
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadDepMedsUsage(depId);
+            return dbs.ReadDepMedsUsage(depId, startDate, endDate);
         }
     }
 }

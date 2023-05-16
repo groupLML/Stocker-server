@@ -17,13 +17,13 @@ namespace server.Models
         public int NormId { get => normId; set => normId = value; }
         public DateTime ReqDate { get => reqDate; set => reqDate = value; }
         public int UserId { get => userId; set => userId = value; }
-        public List<MedNormRequest> MedReqList { get => medReqList; set => medReqList = value; }
         public int DepId { get => depId; set => depId = value; }
         public char ReqStatus { get => reqStatus; set => reqStatus = value; }
+        public List<MedNormRequest> MedReqList { get => medReqList; set => medReqList = value; }
 
         //constructors
         public NormRequest() { }
-        public NormRequest(int reqId,int normId, DateTime reqDate, int userId, int depId, char reqStatus)
+        public NormRequest(int reqId,int normId, DateTime reqDate, int userId, int depId, char reqStatus, List<MedNormRequest> medList)
         {
             this.reqId = reqId;
             this.normId = normId;
@@ -31,7 +31,11 @@ namespace server.Models
             this.depId = depId;
             this.reqDate = reqDate;
             this.reqStatus = reqStatus;
-            this.medReqList = new List<MedNormRequest>();
+            //this.medReqList = new List<MedNormRequest>();
+            if (medList != null)
+                this.MedReqList = medList;
+            else
+                this.MedReqList = new List<MedNormRequest>();
         }
 
         //methodes

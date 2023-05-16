@@ -1187,7 +1187,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Read DepMedUsages from the MedUsages table by depId
     //--------------------------------------------------------------------------------------------------
-    public Object ReadDepMedsUsage(int depId)
+    public Object ReadDepMedsUsage(int depId, DateTime startDate, DateTime endDate)
     {
 
         SqlConnection con;
@@ -1203,7 +1203,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateReadDepObjectCommandSP("spReadDepMedUsagesManager", con, depId);
+        cmd = CreateReadUsageObjectCommandSP("spReadDepMedUsagesManager", con, depId, startDate, endDate);
 
         try
         {
@@ -1220,7 +1220,6 @@ public class DBservices
                     mazNum = dataReader["mazNum"].ToString(),
                     medName = dataReader["medName"].ToString(),
                     useQty = Convert.ToInt32(dataReader["useQty"])
-
                 });
             }
             return listObj;
@@ -1241,7 +1240,27 @@ public class DBservices
         }
     }
 
+    //---------------------------------------------------------------------------------
+    // Create Read Object SqlCommand 
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadUsageObjectCommandSP(String spName, SqlConnection con, int depId, DateTime startDate, DateTime endDate)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
 
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@depId", depId);
+        cmd.Parameters.AddWithValue("@startDate", startDate);
+        cmd.Parameters.AddWithValue("@endDate", endDate);
+
+        return cmd;
+    }
 
 
 
@@ -4271,7 +4290,7 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
-        cmd.Parameters.AddWithValue("@normId", reqId);
+        cmd.Parameters.AddWithValue("@reqId", reqId);
         cmd.Parameters.AddWithValue("@medId", medNormReq.MedId);
         cmd.Parameters.AddWithValue("@reqQty", medNormReq.ReqQty);
 
