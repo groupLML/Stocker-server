@@ -18,7 +18,7 @@ GO
 -- Create date: <15/05/2023>
 -- Description:	<Read Dep MedNorms>
 -- =============================================
-create PROCEDURE spReadDepNormRequests
+alter PROCEDURE spReadDepNormRequests
      @depId smallint
 
 AS
@@ -27,28 +27,20 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-	select NR.reqId as 'ReqId',N.normId as 'NormId', depId,userId, reqDate, reqStatus, MNR.medId as 'MedId', 
-	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'MedName',reqQty
-	 from [Norms] as N 
-	 inner join [NormRequests] as NR on N.normId= NR.normId
-	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
-	 inner join [Medicines] as M on MNR.medId=M.medId
-	 where depId=@depId
-	 order by NR.reqId desc, reqDate desc
-
-END
-GO
-
-	select NR.reqId as 'ReqId',N.normId as 'NormId', D.depId as 'depId' ,D.depName as 'depName'
-	       ,U.userId, U.firstName ,U.lastName,U.jobType, reqDate, reqStatus, MNR.medId as 'MedId', 
-	       genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'MedName',reqQty
+	 select NR.reqId ,N.normId , D.depId, depName,
+	        U.userId, firstName +' '+ lastName as 'fullName',jobType,reqDate,
+			reqStatus, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty
 	 from [Departments] as D 
 	 inner join [Norms] as N on D.depId= N.depId
 	 inner join [NormRequests] as NR on N.normId= NR.normId
 	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
 	 inner join [Medicines] as M on MNR.medId=M.medId
 	 inner join [Users] as U on U.userId = NR.userId
-	 where depId=@depId
+	 where D.depId=@depId
 	 order by NR.reqId desc, reqDate desc
+
+END
+GO
+
 
 

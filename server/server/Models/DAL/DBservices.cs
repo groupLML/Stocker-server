@@ -4397,16 +4397,13 @@ public class DBservices
             while (dataReader.Read())
             {
                 NormRequest nr = new NormRequest();
-                nr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
-                nr.NormId = Convert.ToInt32(dataReader["NormId"]);
-                nr.Dep = new Department();
-                nr.Dep.DepId = Convert.ToInt32(dataReader["depId"]);
-                nr.Dep.DepName = (dataReader["depName"]).ToString();
-                nr.User = new User();
-                nr.User.UserId = Convert.ToInt32(dataReader["userId"]);
-                nr.User.FirstName = (dataReader["firstName"]).ToString();
-                nr.User.LastName = (dataReader["lastName"]).ToString();
-                nr.User.JobType = Convert.ToChar(dataReader["jobType"]);
+                nr.ReqId = Convert.ToInt32(dataReader["reqId"]);
+                nr.NormId = Convert.ToInt32(dataReader["normId"]);
+                nr.DepId = Convert.ToInt32(dataReader["depId"]);
+                nr.DepName = (dataReader["depName"]).ToString();
+                nr.UserId = Convert.ToInt32(dataReader["userId"]);
+                nr.FullName = (dataReader["fullName"]).ToString();
+                nr.JobType = Convert.ToChar(dataReader["jobType"]);
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
                 nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
 
@@ -4416,7 +4413,7 @@ public class DBservices
                 if (nr.ReqId == lastReqId) //בדיקה האם מדובר באותו תקן
                 {
                     MedNormRequest medReq = new MedNormRequest();
-                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
@@ -4424,7 +4421,7 @@ public class DBservices
                 else //הכנסת תרופה בתוך תקן חדש 
                 {
                     MedNormRequest medReq = new MedNormRequest();
-                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
@@ -4480,14 +4477,13 @@ public class DBservices
             while (dataReader.Read())
             {
                 NormRequest nr = new NormRequest();
-                nr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
-                nr.NormId = Convert.ToInt32(dataReader["NormId"]);
-                nr.Dep.DepId = Convert.ToInt32(dataReader["depId"]);
-                nr.Dep.DepName = (dataReader["depName"]).ToString();
-                nr.User.UserId = Convert.ToInt32(dataReader["U.userId"]);
-                nr.User.FirstName = (dataReader["U.firstName"]).ToString();
-                nr.User.LastName = (dataReader["U.lastName"]).ToString();
-                nr.User.JobType = Convert.ToChar(dataReader["U.jobType"]);
+                nr.ReqId = Convert.ToInt32(dataReader["reqId"]);
+                nr.NormId = Convert.ToInt32(dataReader["normId"]);
+                nr.DepId = Convert.ToInt32(dataReader["depId"]);
+                nr.DepName = (dataReader["depName"]).ToString();
+                nr.UserId = Convert.ToInt32(dataReader["userId"]);
+                nr.FullName = (dataReader["fullName"]).ToString();
+                nr.JobType = Convert.ToChar(dataReader["jobType"]);
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
                 nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
 
@@ -4497,7 +4493,7 @@ public class DBservices
                 if (nr.ReqId == lastReqId) //בדיקה האם מדובר באותו תקן
                 {
                     MedNormRequest medReq = new MedNormRequest();
-                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
@@ -4505,7 +4501,7 @@ public class DBservices
                 else //הכנסת תרופה בתוך תקן חדש 
                 {
                     MedNormRequest medReq = new MedNormRequest();
-                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
@@ -4549,7 +4545,7 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@reqId", nr.ReqId);
         cmd.Parameters.AddWithValue("@normId", nr.NormId);
-        cmd.Parameters.AddWithValue("@userId", nr.User.UserId);
+        cmd.Parameters.AddWithValue("@userId", nr.UserId);
         
         return cmd;
     }
@@ -4557,7 +4553,7 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand for norm
     //---------------------------------------------------------------------------------
-    private SqlCommand CreateInsertMedNormRequestCommandSP(String spName, SqlConnection con,int reqId, MedNormRequest medNormReq)
+    private SqlCommand CreateInsertMedNormRequestCommandSP(String spName, SqlConnection con, int reqId, MedNormRequest medNormReq)
     {
         SqlCommand cmd = new SqlCommand(); // create the command object
 

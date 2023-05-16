@@ -4,9 +4,12 @@ namespace server.Models
     public class MedNormRequest
     {
         //fields
+
+        //for DB
         int medId;
         float reqQty;
 
+        //for read
         string medName;
 
         //properties
