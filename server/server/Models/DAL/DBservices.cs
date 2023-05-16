@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MathNet.Numerics;
 using System.Diagnostics.Metrics;
+using Accord.IO;
 //using Microsoft.VisualBasic;
 
 /// DBServices is a class created by me to provides some DataBase Services
@@ -4233,7 +4234,7 @@ public class DBservices
             }
             for (int i = 0; i < nr.MedReqList.Count; i++)
             {
-                using (cmd2 = CreateUpdateInsertMedNormRequestCommandSP("spInsertMedNormRequest", con, reqId, nr.MedReqList[i]))//יצירת command
+                using (cmd2 = CreateInsertMedNormRequestCommandSP("spInsertMedNormRequest", con, reqId, nr.MedReqList[i]))//יצירת command
                 {
                     cmd2.Transaction = transaction;//הפעלת טרנזקציה על הcommand
                     numEffected += cmd2.ExecuteNonQuery(); //הרצת command
@@ -4275,36 +4276,16 @@ public class DBservices
         }
     }
 
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand for norm
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedNormRequestCommandSP(String spName, SqlConnection con, int reqId, MedNormRequest medNormReq)
-    {
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@reqId", reqId);
-        cmd.Parameters.AddWithValue("@medId", medNormReq.MedId);
-        cmd.Parameters.AddWithValue("@reqQty", medNormReq.ReqQty);
-
-        return cmd;
-    }
-
     //--------------------------------------------------------------------------------------------------
     // This method Update a NormRequest in the NormRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateNormRequest(NormRequest nr)
+    public bool UpdateNormRequest(NormRequest nr)
     {
-
         SqlConnection con;
-        SqlCommand cmd;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        SqlCommand cmd3;
+        int numEffected = 0;
 
         try
         {
@@ -4316,16 +4297,62 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequest", con, nr);
+        SqlTransaction transaction = con.BeginTransaction();
 
         try
         {
-            int numEffected = cmd.ExecuteNonQuery(); // execute the command
-            return numEffected;
+            using (cmd1 = CreateUpdateInsertNormRequestCommandSP("spUpdateNorm", con, nr))
+            {
+                cmd1.Transaction = transaction;
+                numEffected = cmd1.ExecuteNonQuery();
+            }
+            if (numEffected != 0)
+            {
+                numEffected = 0;
+                using (cmd2 = CreateDeleteMedNormRequestCommand("spDeleteMedsNormRequest", con, nr.ReqId))
+                {
+                    cmd2.Transaction = transaction;
+                    numEffected = cmd2.ExecuteNonQuery();//מוחזר כמות התרופות שנמחקו מאותה הזמנה
+                }
+                if (numEffected != 0)
+                {
+                    for (int i = 0; i < nr.MedReqList.Count; i++)
+                    {
+                        using (cmd3 = CreateInsertMedNormRequestCommandSP("spInsertMedNormRequest", con, nr.ReqId, nr.MedReqList[i]))
+                        {
+                            cmd3.Transaction = transaction;
+                            numEffected = cmd3.ExecuteNonQuery();
+                        }
+                        if (numEffected == 1)
+                            numEffected = -1;
+                        else
+                            break;
+                    }
+                }
+            }
+
+            if (numEffected == -1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל 3 הפרוצדורות החזירו ערך שינוי, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            // write to log
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -4337,29 +4364,6 @@ public class DBservices
                 con.Close();
             }
         }
-    }
-
-    //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertNormRequestCommandSP(String spName, SqlConnection con, NormRequest nr)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
-
-        cmd.Parameters.AddWithValue("@reqId", nr.ReqId);
-        cmd.Parameters.AddWithValue("@normId", nr.NormId);
-        cmd.Parameters.AddWithValue("@userId", nr.UserId);
-        
-        return cmd;
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -4395,8 +4399,14 @@ public class DBservices
                 NormRequest nr = new NormRequest();
                 nr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
                 nr.NormId = Convert.ToInt32(dataReader["NormId"]);
-                nr.DepId = Convert.ToInt32(dataReader["depId"]);
-                nr.UserId = Convert.ToInt32(dataReader["userId"]);
+                nr.Dep = new Department();
+                nr.Dep.DepId = Convert.ToInt32(dataReader["depId"]);
+                nr.Dep.DepName = (dataReader["depName"]).ToString();
+                nr.User = new User();
+                nr.User.UserId = Convert.ToInt32(dataReader["userId"]);
+                nr.User.FirstName = (dataReader["firstName"]).ToString();
+                nr.User.LastName = (dataReader["lastName"]).ToString();
+                nr.User.JobType = Convert.ToChar(dataReader["jobType"]);
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
                 nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
 
@@ -4440,82 +4450,150 @@ public class DBservices
         }
     }
 
-    ////--------------------------------------------------------------------------------------------------
-    //// This method Read NormRequests from the NormRequests table
-    ////--------------------------------------------------------------------------------------------------
-    //public List<NormRequest> ReadDepNormReq(int depId)
-    //{
+    //--------------------------------------------------------------------------------------------------
+    // This method Read NormRequests from the NormRequests table
+    //--------------------------------------------------------------------------------------------------
+    public List<NormRequest> ReadDepNormRequests(int depId)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
 
-    //    SqlConnection con;
-    //    SqlCommand cmd;
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
 
-    //    try
-    //    {
-    //        con = connect("myProjDB"); // create the connection
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // write to log
-    //        throw (ex);
-    //    }
+        cmd = CreateReadDepObjectCommandSP("spReadDepNormRequests", con, depId);
 
-    //    cmd = CreateReadCommandSP("spReadDepNormRequests", con);
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-    //    try
-    //    {
-    //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+            List<NormRequest> list = new List<NormRequest>();
+            int lastReqId = 0;
 
-    //        List<NormRequest> list = new List<NormRequest>();
-    //        int lastNormId = 0;
+            while (dataReader.Read())
+            {
+                NormRequest nr = new NormRequest();
+                nr.ReqId = Convert.ToInt32(dataReader["ReqId"]);
+                nr.NormId = Convert.ToInt32(dataReader["NormId"]);
+                nr.Dep.DepId = Convert.ToInt32(dataReader["depId"]);
+                nr.Dep.DepName = (dataReader["depName"]).ToString();
+                nr.User.UserId = Convert.ToInt32(dataReader["U.userId"]);
+                nr.User.FirstName = (dataReader["U.firstName"]).ToString();
+                nr.User.LastName = (dataReader["U.lastName"]).ToString();
+                nr.User.JobType = Convert.ToChar(dataReader["U.jobType"]);
+                nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
+                nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
 
-    //        while (dataReader.Read())
-    //        {
-    //            Norm norm = new Norm();
-    //            norm.NormId = Convert.ToInt32(dataReader["NormId"]);
-    //            norm.DepId = Convert.ToInt32(dataReader["DepId"]);
-    //            norm.LastUpdate = Convert.ToDateTime(dataReader["LastUpdate"]);
+                if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
+                    nr.MedReqList = new List<MedNormRequest>();
 
-    //            if (norm.MedList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
-    //                norm.MedList = new List<MedNorm>();
+                if (nr.ReqId == lastReqId) //בדיקה האם מדובר באותו תקן
+                {
+                    MedNormRequest medReq = new MedNormRequest();
+                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedName = (dataReader["medName"]).ToString();
+                    medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
+                }
+                else //הכנסת תרופה בתוך תקן חדש 
+                {
+                    MedNormRequest medReq = new MedNormRequest();
+                    medReq.MedId = Convert.ToInt32(dataReader["MedId"]);
+                    medReq.MedName = (dataReader["medName"]).ToString();
+                    medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
+                    list.Add(nr); //הכנסת תקן חדש לרשימת התקנים
+                    lastReqId = nr.ReqId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
+                }
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
 
-    //            if (norm.NormId == lastNormId) //בדיקה האם מדובר באותו תקן
-    //            {
-    //                MedNorm med = new MedNorm();
-    //                med.MedId = Convert.ToInt32(dataReader["MedId"]);
-    //                med.NormQty = (float)(dataReader["NormQty"]);
-    //                med.MazNum = (dataReader["MazNum"]).ToString();
-    //                med.MedName = (dataReader["medName"]).ToString();
-    //                list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
-    //            }
-    //            else //הכנסת תרופה בתוך תקן חדש 
-    //            {
-    //                MedNorm med = new MedNorm();
-    //                med.MedId = Convert.ToInt32(dataReader["MedId"]);
-    //                med.NormQty = (float)(dataReader["NormQty"]);
-    //                med.MazNum = (dataReader["MazNum"]).ToString();
-    //                med.MedName = (dataReader["medName"]).ToString();
-    //                norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
-    //                list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
-    //                lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
-    //            }
-    //        }
-    //        return list;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // write to log
-    //        throw (ex);
-    //    }
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
-    //    finally
-    //    {
-    //        if (con != null)
-    //        {
-    //            // close the db connection
-    //            con.Close();
-    //        }
-    //    }
-    //}
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertNormRequestCommandSP(String spName, SqlConnection con, NormRequest nr)
+    {
 
+        SqlCommand cmd = new SqlCommand(); // create the command object
 
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", nr.ReqId);
+        cmd.Parameters.AddWithValue("@normId", nr.NormId);
+        cmd.Parameters.AddWithValue("@userId", nr.User.UserId);
+        
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the Update/Insert SqlCommand for norm
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateInsertMedNormRequestCommandSP(String spName, SqlConnection con,int reqId, MedNormRequest medNormReq)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+        cmd.Parameters.AddWithValue("@medId", medNormReq.MedId);
+        cmd.Parameters.AddWithValue("@reqQty", medNormReq.ReqQty);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------
+    // Create the DeleteMedNorm SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateDeleteMedNormRequestCommand(String spName, SqlConnection con, int reqId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+
+        return cmd;
+    }
 }

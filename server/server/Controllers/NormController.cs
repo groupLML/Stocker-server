@@ -17,6 +17,7 @@ namespace server.Controllers
             return mednorm.Read();
         }
 
+
         // GET api/<NormController>/5
         [HttpGet("depId/{depId}")] 
         public List<Norm> GetMedsNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים 
@@ -25,13 +26,6 @@ namespace server.Controllers
             return mednorm.ReadDepNorm(depId);
         }
 
-        //// GET api/<NormController>/5
-        //[HttpGet("Norm/depId/{depId}")]
-        //public Object GetNorm(int depId) //קריאה של פרטי תרופות של תקן מחלקתי מסוים 
-        //{
-        //    Norm mednorm = new Norm();
-        //    return mednorm.ReadDepNorm(depId);
-        //}
 
         // POST api/<NormController>
         [HttpPost]
@@ -48,11 +42,5 @@ namespace server.Controllers
             norm.NormId = normId;
             return norm.Update();
         }
-
-        //// DELETE api/<NormController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

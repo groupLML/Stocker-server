@@ -15,14 +15,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <15/05/2023>
--- Description:	<insert MedNorm>
+-- Create date: <16/05/2023>
+-- Description:	<update Norm>
 -- =============================================
-alter PROCEDURE spInsertMedNormRequest
+Alter PROCEDURE spUpdateNormRequest
 	
-	@reqId smallint,
-	@medId smallint,
-	@reqQty real
+    @normId smallint,
+	@depId smallint
 
 AS
 BEGIN
@@ -31,7 +30,10 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	insert into [MedNormRequests] ([reqId], [medId], [reqQty]) values (@reqId,@medId,@reqQty)
+	UPDATE [Norms] set [lastUpdate]=GETDATE()
+	where normId=@normId
 
 END
 GO
+
+--	UPDATE [Norms] set [depId]=@depId, [lastUpdate]=GETDATE()

@@ -5,11 +5,12 @@ namespace server.Models
     {
         //fields
         int medId;
-        string medName;
         float reqQty;
 
+        string medName;
+
         //properties
-       
+
         public int MedId { get => medId; set => medId = value; }
         public float ReqQty { get => reqQty; set => reqQty = value; }
         public string MedName { get => medName; set => medName = value; }

@@ -35,14 +35,10 @@ namespace server.Controllers
 
         // PUT api/<NormRequestController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public bool Put(int reqId, [FromBody] NormRequest nr)
         {
-        }
-
-        // DELETE api/<NormRequestController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            nr.ReqId = reqId;
+            return nr.Update();
         }
     }
 }

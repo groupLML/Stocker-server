@@ -15,14 +15,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <15/05/2023>
--- Description:	<insert MedNorm>
+-- Create date: <16/05/2023>
+-- Description:	<delete meds Norm>
 -- =============================================
-alter PROCEDURE spInsertMedNormRequest
-	
-	@reqId smallint,
-	@medId smallint,
-	@reqQty real
+CREATE PROCEDURE spDeleteMedsNormRequest
+
+	@reqId smallint
 
 AS
 BEGIN
@@ -31,7 +29,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	insert into [MedNormRequests] ([reqId], [medId], [reqQty]) values (@reqId,@medId,@reqQty)
-
+	 delete from [MedNormRequests] where reqId = @reqId
 END
 GO
+
