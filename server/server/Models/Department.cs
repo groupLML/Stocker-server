@@ -28,7 +28,7 @@
 
 
         //methodes
-        public bool Insert()
+        public int Insert()
         {
             DBservices dbs = new DBservices();
             List<Department> List = dbs.ReadDeps();
@@ -36,10 +36,9 @@
             foreach (Department dep in List) //בדיקה אם המחלקה לא קיימת כבר
             {
                 if (this.DepName == dep.DepName || this.DepPhone == dep.DepPhone)
-                    return false;
+                    return -1;
             }
-            dbs.InsertDep(this);
-            return true;
+            return dbs.InsertDep(this);
         }
 
         public int Update()

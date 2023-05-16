@@ -26,7 +26,7 @@ namespace server.Controllers
 
         // POST api/<DepartmentController>
         [HttpPost]
-        public bool Post([FromBody] Department dep)
+        public int Post([FromBody] Department dep)
         {
             return dep.Insert();
         }
