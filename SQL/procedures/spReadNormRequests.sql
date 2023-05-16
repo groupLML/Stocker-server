@@ -1,4 +1,4 @@
--- ================================================
+﻿-- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
 --
@@ -28,8 +28,10 @@ BEGIN
 	--SET NOCOUNT ON;
 
 	 select NR.reqId ,N.normId , D.depId, depName,
-	        U.userId, firstName +' '+ lastName as 'fullName',jobType,reqDate,
-			reqStatus, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty
+	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate,
+			case when (reqStatus like 'W') then N'בהמתנה'
+			     when (reqStatus like 'C') then N'הושלם'
+			end as reqStatus, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty
 	 from [Departments] as D 
 	 inner join [Norms] as N on D.depId= N.depId
 	 inner join [NormRequests] as NR on N.normId= NR.normId

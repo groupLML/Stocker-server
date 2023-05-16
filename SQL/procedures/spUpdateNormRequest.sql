@@ -15,13 +15,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <16/05/2023>
+-- Create date: <1/05/2023>
 -- Description:	<update Norm>
 -- =============================================
-Alter PROCEDURE spUpdateNormRequest
+alter PROCEDURE spUpdateNormRequest
 	
+	@reqId smallint,
     @normId smallint,
-	@depId smallint
+	@userId smallint
 
 AS
 BEGIN
@@ -30,8 +31,8 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	UPDATE [Norms] set [lastUpdate]=GETDATE()
-	where normId=@normId
+	UPDATE [NormRequests] set [ReqDate]=GETDATE()
+	where reqId=@reqId
 
 END
 GO

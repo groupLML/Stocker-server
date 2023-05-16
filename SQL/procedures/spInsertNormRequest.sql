@@ -18,7 +18,7 @@ GO
 -- Create date: <15/05/2023>
 -- Description:	<insert Norm>
 -- =============================================
-create PROCEDURE spInsertNormRequest
+alter PROCEDURE spInsertNormRequest
 
 	@reqId smallint,
     @normId smallint,

@@ -34,7 +34,7 @@ namespace server.Controllers
         }
 
         // PUT api/<NormRequestController>/5
-        [HttpPut("{id}")]
+        [HttpPut("{reqId}")]
         public bool Put(int reqId, [FromBody] NormRequest nr)
         {
             nr.ReqId = reqId;

@@ -4301,7 +4301,7 @@ public class DBservices
 
         try
         {
-            using (cmd1 = CreateUpdateInsertNormRequestCommandSP("spUpdateNorm", con, nr))
+            using (cmd1 = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequest", con, nr))
             {
                 cmd1.Transaction = transaction;
                 numEffected = cmd1.ExecuteNonQuery();
@@ -4403,9 +4403,9 @@ public class DBservices
                 nr.DepName = (dataReader["depName"]).ToString();
                 nr.UserId = Convert.ToInt32(dataReader["userId"]);
                 nr.FullName = (dataReader["fullName"]).ToString();
-                nr.JobType = Convert.ToChar(dataReader["jobType"]);
+                nr.Position = (dataReader["position"]).ToString();
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
-                nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
+                nr.ReqStatus = (dataReader["reqStatus"]).ToString();
 
                 if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
                     nr.MedReqList = new List<MedNormRequest>();
@@ -4483,9 +4483,9 @@ public class DBservices
                 nr.DepName = (dataReader["depName"]).ToString();
                 nr.UserId = Convert.ToInt32(dataReader["userId"]);
                 nr.FullName = (dataReader["fullName"]).ToString();
-                nr.JobType = Convert.ToChar(dataReader["jobType"]);
+                nr.Position = (dataReader["position"]).ToString();
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
-                nr.ReqStatus = Convert.ToChar(dataReader["reqStatus"]);
+                nr.ReqStatus = (dataReader["reqStatus"]).ToString();
 
                 if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
                     nr.MedReqList = new List<MedNormRequest>();

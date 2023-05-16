@@ -10,13 +10,13 @@ namespace server.Models
         int normId;
         DateTime reqDate;
         int userId;
-        char reqStatus;
+        string reqStatus;
 
         //for Read
         int depId;
         string depName;
         string fullName;
-        char jobType;
+        string position;
         
         private List<MedNormRequest> medReqList;
 
@@ -25,25 +25,26 @@ namespace server.Models
         public int NormId { get => normId; set => normId = value; }
         public DateTime ReqDate { get => reqDate; set => reqDate = value; }
         public int UserId { get => userId; set => userId = value; }
-        public char ReqStatus { get => reqStatus; set => reqStatus = value; }
+        public string ReqStatus { get => reqStatus; set => reqStatus = value; }
         public int DepId { get => depId; set => depId = value; }
         public string DepName { get => depName; set => depName = value; }
         public string FullName { get => fullName; set => fullName = value; }
-        public char JobType { get => jobType; set => jobType = value; }
+        public string Position { get => position; set => position = value; }
         public List<MedNormRequest> MedReqList { get => medReqList; set => medReqList = value; }
+        
 
 
         //constructors
         public NormRequest() { }
-        public NormRequest(int reqId,int normId, DateTime reqDate, int userId,string fullName, char jobType, int depId, string depName, char reqStatus, List<MedNormRequest> medList)
+        public NormRequest(int reqId,int normId, DateTime reqDate, int userId,string fullName, string position, int depId, string depName, string reqStatus, List<MedNormRequest> medList)
         {
-            this.reqId = reqId;
+            this.ReqId = reqId;
             this.NormId = normId;
-            this.userId = userId; 
-            this.fullName = fullName;
-            this.jobType = jobType;
-            this.depId = depId;
-            this.depName = depName;
+            this.UserId = userId; 
+            this.FullName = fullName;
+            this.Position = position;
+            this.DepId = depId;
+            this.DepName = depName;
             this.ReqDate = reqDate;
             this.ReqStatus = reqStatus;
             if (medList != null)
