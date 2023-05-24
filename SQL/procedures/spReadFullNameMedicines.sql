@@ -18,7 +18,7 @@ GO
 -- Create date: <16/03/2023>
 -- Description:	<Read FULL NAME Medicines>
 -- =============================================
-CREATE PROCEDURE spReadFullNameMedicines 
+Alter PROCEDURE spReadFullNameMedicines 
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -31,5 +31,6 @@ BEGIN
 	Select medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',
 	        mazNum, medStatus, lastUpdate
 	from [Medicines]
+	order by medName
 END
 GO
