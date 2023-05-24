@@ -68,6 +68,11 @@ namespace server.Models
                 return new Object();
         }
 
-
+        
+        public bool UpdateDepStock(List<Stock> stockList)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateNurseStock(stockList);
+        }
     }
 }

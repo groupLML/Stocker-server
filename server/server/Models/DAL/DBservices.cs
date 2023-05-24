@@ -1351,6 +1351,75 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a Med Qty in the Stock table 
+    //--------------------------------------------------------------------------------------------------
+    public bool UpdateNurseStock(List<Stock> stockList)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+        int numEffected = 0;
+        int stockListCount = stockList.Count;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        SqlTransaction transaction = con.BeginTransaction();
+
+        try
+        {
+            for (int i = 0; i < stockList.Count; i++)
+            {
+                using (cmd = CreateUpdateInsertStockCommandSP("spUpdateStock", con, stockList[i]))
+                {
+                    cmd.Transaction = transaction;
+                    cmd.ExecuteNonQuery();
+                    numEffected++;
+                }
+            }
+
+            if (stockListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל התרופות התעדכנו במסד הנתונים, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand
     //---------------------------------------------------------------------------------
@@ -4053,7 +4122,6 @@ public class DBservices
             }
         }
     }
-
 
     //---------------------------------------------------------------------------------
     // Create the Update/Insert SqlCommand

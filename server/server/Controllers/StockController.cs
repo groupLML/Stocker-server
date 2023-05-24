@@ -49,11 +49,11 @@ namespace server.Controllers
         }
 
         // PUT api/<StockController>/5
-        [HttpPut("depId/{depId}")]
-        public bool PutDepStock(int depId,[FromBody] Stock stock)
+        [HttpPut("UpdateNurse")]
+        public bool PutDepStock([FromBody] List<Stock> DepStock)
         {
-            Stock stock = new Stock(0, medId, depId, qty, DateTime.Now);
-            return stock.Update();
+            Stock stock = new Stock();
+            return stock.UpdateDepStock(DepStock);
         }
 
 
