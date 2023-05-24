@@ -4550,7 +4550,6 @@ public class DBservices
                 nr.FullName = (dataReader["fullName"]).ToString();
                 nr.Position = (dataReader["position"]).ToString();
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
-                nr.ReqStatus = (dataReader["reqStatus"]).ToString();
 
                 if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
                     nr.MedReqList = new List<MedNormRequest>();
