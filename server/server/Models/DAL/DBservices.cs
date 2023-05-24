@@ -1377,7 +1377,7 @@ public class DBservices
         {
             for (int i = 0; i < stockList.Count; i++)
             {
-                using (cmd = CreateUpdateInsertStockCommandSP("spUpdateStock", con, stockList[i]))
+                using (cmd = CreateUpdateInsertStockCommandSP("spUpdateStockNurse", con, stockList[i]))
                 {
                     cmd.Transaction = transaction;
                     cmd.ExecuteNonQuery();
@@ -4630,7 +4630,6 @@ public class DBservices
                 nr.FullName = (dataReader["fullName"]).ToString();
                 nr.Position = (dataReader["position"]).ToString();
                 nr.ReqDate = Convert.ToDateTime(dataReader["reqDate"]);
-                nr.ReqStatus = (dataReader["reqStatus"]).ToString();
 
                 if (nr.MedReqList == null) //במידה ואין תרופות בתקן, ניצור רשימה ריקה
                     nr.MedReqList = new List<MedNormRequest>();
