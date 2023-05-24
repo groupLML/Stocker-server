@@ -2282,7 +2282,7 @@ public class DBservices
 
         cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
 
-        cmd.CommandTimeout = 60;           // Time to wait for the execution' The default is 30 seconds
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
@@ -3504,6 +3504,83 @@ public class DBservices
                 con.Close();
             }
         }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Predictions from the Predictions table
+    //--------------------------------------------------------------------------------------------------
+    public List<NormPredictions> ReadNormPrediction(int dep, int med)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadPredictionCommand("spReadDataPredictions", con, dep, med);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<NormPredictions> list = new List<NormPredictions>();
+
+            while (dataReader.Read())
+            {
+                NormPredictions p = new NormPredictions();
+                p.UsageOneMonthAgo = Convert.ToDouble(dataReader["UsageOneMonthAgo"]);
+                p.UsageOneYearAgo = Convert.ToDouble(dataReader["UsageOneYearAgo"]);
+                p.Season = dataReader["Season"].ToString();
+                p.FutureUsage = Convert.ToDouble(dataReader["FutureUsage"]);
+                list.Add(p);
+
+            }
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Create Read Norm Prediction SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateReadPredictionCommand(String spName, SqlConnection con, int dep, int med)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@medId", med);
+        cmd.Parameters.AddWithValue("@depId", dep);
+
+        return cmd;
     }
 
 

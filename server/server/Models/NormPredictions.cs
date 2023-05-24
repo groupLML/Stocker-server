@@ -1,53 +1,62 @@
 ﻿using Accord.Math;
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Filters;
+using Accord.Statistics.Kernels;
 using Accord.Statistics.Models.Regression.Linear;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Intrinsics.X86;
+
 
 namespace server.Models
 {
-    public class Prediction
+    public class NormPredictions
     {
         double usageOneMonthAgo;
-        double usageTwoMonthAgo;
         double usageOneYearAgo;
-        double totalReqQty;
-        string thisMonth;
         string season;
         double futureUsage;
 
-        //properties
         public double UsageOneMonthAgo { get => usageOneMonthAgo; set => usageOneMonthAgo = value; }
-        public double UsageTwoMonthAgo { get => usageTwoMonthAgo; set => usageTwoMonthAgo = value; }
         public double UsageOneYearAgo { get => usageOneYearAgo; set => usageOneYearAgo = value; }
-        public double TotalReqQty { get => totalReqQty; set => totalReqQty = value; }
-        public string ThisMonth { get => thisMonth; set => thisMonth = value; }
         public string Season { get => season; set => season = value; }
         public double FutureUsage { get => futureUsage; set => futureUsage = value; }
 
-        //constructors
-        public Prediction() { }
-        public Prediction(double usageOneMonthAgo, double usageTwoMonthAgo, double usageOneYearAgo, double totalReqQty, string thisMonth, string season, double futureUsage)
+        public NormPredictions() { }
+        public NormPredictions(double usageOneMonthAgo, double usageOneYearAgo, string season, double futureUsage)
         {
             this.UsageOneMonthAgo = usageOneMonthAgo;
-            this.UsageTwoMonthAgo = usageTwoMonthAgo;
             this.UsageOneYearAgo = usageOneYearAgo;
-            this.TotalReqQty = totalReqQty;
-            this.ThisMonth = thisMonth;
             this.Season = season;
             this.FutureUsage = futureUsage;
         }
 
 
-        //method
-        public double[] GetPrediction(int month, int dep, int med)
+        public Dictionary<int, double> ReadNormPredictions(int depId)
+        {
+            Dictionary<int, double> Predictions = new Dictionary<int, double>();
+            DBservices dbs = new DBservices();
+            List<Norm> list = dbs.ReadDepNorm(depId);
+            List<MedNorm> medList = list[0].MedList;
+
+            foreach (MedNorm mn in medList) 
+            {
+                double predicted = MedNormPrediction(depId, mn.MedId);
+                Predictions.Add(mn.MedId, predicted);
+            }
+            return Predictions;
+        }
+
+
+        public double MedNormPrediction(int dep, int med)
         {
             //Create a dataset
             DBservices dbs = new DBservices();
-            List<Prediction> list = dbs.ReadPrediction(month, dep, med);
+            List<NormPredictions> list = dbs.ReadNormPrediction(dep, med);
 
             int len70 = (int)(list.Count * 70 / 100);//הגדרת כמות המייצגת את ה-70% מהדאטה כולו
 
@@ -55,26 +64,18 @@ namespace server.Models
             //list = Shuffle(list);
 
             //Normalization
-            double minReq = 10000;
             double minOneMonth = 10000;
-            double minTwoMonth = 10000;
             double minOneYear = 10000;
-            double maxReq = 0;
             double maxOneMonth = 0;
-            double maxTwoMonth = 0;
             double maxOneYear = 0;
 
             //מציאת מינימום מקסימום עבור כל פיצ'ר
-            foreach (Prediction p in list)
+            foreach (NormPredictions p in list)
             {
                 if (p.UsageOneMonthAgo < minOneMonth) minOneMonth = p.UsageOneMonthAgo;
                 if (p.UsageOneMonthAgo > maxOneMonth) maxOneMonth = p.UsageOneMonthAgo;
-                if (p.UsageTwoMonthAgo < minTwoMonth) minTwoMonth = p.UsageTwoMonthAgo;
-                if (p.UsageTwoMonthAgo > maxTwoMonth) maxTwoMonth = p.UsageTwoMonthAgo;
                 if (p.UsageOneYearAgo < minOneYear) minOneYear = p.UsageOneYearAgo;
                 if (p.UsageOneYearAgo > maxOneYear) maxOneYear = p.UsageOneYearAgo;
-                if (p.TotalReqQty < minReq) minReq = p.TotalReqQty;
-                if (p.TotalReqQty > maxReq) maxReq = p.TotalReqQty;
             }
 
             //הגדרת מטריצת פיצרים מבחן ואימון
@@ -82,33 +83,27 @@ namespace server.Models
             object[][] instancesTest = new object[list.Count - len70][];
             //הגדרת ווקטור תוצאות מבחן ואימון
             double[] outputsTrain = new double[len70];
-            double[] outputsTest = new double[list.Count-len70];
+            double[] outputsTest = new double[list.Count - len70];
 
             //Split data into training and testing sets and normalization
-            for (int i = 0; i < len70; i++) 
-            {
+            for (int i = 0; i < len70; i++)
+            {
                 instancesTrain[i] = new object[]
                 {
                 (list[i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
-                (list[i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
                 (list[i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneYear),
-                (list[i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
-                //list[i].ThisMonth,
                 list[i].Season
                 };
                 outputsTrain.SetValue(list[i].FutureUsage, i);
             }
 
 
-            for (int i = 0; i < list.Count - len70; i++) 
-            {
+            for (int i = 0; i < list.Count - len70; i++)
+            {
                 instancesTest[i] = new object[]
                 {
                 (list[len70+i].UsageOneMonthAgo - minOneMonth) / (maxOneMonth - minOneMonth),
-                (list[len70+i].UsageTwoMonthAgo - minTwoMonth) / (maxTwoMonth - minTwoMonth),
                 (list[len70 + i].UsageOneYearAgo - minOneYear) / (maxOneYear - minOneMonth),
-                (list[len70+i].TotalReqQty - minReq) / (maxReq - minReq), // normalize the totalReqQty column
-                //list[len70+i].ThisMonth,
                 list[len70+i].Season
                 };
                 outputsTest.SetValue(list[len70 + i].FutureUsage, i);
@@ -119,11 +114,8 @@ namespace server.Models
             var codebook = new Codification<object>()
             {
                 { "usageOneMonthAgo", CodificationVariable.Continuous },
-                { "usageTwoMonthAgo", CodificationVariable.Continuous },
                 { "UsageOneYearAgo", CodificationVariable.Continuous },
-                { "totalReqQty", CodificationVariable.Continuous },
-                //{ "thisMonth", CodificationVariable.Categorical },
-                { "season", CodificationVariable.Categorical }
+                { "season", CodificationVariable.Categorical },
             };
             // Learn the codebook
             codebook.Learn(instancesTrain);
@@ -145,24 +137,6 @@ namespace server.Models
             //use Ordinary Least Squares to estimate a regression model:
             MultipleLinearRegression regression = ols.Learn(inputsTrain, outputsTrain);
 
-            //double a = regression.Weights[0]; // a = 0
-            //double b = regression.Weights[1]; // b = 0
-            //double c = regression.Weights[2];
-            //double d = regression.Weights[3];
-            //double e = regression.Weights[4];
-            //double f = regression.Weights[5];
-            //double g = regression.Weights[6];
-            //double h = regression.Intercept;
-
-            Console.WriteLine("cofficients");
-            for (int i = 0; i < 8; i++)
-            {
-                Console.WriteLine(regression.Weights[i]);
-            }
-            Console.WriteLine("intercept:");
-            Console.WriteLine(regression.Intercept);
-
-
             //compute the predicted points using:
             double[] predicted = regression.Transform(inputsTest);
 
@@ -170,38 +144,61 @@ namespace server.Models
             double error = new SquareLoss(outputsTest).Loss(predicted);
             Console.WriteLine($"Mean squared error on testing set: {error}");
 
-            return predicted;
-            //return (int)AVG(predicted);
+
+            //coefficients
+            double a = regression.Weights[0];
+            double b = regression.Weights[1];
+            double c1 = regression.Weights[2];
+            double c2 = regression.Weights[3];
+            double c3 = regression.Weights[4];
+            double c4 = regression.Weights[5];
+            double n = regression.Intercept;
+
+            //int x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0;
+            //int month = DateTime.Now.Month;
+            //if (month == 12 || month == 1 || month == 2) //חורף
+            //    x3 = 1;
+            //if (month == 3 || month == 4 || month == 5) //אביב
+            //    x4 = 1;
+            //if (month == 6 || month == 7 || month == 8) //קיץ
+            //    x5 = 1;
+            //if (month == 9 || month == 1 || month == 10) //סתיו
+            //    x6 = 1;
+
+
+            //linear equation
+            //double y = a * x1 + b * x2 + c1 * x3 + c2 * x4 + c3 * x5 + c4 * x6 + n;
+
+            Console.WriteLine("cofficients");
+            for (int i = 0; i < 6; i++)
+            {
+                Console.WriteLine(regression.Weights[i]);
+            }
+            Console.WriteLine("intercept:");
+            Console.WriteLine(regression.Intercept);
+
+            double y = a  + b + n;
+
+            return y;
         }
 
 
-        public static List<Prediction> Shuffle<Prediction>(List<Prediction> list) //עירבוב רשומות עבור רנדומליות 
+        public static List<NormPredictions> Shuffle<NormPredictions>(List<NormPredictions> list) //עירבוב רשומות עבור רנדומליות 
         {
             Random random = new Random();
-            List<Prediction> shuffledList = new List<Prediction>(list);
+            List<NormPredictions> shuffledList = new List<NormPredictions>(list);
 
             int n = shuffledList.Count;
             while (n > 1)
             {
                 n--;
                 int k = random.Next(n + 1);
-                Prediction value = shuffledList[k];
+                NormPredictions value = shuffledList[k];
                 shuffledList[k] = shuffledList[n];
                 shuffledList[n] = value;
             }
             return shuffledList;
         }
-
-        //public static double AVG(double[] predicted) //avarage of predicted vector
-        //{
-        //    double sum = 0.0;
-        //    foreach (double num in predicted)
-        //    {
-        //        sum += num;
-        //    }
-        //    return sum / predicted.Length;
-        //}
-
 
     }
 }
