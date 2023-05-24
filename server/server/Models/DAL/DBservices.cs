@@ -1380,8 +1380,7 @@ public class DBservices
                 using (cmd = CreateUpdateInsertStockCommandSP("spUpdateStockNurse", con, stockList[i]))
                 {
                     cmd.Transaction = transaction;
-                    cmd.ExecuteNonQuery();
-                    numEffected++;
+                    numEffected += Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
 
