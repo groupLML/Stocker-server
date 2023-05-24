@@ -48,6 +48,14 @@ namespace server.Controllers
             return stock.Update();
         }
 
+        // PUT api/<StockController>/5
+        [HttpPut("depId/{depId}")]
+        public bool PutDepStock(int depId,[FromBody] Stock stock)
+        {
+            Stock stock = new Stock(0, medId, depId, qty, DateTime.Now);
+            return stock.Update();
+        }
+
 
         // DELETE api/<StockController>/5
         [HttpDelete("{id}")]
