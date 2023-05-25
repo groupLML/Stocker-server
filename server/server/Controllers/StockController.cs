@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using server.Models;
 using System.Runtime.ConstrainedExecution;
+using System.Text.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -48,12 +51,48 @@ namespace server.Controllers
             return stock.Update();
         }
 
+        //// PUT api/<StockController>/5
+        //[HttpPut("UpdateNurse")]
+        //public bool PutDepStock([FromBody] List<Stock> DepStock)
+        //{
+        //    Stock stock = new Stock();
+        //    return stock.UpdateDepStock(DepStock);
+        //}
+
+
         // PUT api/<StockController>/5
-        [HttpPut("UpdateNurse")]
-        public bool PutDepStock([FromBody] List<Stock> DepStock)
+        [HttpPut("UpdateNurse/depId/{depId}")]
+        public bool PutDepStock(int depId, [FromBody] JsonElement stockList)
         {
+            List<Stock> DepStock = new List<Stock>();
+
+            JObject json = JsonConvert.DeserializeObject<JObject>(stockList.GetRawText());
+
+            JArray medList = json["medsInStockUpdate"] as JArray;
+
+            foreach (JObject item in medList)
+            {
+                int medId = item.Value<int>("medId");
+                float stcQty = item.Value<float>("stcQty");
+
+                DepStock.Add(new Stock(0, medId, depId, stcQty, DateTime.Now));
+            }
+
             Stock stock = new Stock();
             return stock.UpdateDepStock(DepStock);
+            //swagger:  {"medsInStockUpdate":[{ "medId": 1, "medName": "Paracetamol Acamol 20 MG TAB", "stcQty": 110}]}
+
+
+            //List<Object> List = JsonConvert.DeserializeObject<List<Object>>(stockList.GetProperty("medsInStockUpdate").GetRawText());
+
+            //for (int i = 0; i < List.Count; i++)
+            //{
+            //    int medId = List[i].GetProperty("medId").GetInt32();
+            //    float qty = (float)List[i].GetProperty("stcQty").GetSingle();
+            //    DepStock.Add(new Stock(0, medId, depId, qty, DateTime.Now));
+            //}
+            //Stock stock= new Stock();
+            //return stock.UpdateDepStock(DepStock);
         }
 
 
