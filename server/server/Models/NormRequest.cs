@@ -18,6 +18,7 @@ namespace server.Models
         string fullName;
         string position;
         
+
         private List<MedNormRequest> medReqList;
 
         //properties

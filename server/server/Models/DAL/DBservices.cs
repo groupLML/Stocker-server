@@ -4559,6 +4559,7 @@ public class DBservices
                     medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    medReq.NormQty = (float)(dataReader["normQty"]);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4567,6 +4568,7 @@ public class DBservices
                     medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    medReq.NormQty = (float)(dataReader["normQty"]);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
                     list.Add(nr); //הכנסת תקן חדש לרשימת התקנים
                     lastReqId = nr.ReqId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -4638,6 +4640,7 @@ public class DBservices
                     medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    medReq.NormQty = (float)(dataReader["normQty"]);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4646,6 +4649,7 @@ public class DBservices
                     medReq.MedId = Convert.ToInt32(dataReader["medId"]);
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
+                    medReq.NormQty = (float)(dataReader["normQty"]);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
                     list.Add(nr); //הכנסת תקן חדש לרשימת התקנים
                     lastReqId = nr.ReqId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים

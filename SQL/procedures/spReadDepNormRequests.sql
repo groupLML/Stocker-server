@@ -28,18 +28,32 @@ BEGIN
 	--SET NOCOUNT ON;
 
 	 select NR.reqId ,N.normId , D.depId, depName,
-	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty
+	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty,MN.normQty
 	 from [Departments] as D 
 	 inner join [Norms] as N on D.depId= N.depId
 	 inner join [NormRequests] as NR on N.normId= NR.normId
 	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
 	 inner join [Medicines] as M on MNR.medId=M.medId
 	 inner join [Users] as U on U.userId = NR.userId
+	 inner join [MedNorms] as MN on N.normId=MN.normId
 	 where D.depId=@depId and reqStatus = 'W'
 	 order by NR.reqId desc, reqDate desc
 
 END
 GO
+
+	 select NR.reqId ,N.normId , D.depId, depName,
+	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty,MN.normQty
+	 from [Departments] as D 
+	 inner join [Norms] as N on D.depId= N.depId
+	 inner join [NormRequests] as NR on N.normId= NR.normId
+	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
+	 inner join [Medicines] as M on MNR.medId=M.medId
+	 inner join [Users] as U on U.userId = NR.userId
+	 inner join [MedNorms] as MN on N.normId=MN.normId
+	 where D.depId=3 and reqStatus = 'W'
+	 order by NR.reqId desc, reqDate desc
+
 
 
 
