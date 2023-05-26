@@ -36,7 +36,7 @@ BEGIN
 	 inner join [Medicines] as M on MNR.medId=M.medId
 	 inner join [MedNorms] as MN on N.normId=MN.normId
 	 inner join [Users] as U on U.userId = NR.userId
-	 where reqStatus = 'W'
+	 where reqStatus = 'W' and MN.medId = MNR.medId
 	 order by NR.reqId desc, reqDate desc
 	 
 END
