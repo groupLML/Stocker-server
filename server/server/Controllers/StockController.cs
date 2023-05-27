@@ -51,14 +51,6 @@ namespace server.Controllers
             return stock.Update();
         }
 
-        //// PUT api/<StockController>/5
-        //[HttpPut("UpdateNurse")]
-        //public bool PutDepStock([FromBody] List<Stock> DepStock)
-        //{
-        //    Stock stock = new Stock();
-        //    return stock.UpdateDepStock(DepStock);
-        //}
-
 
         // PUT api/<StockController>/5
         [HttpPut("UpdateNurse/depId/{depId}")]
@@ -81,18 +73,6 @@ namespace server.Controllers
             Stock stock = new Stock();
             return stock.UpdateDepStock(DepStock);
             //swagger:  {"medsInStockUpdate":[{ "medId": 1, "medName": "Paracetamol Acamol 20 MG TAB", "stcQty": 110}]}
-
-
-            //List<Object> List = JsonConvert.DeserializeObject<List<Object>>(stockList.GetProperty("medsInStockUpdate").GetRawText());
-
-            //for (int i = 0; i < List.Count; i++)
-            //{
-            //    int medId = List[i].GetProperty("medId").GetInt32();
-            //    float qty = (float)List[i].GetProperty("stcQty").GetSingle();
-            //    DepStock.Add(new Stock(0, medId, depId, qty, DateTime.Now));
-            //}
-            //Stock stock= new Stock();
-            //return stock.UpdateDepStock(DepStock);
         }
 
 
