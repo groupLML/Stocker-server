@@ -36,20 +36,20 @@ namespace server.Models
         }
 
 
-        public Dictionary<int, double> ReadNormPredictions(int depId)
-        {
-            Dictionary<int, double> Predictions = new Dictionary<int, double>();
-            DBservices dbs = new DBservices();
-            List<Norm> list = dbs.ReadDepNorm(depId);
-            List<MedNorm> medList = list[0].MedList;
+        //public Dictionary<int, double> ReadNormPredictions(int depId)
+        //{
+        //    Dictionary<int, double> Predictions = new Dictionary<int, double>();
+        //    DBservices dbs = new DBservices();
+        //    List<Norm> list = dbs.ReadDepNorm(depId);
+        //    List<MedNorm> medList = list[0].MedList;
 
-            foreach (MedNorm mn in medList) 
-            {
-                double predicted = MedNormPrediction(depId, mn.MedId);
-                Predictions.Add(mn.MedId, predicted);
-            }
-            return Predictions;
-        }
+        //    foreach (MedNorm mn in medList)
+        //    {
+        //        double predicted = MedNormPrediction(depId, mn.MedId);
+        //        Predictions.Add(mn.MedId, predicted);
+        //    }
+        //    return Predictions;
+        //}
 
 
         public double MedNormPrediction(int dep, int med)
