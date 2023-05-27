@@ -42,7 +42,7 @@ select month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear,
 	     on U.usageId= MU.usageId inner join MedNorms MN
 		 on MU.medId= MN.medId inner join Norms N
 		 on N.normId=MN.normId
-	where MN.medId=1 and U.depId=3 and DATEFROMPARTS(year(U.lastUpdate),month(U.lastUpdate),1) != DATEFROMPARTS(year(GETDATE()),month(GETDATE()),1)
+	where MU.medId=@medId and U.depId=@depId and DATEFROMPARTS(year(U.lastUpdate),month(U.lastUpdate),1) != DATEFROMPARTS(year(GETDATE()),month(GETDATE()),1)
 	group by MU.medId, month(U.lastUpdate), year(U.lastUpdate)
 )
 
@@ -57,7 +57,7 @@ from temp t1 left outer join temp t2
      on (t1.useMonth-1)=t2.useMonth and t1.useYear=t2.useYear
 	 left outer join temp t3
 	 on t1.useMonth=t3.useMonth and (t1.useYear-1)=t3.useYear
-
+	 where t3.futureUsage IS NOT NULL and t2.futureUsage IS NOT NULL 
 
 END
 GO

@@ -154,30 +154,38 @@ namespace server.Models
             double c4 = regression.Weights[5];
             double n = regression.Intercept;
 
-            //int x1 = 0, x2 = 0, x3 = 0, x4 = 0, x5 = 0, x6 = 0;
-            //int month = DateTime.Now.Month;
-            //if (month == 12 || month == 1 || month == 2) //חורף
-            //    x3 = 1;
-            //if (month == 3 || month == 4 || month == 5) //אביב
-            //    x4 = 1;
-            //if (month == 6 || month == 7 || month == 8) //קיץ
-            //    x5 = 1;
-            //if (month == 9 || month == 1 || month == 10) //סתיו
-            //    x6 = 1;
 
+            //season variable
+            int x3 = 0, x4 = 0, x5 = 0, x6 = 0;
+            int month = DateTime.Now.Month;
+            if (month == 12 || month == 1 || month == 2) //חורף
+                x3 = 1;
+            if (month == 3 || month == 4 || month == 5) //אביב
+                x4 = 1;
+            if (month == 6 || month == 7 || month == 8) //קיץ
+                x5 = 1;
+            if (month == 9 || month == 1 || month == 10) //סתיו
+                x6 = 1;
+
+
+            //numeric variable
+            Object obj = dbs.ReadX1X2(dep, med);
+            double x1 = (double)obj.GetType().GetProperty("x1").GetValue(obj, null);
+            double x2 = (double)obj.GetType().GetProperty("x2").GetValue(obj, null);
+
+            x1 = (x1 - minOneMonth) / (maxOneMonth - minOneMonth);
+            x2 = (x2 - minOneYear) / (maxOneYear - minOneYear);
 
             //linear equation
-            //double y = a * x1 + b * x2 + c1 * x3 + c2 * x4 + c3 * x5 + c4 * x6 + n;
+            double y = a * x1 + b * x2 + c1 * x3 + c2 * x4 + c3 * x5 + c4 * x6 + n;
 
-            Console.WriteLine("cofficients");
-            for (int i = 0; i < 6; i++)
-            {
-                Console.WriteLine(regression.Weights[i]);
-            }
-            Console.WriteLine("intercept:");
-            Console.WriteLine(regression.Intercept);
-
-            double y = a  + b + n;
+            //Console.WriteLine("cofficients");
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    Console.WriteLine(regression.Weights[i]);
+            //}
+            //Console.WriteLine("intercept:");
+            //Console.WriteLine(regression.Intercept);
 
             return y;
         }

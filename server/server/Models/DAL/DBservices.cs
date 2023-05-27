@@ -3629,6 +3629,59 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read X1 X1 from the usage table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadX1X2(int dep, int med)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadPredictionCommand("spReadX1X2Usage", con, dep, med);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+           Object Obj = new Object();
+
+            while (dataReader.Read())
+            {
+                Obj=new
+                {
+                    x1 = (double)Convert.ToSingle(dataReader["usageOneMonthAgo"]),
+                    x2 = (double)Convert.ToSingle(dataReader["usageOneYearAgo"])
+                };
+            }
+            return Obj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     //--------------------------------------------------------------------
     // Create Read Norm Prediction SqlCommand
     //--------------------------------------------------------------------
