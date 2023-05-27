@@ -58,7 +58,8 @@ namespace server.Models
         public List<Norm> ReadDepNorm(int depId) //קריאת פרטי התקן
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadDepNorm(depId);
+            //return dbs.ReadDepNorm(depId);
+            return dbs.ReadDepNormPrediction(depId);
         }
     }
 }

@@ -18,7 +18,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE spReadX1X2Usage
+ALTER PROCEDURE spReadX1X2Usage
 	-- Add the parameters for the stored procedure here
 	@medId smallint,
 	@depId smallint
@@ -39,7 +39,7 @@ with temp as (
 	select sum(MU.useQty) as totalUsage,  month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear
 	from Usages U inner join MedUsages MU
 	     on U.usageId= MU.usageId 
-	where MU.medId=1 and U.depId=3 and (month(U.lastUpdate)= month(GETDATE()) and year(U.lastUpdate)= year(GETDATE())-1)
+	where MU.medId=@medId and U.depId=@depId and (month(U.lastUpdate)= month(GETDATE()) and year(U.lastUpdate)= year(GETDATE())-1)
 	group by MU.medId, month(U.lastUpdate), year(U.lastUpdate)
 )
 
