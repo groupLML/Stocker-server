@@ -13,18 +13,18 @@ namespace server.Models
         string medName;
         float normQty;
 
-        double predQty;
+        int predQty;
 
         //properties
         public int MedId { get => medId; set => medId = value; }
         public float ReqQty { get => reqQty; set => reqQty = value; }
         public float NormQty { get => normQty; set => normQty = value; }
         public string MedName { get => medName; set => medName = value; }
-        public double PredQty { get => predQty; set => predQty = value; }
+        public int PredQty { get => predQty; set => predQty = value; }
 
         //constructors
         public MedNormRequest() { }
-        public MedNormRequest( int medId, string medName, float reqQty, float normQty, double predQty)
+        public MedNormRequest( int medId, string medName, float reqQty, float normQty, int predQty)
         {
             this.medId = medId;
             this.medName = medName;

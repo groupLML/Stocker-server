@@ -561,7 +561,7 @@ public class DBservices
         }
     }
 
-    
+
 
 
     /*****************Departments*****************/
@@ -3654,11 +3654,11 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-           Object Obj = new Object();
+            Object Obj = new Object();
 
             while (dataReader.Read())
             {
-                Obj=new
+                Obj = new
                 {
                     x1 = (double)Convert.ToSingle(dataReader["usageOneMonthAgo"]),
                     x2 = (double)Convert.ToSingle(dataReader["usageOneYearAgo"])
@@ -4118,7 +4118,7 @@ public class DBservices
             if (numEffected != 0)
             {
                 numEffected = 0;
-                using (cmd2 = CreateDeleteMedNormCommand("spDeleteMedsNorm", con, norm.NormId)) 
+                using (cmd2 = CreateDeleteMedNormCommand("spDeleteMedsNorm", con, norm.NormId))
                 {
                     cmd2.Transaction = transaction;
                     numEffected = cmd2.ExecuteNonQuery();//מוחזר כמות התרופות שנמחקו מאותה הזמנה
@@ -4192,7 +4192,7 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@normId", norm.NormId);
         cmd.Parameters.AddWithValue("@depId", norm.DepId);
-      
+
         return cmd;
     }
 
@@ -4284,6 +4284,8 @@ public class DBservices
                     med.NormQty = (float)(dataReader["NormQty"]);
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.MedName = (dataReader["medName"]).ToString();
+                    NormPredictions np = new NormPredictions();
+                    med.PredQty = (int)np.MedNormPrediction(norm.DepId, med.MedId);
                     list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4293,6 +4295,8 @@ public class DBservices
                     med.NormQty = (float)(dataReader["NormQty"]);
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.MedName = (dataReader["medName"]).ToString();
+                    NormPredictions np = new NormPredictions();
+                    med.PredQty = (int)np.MedNormPrediction(norm.DepId, med.MedId);
                     norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
                     list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
                     lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -4438,8 +4442,8 @@ public class DBservices
                     med.NormQty = (float)(dataReader["NormQty"]);
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.MedName = (dataReader["medName"]).ToString();
-                    NormPredictions np= new NormPredictions();  
-                    med.PredQty = np.MedNormPrediction(depId, med.MedId);
+                    NormPredictions np = new NormPredictions();
+                    med.PredQty = (int)np.MedNormPrediction(depId, med.MedId);
                     list[list.Count - 1].MedList.Add(med); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4450,7 +4454,7 @@ public class DBservices
                     med.MazNum = (dataReader["MazNum"]).ToString();
                     med.MedName = (dataReader["medName"]).ToString();
                     NormPredictions np = new NormPredictions();
-                    med.PredQty = np.MedNormPrediction(depId, med.MedId);
+                    med.PredQty = (int)np.MedNormPrediction(depId, med.MedId);
                     norm.MedList.Add(med); //תרופה נכנסת לתקן חדש 
                     list.Add(norm); //הכנסת תקן חדש לרשימת התקנים
                     lastNormId = norm.NormId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -4473,6 +4477,7 @@ public class DBservices
             }
         }
     }
+
 
 
     /*****************NormRequests*****************/
@@ -4643,6 +4648,97 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method Update a Norm by NormRequest 
+    //--------------------------------------------------------------------------------------------------
+    public bool UpdateNormRequestManager(List<MedNorm> mn, NormRequest nr)
+    {
+        SqlConnection con;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+        SqlCommand cmd3;
+        int numEffected = 0;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        SqlTransaction transaction = con.BeginTransaction();
+
+        try
+        {
+            using (cmd1 = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequestManager", con, nr))
+            {
+                cmd1.Transaction = transaction;
+                numEffected = cmd1.ExecuteNonQuery();
+            }
+            if (numEffected != 0)
+            {
+                numEffected = 0;
+                Norm norm= new Norm(nr.NormId, 0, DateTime.Now);
+                using (cmd2 = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm))
+                {
+                    cmd2.Transaction = transaction;
+                    numEffected = cmd2.ExecuteNonQuery();
+                }
+                if (numEffected != 0)
+                {
+                    for (int i = 0; i < mn.Count; i++)
+                    {
+                        using (cmd3 = CreateUpdateInsertMedNormCommandSP("spInsertUpdateMedNorm", con, nr.NormId, mn[i]))
+                        {
+                            cmd3.Transaction = transaction;
+                            numEffected = cmd3.ExecuteNonQuery();
+                        }
+                        if (numEffected == 1)
+                            numEffected = -1;
+                        else
+                            break;
+                    }
+                }
+            }
+
+            if (numEffected == -1)// אם הכל הסתיים בהצלחה, נעשה commit
+            {
+                transaction.Commit();
+                return true;
+            }
+            else //אם לא כל 3 הפרוצדורות החזירו ערך שינוי, נעשה rollback 
+            {
+                transaction.Rollback();
+                return false;
+            }
+        }
+        catch (SqlException sqlEx)
+        {
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
+            Console.WriteLine("SqlException:" + sqlEx.Message);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method Read NormRequests from the NormRequests table
     //--------------------------------------------------------------------------------------------------
     public List<NormRequest> ReadNormRequests()
@@ -4692,6 +4788,8 @@ public class DBservices
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     medReq.NormQty = (float)(dataReader["normQty"]);
+                    NormPredictions np = new NormPredictions();
+                    medReq.PredQty = (int)np.MedNormPrediction(nr.DepId, medReq.MedId);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4701,6 +4799,8 @@ public class DBservices
                     medReq.MedName = (dataReader["medName"]).ToString();
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     medReq.NormQty = (float)(dataReader["normQty"]);
+                    NormPredictions np = new NormPredictions();
+                    medReq.PredQty = (int)np.MedNormPrediction(nr.DepId, medReq.MedId);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
                     list.Add(nr); //הכנסת תקן חדש לרשימת התקנים
                     lastReqId = nr.ReqId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -4855,7 +4955,7 @@ public class DBservices
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     medReq.NormQty = (float)(dataReader["normQty"]);
                     NormPredictions np = new NormPredictions();
-                    medReq.PredQty = np.MedNormPrediction(depId, medReq.MedId);
+                    medReq.PredQty = (int)np.MedNormPrediction(depId, medReq.MedId);
                     list[list.Count - 1].MedReqList.Add(medReq); //תרופה נכנסת לאותו תקן
                 }
                 else //הכנסת תרופה בתוך תקן חדש 
@@ -4866,7 +4966,7 @@ public class DBservices
                     medReq.ReqQty = (float)(dataReader["reqQty"]);
                     medReq.NormQty = (float)(dataReader["normQty"]);
                     NormPredictions np = new NormPredictions();
-                    medReq.PredQty = np.MedNormPrediction(depId, medReq.MedId);
+                    medReq.PredQty = (int)np.MedNormPrediction(depId, medReq.MedId);
                     nr.MedReqList.Add(medReq); //תרופה נכנסת לתקן חדש 
                     list.Add(nr); //הכנסת תקן חדש לרשימת התקנים
                     lastReqId = nr.ReqId; //קביעת מספר התקן האחרון שנכנס לרשימת התקנים
@@ -4909,7 +5009,7 @@ public class DBservices
         cmd.Parameters.AddWithValue("@reqId", nr.ReqId);
         cmd.Parameters.AddWithValue("@normId", nr.NormId);
         cmd.Parameters.AddWithValue("@userId", nr.UserId);
-        
+
         return cmd;
     }
 

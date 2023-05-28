@@ -18,7 +18,7 @@ GO
 -- Create date: <1/05/2023>
 -- Description:	<update NormReq>
 -- =============================================
-alter PROCEDURE spUpdateNormRequest
+ALTER PROCEDURE spUpdateNormRequestManager
 	
 	@reqId smallint,
     @normId smallint,
@@ -31,7 +31,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	UPDATE [NormRequests] set [ReqDate]=GETDATE()
+	UPDATE [NormRequests] set [reqStatus]='C'
 	where reqId=@reqId
 
 END

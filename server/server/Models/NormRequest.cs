@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace server.Models
 {
     public class NormRequest
@@ -54,6 +56,14 @@ namespace server.Models
                 this.MedReqList = new List<MedNormRequest>();
         }
 
+        public NormRequest(int reqId, int normId, int userId)
+        {
+            this.ReqId = reqId;
+            this.NormId = normId;
+            this.UserId = userId;
+        }
+
+
         //methodes
         public bool Insert()
         {
@@ -80,5 +90,13 @@ namespace server.Models
             //return dbs.ReadNormRequests();
             return dbs.ReadDepNormRequestsPrediction(depId);
         }
+
+
+        public bool UpdateManager(List<MedNorm> mn)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateNormRequestManager(mn, this);
+        }
+        
     }
 }

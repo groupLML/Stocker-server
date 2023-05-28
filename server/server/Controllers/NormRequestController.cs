@@ -40,5 +40,13 @@ namespace server.Controllers
             nr.ReqId = reqId;
             return nr.Update();
         }
+
+
+        [HttpPut("reqId/{reqId}/normId/{normId}")]
+        public bool PutManager(int reqId, int normId, [FromBody] List<MedNorm> mnList)
+        {
+            NormRequest nm = new NormRequest(reqId, normId, 0);
+            return nm.UpdateManager(mnList);
+        }
     }
 }
