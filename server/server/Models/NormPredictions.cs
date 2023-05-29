@@ -179,15 +179,15 @@ namespace server.Models
             //linear equation
             double y = a * x1 + b * x2 + c1 * x3 + c2 * x4 + c3 * x5 + c4 * x6 + n;
 
-            //Console.WriteLine("medId: "+ med);
-            //Console.WriteLine("cofficients");
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    Console.WriteLine(regression.Weights[i]);
-            //}
-            //Console.WriteLine("intercept:");
-            //Console.WriteLine(regression.Intercept);
-            //Console.WriteLine("y: "+ y + "x1: "+ x1 + "x2: " + x2 + "x3: " + x3 + "x4: " + x4 + "x5: " + x5 + "x6: " + x6);
+            Console.WriteLine("medId: " + med);
+            Console.WriteLine("cofficients");
+            for (int i = 0; i < 6; i++)
+            {
+                Console.WriteLine(regression.Weights[i]);
+            }
+            Console.WriteLine("intercept:");
+            Console.WriteLine(regression.Intercept);
+            Console.WriteLine("y: " + y + " x1: " + x1 + " x2: " + x2 );
 
             return y;
         }
