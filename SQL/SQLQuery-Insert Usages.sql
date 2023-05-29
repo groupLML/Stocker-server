@@ -5,24 +5,6 @@ Select * from [MedUsages]
 Select * from MedNorms
 Select * from [Norms]
 
-
-
-
-select month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear,
-                MU.useQty
-    from Norms N inner join MedNorms MN on  N.normId=MN.normId
-	     inner join MedUsages MU on MU.medId= MN.medId
-		 inner join Usages U on U.usageId= MU.usageId
-    where MN.medId=4 and U.depId=3 and year(U.lastUpdate) = 2020 and DATEFROMPARTS(year(U.lastUpdate),month(U.lastUpdate),1) != DATEFROMPARTS(year(GETDATE()),month(GETDATE()),1)
-   
-   
-   group by MU.medId, month(U.lastUpdate), year(U.lastUpdate),  MU.useQty
-
-Select *
-from [MedUsages] inner join [Usages] on [MedUsages].usageId = [Usages].usageId
-where medId=4 and depId=3 and year(lastUpdate) =2020
-order by [Usages].usageId desc
-
 --למחוק
 DROP TABLE [Usages]
 DROP TABLE [MedUsages]
@@ -1326,7 +1308,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 21, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 29, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (5,'66666','2023-05-30 12:29:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (5,'66666','2023-05-01 12:29:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 25, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 26, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 23, '1491302')
@@ -1389,7 +1371,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @usageId, 17, '1791302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 27, '1891302')
-DECLARE @usageId smallint
+
 Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (5,'66666','2024-01-28 12:03:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 28, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 29, '1291302')
@@ -1454,7 +1436,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 25, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 28, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (5,'66666','2024-09-30 15:44:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (5,'66666','2024-09-06 15:44:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 18, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 22, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 30, '1491302')
@@ -1494,7 +1476,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 19, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 26, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2020-02-30 05:35:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2020-02-10 05:35:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 28, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 29, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 24, '1491302')
@@ -1550,7 +1532,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 24, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2020-09-31 15:13:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2020-09-24 15:13:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 23, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 23, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 30, '1491302')
@@ -1677,8 +1659,8 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @usageId, 16, '1791302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 21, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 26, '1891302')
-------
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-01-31 07:21:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-01-13 07:21:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 23, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 21, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 20, '1491302')
@@ -1686,7 +1668,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 28, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 23, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-02-30 13:47:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-02-09 13:47:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 21, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 28, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 22, '1491302')
@@ -1710,7 +1692,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 23, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 22, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-05-31 17:26:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-05-17 17:26:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 18, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 25, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 26, '1491302')
@@ -1726,7 +1708,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 28, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 20, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-07-31 23:19:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-07-11 23:19:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 24, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 27, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 27, '1491302')
@@ -1750,7 +1732,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 23, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 22, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-10-30 12:27:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-10-18 12:27:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 19, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 25, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 25, '1491302')
@@ -1758,7 +1740,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 20, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 27, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-11-31 10:41:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2022-11-08 10:41:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 20, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 21, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 28, '1491302')
@@ -1782,7 +1764,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 26, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-02-29 12:38:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-02-17 12:38:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 19, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 30, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 20, '1491302')
@@ -1806,7 +1788,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 21, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-05-17 24:20:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-05-17 00:20:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 24, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 26, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 30, '1491302')
@@ -1838,7 +1820,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 23, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 21, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-09-30 19:40:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-09-24 19:40:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 25, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 27, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 27, '1491302')
@@ -1862,7 +1844,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 20, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 26, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-12-31 14:31:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2023-12-20 14:31:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 23, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 25, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 30, '1491302')
@@ -1870,7 +1852,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 19, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2024-01-29 21:08:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2024-01-23 21:08:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 26, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 30, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 23, '1491302')
@@ -1918,7 +1900,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 18, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 29, '1891302')
 
-Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2024-07-30 19:12:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
+Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (6,'66666','2024-07-05 19:12:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 19, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 25, '1291302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @usageId, 22, '1491302')
@@ -1989,7 +1971,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @usageId, 22, '1791302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 19, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 29, '1891302')
-
+DECLARE @usageId smallint
 Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (7,'66666','2020-04-30 05:22:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 19, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 26, '1291302')
