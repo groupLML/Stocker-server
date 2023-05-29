@@ -39,6 +39,9 @@ namespace server.Controllers
         [HttpPut("{normId}")]
         public bool Put(int normId, [FromBody] Norm norm)
         {
+            if (normId == 0){
+                return norm.Insert();
+            }
             norm.NormId = normId;
             return norm.Update();
         }

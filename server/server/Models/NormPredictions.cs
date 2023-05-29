@@ -164,7 +164,7 @@ namespace server.Models
                 x4 = 1;
             if (month == 6 || month == 7 || month == 8) //קיץ
                 x5 = 1;
-            if (month == 9 || month == 1 || month == 10) //סתיו
+            if (month == 9 || month == 10 || month == 11) //סתיו
                 x6 = 1;
 
 
@@ -179,6 +179,7 @@ namespace server.Models
             //linear equation
             double y = a * x1 + b * x2 + c1 * x3 + c2 * x4 + c3 * x5 + c4 * x6 + n;
 
+            //Console.WriteLine("medId: "+ med);
             //Console.WriteLine("cofficients");
             //for (int i = 0; i < 6; i++)
             //{
@@ -186,6 +187,7 @@ namespace server.Models
             //}
             //Console.WriteLine("intercept:");
             //Console.WriteLine(regression.Intercept);
+            //Console.WriteLine("y: "+ y + "x1: "+ x1 + "x2: " + x2 + "x3: " + x3 + "x4: " + x4 + "x5: " + x5 + "x6: " + x6);
 
             return y;
         }
