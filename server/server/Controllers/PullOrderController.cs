@@ -56,6 +56,7 @@ namespace server.Controllers
             {
                 ClientNoticetion clientNoticetion = new ClientNoticetion();
                 _ = clientNoticetion.SendMessage("100");
+
             }
             return ret;
 

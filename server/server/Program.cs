@@ -1,4 +1,4 @@
-using server.Hubs;
+using server.Hubs; ///???
 using server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<TimedHostedService>();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(); ///???
 
 var app = builder.Build();
 
@@ -30,7 +30,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<ClientNoticetion>("/ClientNoticetion");
+app.MapHub<ClientNoticetion>("/ClientNoticetion"); ///???
 
 app.Run();
 
