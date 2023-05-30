@@ -3706,6 +3706,88 @@ public class DBservices
 
 
 
+    /***************** Dashboard *****************/
+    //--------------------------------------------------------------------------------------------------
+    // This method Read X1 X1 from the usage table
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadBoxs(int interval)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDashboardDataCommand("spDashboardBoxs", con, interval);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            Object Obj = new Object();
+
+            while (dataReader.Read())
+            {
+                Obj = new
+                {
+                    CurrentPO = Convert.ToInt32(dataReader["CurrentPO"]),
+                    PrevPO = Convert.ToInt32(dataReader["PrevPO"]),
+                    CurrentMR = Convert.ToInt32(dataReader["CurrentMR"]),
+                    PrevMR = Convert.ToInt32(dataReader["PrevMR"]),
+                    CurrentMRD = Convert.ToInt32(dataReader["CurrentMRD"]),
+                    PrevMRD = Convert.ToInt32(dataReader["PrevMRD"])
+                };
+            }
+            return Obj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Create Read dashboard data SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int interval)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@interval", interval);
+
+        return cmd;
+    }
+
+
+
+
     /***************** Token React *****************/
     //--------------------------------------------------------------------------------------------------
     // This method Update Token from the Tokens table
@@ -4680,7 +4762,7 @@ public class DBservices
             if (numEffected != 0)
             {
                 numEffected = 0;
-                Norm norm= new Norm(nr.NormId, 0, DateTime.Now);
+                Norm norm = new Norm(nr.NormId, 0, DateTime.Now);
                 using (cmd2 = CreateUpdateInsertNormCommandSP("spUpdateNorm", con, norm))
                 {
                     cmd2.Transaction = transaction;

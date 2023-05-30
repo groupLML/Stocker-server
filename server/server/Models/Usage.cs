@@ -49,5 +49,11 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.ReadDepMedsUsage(depId, startDate, endDate);
         }
+
+        public Object ReadBoxsData(int interval)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadBoxs(interval);
+        }
     }
 }

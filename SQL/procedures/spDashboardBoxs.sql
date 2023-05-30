@@ -18,7 +18,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE Dashboard
+CREATE PROCEDURE spDashboardBoxs
 	-- Add the parameters for the stored procedure here
 	@interval smallint
 AS
@@ -53,12 +53,46 @@ BEGIN
 	where MR.reqStatus like 'D' and datediff(day,MR.reqDate,getdate())<=@interval
 
 
-	select @countCurrentPO as countCurrentPO, 
-	       @countPreviousPO as countPreviousPO, 
-		   @countCurrentMR as countCurrentMR,
-		   @countPreviousMR as countPreviousMR,
-		   @countCurrentMRD as countCurrentMRD,
-		   @countPreviousMRD as countPreviousMRD
+	select @countCurrentPO as CurrentPO, 
+	       @countPreviousPO as PrevPO, 
+		   @countCurrentMR as CurrentMR,
+		   @countPreviousMR as PrevMR,
+		   @countCurrentMRD as CurrentMRD,
+		   @countPreviousMRD as PrevMRD
 
 END
 GO
+
+
+
+	--declare @countCurrentPO smallint, @countPreviousPO smallint, @countCurrentMR smallint, @countPreviousMR smallint,
+	--        @countCurrentMRD smallint, @countPreviousMRD smallint
+
+	--Select @countCurrentPO= count(*), @countPreviousPO= (select count(*)
+	--                                                     from [PullOrders] as PO
+	--                                                     where PO.pullDate<=(getdate()-7) and PO.pullDate>=getdate()-7*2)
+	--from [PullOrders] as PO
+	--where datediff(day,PO.pullDate,getdate())<=7
+
+
+	--Select @countCurrentMR=count(*), @countPreviousMR=(select count(*)
+	--                                                   from [MedRequests] MR
+	--                                                   where MR.reqDate<=(getdate()-7) and MR.reqDate>=getdate()-7*2)
+	--from [MedRequests] MR
+	--where MR.reqStatus like 'T' and datediff(day,MR.reqDate,getdate())<=7
+
+
+	--Select @countCurrentMRD=count(*), @countPreviousMRD=(select count(*)
+	--                                                     from [MedRequests] MR
+	--                                                     where MR.reqStatus like 'D' and 
+	--												          (MR.reqDate<=(getdate()-7) and MR.reqDate>=getdate()-7*2))
+	--from [MedRequests] MR
+	--where MR.reqStatus like 'D' and datediff(day,MR.reqDate,getdate())<=7
+
+
+	--select @countCurrentPO as CurrentPO, 
+	--       @countPreviousPO as PrevPO, 
+	--	   @countCurrentMR as CurrentMR,
+	--	   @countPreviousMR as PrevMR,
+	--	   @countCurrentMRD as CurrentMRD,
+	--	   @countPreviousMRD as PrevMRD
