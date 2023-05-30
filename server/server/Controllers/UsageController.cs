@@ -33,13 +33,22 @@ namespace server.Controllers
             return p.GetPrediction(month,dep, med);
         }
 
-        //// GET: api/<UsageController>
-        //[HttpGet("/NormPrediction/dep/{dep}")]
-        //public Dictionary<int, double> GetNormPrediction(int dep)
-        //{
-        //    NormPredictions p = new NormPredictions();
-        //    return p.ReadNormPredictions(dep);
-        //}
+
+        // GET api/<UsageController>/5
+        [HttpGet("/GetDashboard/interval/{interval}")]
+        public Object GetDashboard(int interval)
+        {
+            Usage use = new Usage();
+            return use.ReadBoxsData(interval);
+        }
+
+        // GET: api/<UsageController>
+        [HttpGet("/NormMedPrediction/dep/{dep}/med/{med}")]
+        public int GetNormPrediction(int dep, int med)
+        {
+            NormPredictions p = new NormPredictions();
+            return (int)p.MedNormPrediction(dep, med);
+        }
 
 
         // POST api/<UsageController>
