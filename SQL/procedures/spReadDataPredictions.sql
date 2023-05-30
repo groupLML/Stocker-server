@@ -162,3 +162,31 @@ GO
 --	 left outer join temp t3
 --	 on t1.useMonth=t3.useMonth and (t1.useYear-1)=t3.useYear
 --	 where t3.futureUsage IS NOT NULL and t2.futureUsage IS NOT NULL 
+
+
+--with temp as (
+--select month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear,
+--	       case when (month(U.lastUpdate) in (9,10,11)) then '1' --סתיו
+--		        when (month(U.lastUpdate) in (12,1,2)) then '2' --חורף
+--				when (month(U.lastUpdate) in (3,4,5)) then '3'-- אביב
+--				else '4' --קיץ
+--				end as season,
+--			    sum(useQty) as futureUsage
+--	from Usages U inner join MedUsages MU
+--	     on U.usageId= MU.usageId
+--	where MU.medId=7 and U.depId=4 and DATEFROMPARTS(year(U.lastUpdate),month(U.lastUpdate),1) != DATEFROMPARTS(year(GETDATE()),month(GETDATE()),1)
+--	group by MU.medId, month(U.lastUpdate), year(U.lastUpdate)
+--)
+
+--select  case when (t2.futureUsage IS NULL) then 0 
+--			 else t2.futureUsage
+--			 end as usageOneMonthAgo,
+--        case when (t3.futureUsage IS NULL) then 0 
+--			 else t3.futureUsage
+--			 end as usageOneYearAgo,
+--        t1.season, t1.futureUsage
+--from temp t1 left outer join temp t2
+--     on (t1.useMonth-1)=t2.useMonth and t1.useYear=t2.useYear
+--	 left outer join temp t3
+--	 on t1.useMonth=t3.useMonth and (t1.useYear-1)=t3.useYear
+--	 where t3.futureUsage IS NOT NULL and t2.futureUsage IS NOT NULL 
