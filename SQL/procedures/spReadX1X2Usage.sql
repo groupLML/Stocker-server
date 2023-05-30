@@ -72,3 +72,22 @@ GO
 	--     on U.usageId= MU.usageId 
 	--where MU.medId=1 and U.depId=3
 	--order by month(U.lastUpdate), year(U.lastUpdate)
+
+--	with temp as (
+--    select sum(MU.useQty) as totalUsage,  month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear
+--	from Usages U inner join MedUsages MU
+--	     on U.usageId= MU.usageId 
+--	where MU.medId=7 and U.depId=4 and (month(U.lastUpdate)= month(GETDATE())-1 and year(U.lastUpdate)= year(GETDATE()))
+--	group by MU.medId, month(U.lastUpdate), year(U.lastUpdate)
+--	UNION
+--	select sum(MU.useQty) as totalUsage,  month(U.lastUpdate) as useMonth, year(U.lastUpdate) as useYear
+--	from Usages U inner join MedUsages MU
+--	     on U.usageId= MU.usageId 
+--	where MU.medId=7 and U.depId=4 and (month(U.lastUpdate)= month(GETDATE()) and year(U.lastUpdate)= year(GETDATE())-1)
+--	group by MU.medId, month(U.lastUpdate), year(U.lastUpdate)
+--)
+
+--select t1.totalUsage as usageOneMonthAgo, t2.totalUsage as usageOneYearAgo
+--from temp t1 left outer join temp t2
+--	 on t1.useMonth=t2.useMonth-1 and t1.useYear=t2.useYear+1
+--	 where t1.totalUsage IS NOT NULL and t2.totalUsage IS NOT NULL 
