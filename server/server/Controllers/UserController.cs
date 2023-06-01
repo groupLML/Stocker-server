@@ -101,13 +101,15 @@ namespace server.Controllers
                 string usermail = user.Email;
                 string ourMail = "cgroup36.proj@gmail.com";
                 string ourMailPass = "ilmdsebngylhpnxs\r\n";
-              
-                string messageBody =  "היי " + lastName + " " + firstName + "\n";
-                messageBody += "אנו שמחים לבשר לך על הצטרפותך למערכת של בית החולים בהצלחה. להלן הפרטים שלך עבור כניסה למערכת: \n";
-                messageBody += "שם משתמש: " + username + "\n"; 
-                messageBody += "סיסמא: " + password + "\n";
-                messageBody += "המייל: " + email + "\n";
-                messageBody = messageBody.Replace("\n", Environment.NewLine);
+
+                string messageBody = "<div align = \"right\" >";
+                messageBody += "היי " + lastName + " " + firstName + "<br>";
+                messageBody += "אנו שמחים לבשר לך על הצטרפותך <br> למערכת של בית החולים בהצלחה<br> :להלן הפרטים שלך עבור כניסה למערכת <br> ";
+                messageBody += username + " :שם משתמש" + "<br>";
+                messageBody += "סיסמא: " + password + "<br>";
+                messageBody += email+ " :המייל" + "<br>";
+                messageBody += "</div>";
+                // messageBody = messageBody.Replace("\n", Environment.NewLine);
                 //messageBody += email + "המייל: " + password + "סיסמא: " + username + "אנו שמחים לבשר לך הצטרפת למערכת של בית החולים בהצלחה. להלן הפרטים שלך עבור המערכת: שם משתמש: " + lastName + firstName + "היי";
 
                 SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
