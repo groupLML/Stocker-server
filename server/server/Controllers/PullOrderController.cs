@@ -4,7 +4,6 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.Intrinsics.Arm;
-using server.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -51,15 +50,6 @@ namespace server.Controllers
         [HttpPost]
         public bool Post([FromBody] PullOrder po)
         {
-            //bool ret = po.Insert();
-            //if (ret)
-            //{
-            //    ClientNoticetion clientNoticetion = new ClientNoticetion();
-            //    _ = clientNoticetion.SendMessage("100");
-
-            //}
-            //return ret;
-
             return po.Insert();
 
             //{ "orderId": 0, "depId": 3, "pUser": 0, "reportNum": "11118", "status": "W", "orderDate": "2023-04-04T07:53:02.996Z",
