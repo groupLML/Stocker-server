@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using MathNet.Numerics;
 using System.Diagnostics.Metrics;
 using Accord.IO;
+using System.Collections.Concurrent;
 //using Microsoft.VisualBasic;
 
 /// DBServices is a class created by me to provides some DataBase Services
@@ -3707,8 +3708,26 @@ public class DBservices
 
 
     /***************** Dashboard *****************/
+
+    //public Object ReadData(int dep, int med, int year){
+
+    //    ConcurrentBag<Object> resultCollection = new ConcurrentBag<Object>();
+    //    ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadBoxs(7), () => ReadLineChart(dep, med, year) }, f =>
+    //    {
+    //        resultCollection.Add(f.Invoke());
+    //    });
+
+    //    dynamic Obj = new System.Dynamic.ExpandoObject();
+    //    Object[] data = resultCollection.ToArray();
+    //    Obj.boxs = data[0];
+    //    Obj.lineChart = data[1];
+
+    //    return Obj;
+
+    //}
+
     //--------------------------------------------------------------------------------------------------
-    // This method Read X1 X1 from the usage table
+    // This method Read Boxes for dashboard
     //--------------------------------------------------------------------------------------------------
     public Object ReadBoxs(int interval)
     {
@@ -3785,7 +3804,106 @@ public class DBservices
         return cmd;
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Line chart for dashboard
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadLineChart(int dep, int med, int year)
+    {
 
+        SqlConnection con;
+        SqlCommand cmd1;
+        SqlCommand cmd2;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd1 = CreateReadDashboardDataCommand("spDashboardUsageLineChart", con, dep, med, year);
+        cmd2 = CreateReadDashboardDataCommand("spDashboardUsageLineChart", con, dep, med, year);
+
+        try
+        {
+            SqlDataReader dataReader1 = cmd1.ExecuteReader(CommandBehavior.CloseConnection);
+
+            int[] usageQty = new int[12];
+            int[] poQty = new int[12];
+
+            int index = 0;
+            while (dataReader1.Read())
+            {
+                usageQty[index] = Convert.ToInt32(dataReader1["qty"]);
+                index++;
+            }
+
+            SqlDataReader dataReader2 = cmd2.ExecuteReader(CommandBehavior.CloseConnection);
+
+            index = 0;
+            while (dataReader2.Read())
+            {
+                poQty[index] = Convert.ToInt32(dataReader2["qty"]);
+                index++;
+            }
+
+            Object Obj = new
+            {
+                series = new[] {
+                    new{
+                         name = "צריכה בפועל",
+                         data = usageQty
+                    },
+                    new{
+                         name = "הנפקה",
+                         data = poQty
+                    }
+                }
+            };
+
+            return Obj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+    // Create Read dashboard data SqlCommand
+    //--------------------------------------------------------------------
+    private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int dep, int med, int year)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@depId", dep);
+        cmd.Parameters.AddWithValue("@medId", med);
+        cmd.Parameters.AddWithValue("@year", year);
+
+        return cmd;
+    }
 
 
     /***************** Token React *****************/

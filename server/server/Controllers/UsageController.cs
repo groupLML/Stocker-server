@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -70,6 +71,16 @@ namespace server.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+
+
+        // GET api/<UsageController>/5
+        [HttpGet("/GetData/dep/{dep}/med/{med}/year/{year}")]
+        public Object GetData(int dep, int med, int year)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadLineChart(dep, med, year);
         }
     }
 }

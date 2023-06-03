@@ -1971,7 +1971,7 @@ INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (4, @us
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (5, @usageId, 22, '1791302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (7, @usageId, 19, '1591302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (8, @usageId, 29, '1891302')
-DECLARE @usageId smallint
+
 Insert INTO [Usages] ([depId],[reportNum],[lastUpdate]) Values (7,'66666','2020-04-30 05:22:00.637') set @usageId =(SELECT SCOPE_IDENTITY());
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (1, @usageId, 19, '1191302')
 INSERT INTO [MedUsages] ([medId], [usageId], [useQty], [chamNum]) VALUES (2, @usageId, 26, '1291302')
