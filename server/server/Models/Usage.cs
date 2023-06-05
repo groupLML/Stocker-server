@@ -50,10 +50,17 @@ namespace server.Models
             return dbs.ReadDepMedsUsage(depId, startDate, endDate);
         }
 
-        public Object ReadBoxsData(int interval)
+        public Object GetDashboardData(int dep, int med, int month, string year)
         {
             DBservices dbs = new DBservices();
-            return dbs.ReadBoxs(interval);
+            return dbs.ReadData(dep, med, month, year);
         }
+
+
+        //public Object ReadBoxsData(int interval)
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.ReadBoxs(interval);
+        //}
     }
 }

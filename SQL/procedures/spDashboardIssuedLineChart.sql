@@ -22,7 +22,8 @@ ALTER PROCEDURE spDashboardIssuedLineChart
 	-- Add the parameters for the stored procedure here
 	@depId smallint,
 	@medId smallint,
-	@year smallint
+	@month smallint,
+	@year char(4)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -45,12 +46,12 @@ BEGIN
         from
             (select sum(supQty) as TotalPO, month(lastUpdate) as monthPO, Year(lastUpdate) as yearPO
              from PushOrders as PO inner join PushMedOrders as PMO on PO.pushId=PMO.orderId
-             where medId=@medId and depId=@depId and pushStatus like 'I' and Year(lastUpdate)=@year
+             where medId=@medId and depId=@depId and pushStatus like 'I' and Year(lastUpdate)like @year
              group by medId, depId, month(lastUpdate), Year(lastUpdate)) as t1
          FULL OUTER JOIN
             (select sum(supQty) as TotalPO, month(lastUpdate) as monthPO, Year(lastUpdate) as yearPO
              from PullOrders as PO inner join PullMedOrders as PMO on PO.pullId=PMO.orderId
-             where medId=@medId and depId=@depId and pullStatus like 'I' and Year(lastUpdate)=@year 
+             where medId=@medId and depId=@depId and pullStatus like 'I' and Year(lastUpdate) like @year 
              group by medId, depId, month(lastUpdate), Year(lastUpdate)) as t2
 	     on t1.monthPO=t2.monthPO and t1.yearPO=t2.yearPO
          order by monthPO

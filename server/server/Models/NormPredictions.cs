@@ -1,5 +1,6 @@
 ﻿using Accord.Math;
 using Accord.Math.Optimization.Losses;
+using Accord.Statistics.Analysis;
 using Accord.Statistics.Filters;
 using Accord.Statistics.Kernels;
 using Accord.Statistics.Models.Regression.Linear;
@@ -187,7 +188,7 @@ namespace server.Models
             }
             Console.WriteLine("intercept:");
             Console.WriteLine(regression.Intercept);
-            Console.WriteLine("y: " + y + " x1: " + x1 + " x2: " + x2 );
+            Console.WriteLine("y: " + y + " x1: " + x1 + " x2: " + x2);
 
             return y;
         }

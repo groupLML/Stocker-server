@@ -3517,6 +3517,7 @@ public class DBservices
 
 
     /***************** Prediction *****************/
+
     //--------------------------------------------------------------------------------------------------
     // This method Read Predictions from the Predictions table
     //--------------------------------------------------------------------------------------------------
@@ -3708,28 +3709,106 @@ public class DBservices
 
 
     /***************** Dashboard *****************/
+    public Object ReadData(int dep, int med, int month, string year)
+    {
+        ConcurrentBag<Object> resultCollection = new ConcurrentBag<Object>();
+        ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadBarChart(dep, med, month, year), () => ReadBoxs(dep, med, month, year), () => ReadLineChart(dep, med, month, year) }, f =>
+        {
+            resultCollection.Add(f.Invoke());
+        });
 
-    //public Object ReadData(int dep, int med, int year){
+        dynamic Obj = new System.Dynamic.ExpandoObject();
+        Object[] data = resultCollection.ToArray();
+        Obj.lineChart = data[0];
+        Obj.boxs = data[2];
+        Obj.barChart = data[1];
 
-    //    ConcurrentBag<Object> resultCollection = new ConcurrentBag<Object>();
-    //    ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadBoxs(7), () => ReadLineChart(dep, med, year) }, f =>
+        return Obj;
+
+    }
+
+    ////--------------------------------------------------------------------------------------------------
+    //// This method Read Boxes for dashboard
+    ////--------------------------------------------------------------------------------------------------
+    //public Object ReadBoxs(int interval)
+    //{
+
+    //    SqlConnection con;
+    //    SqlCommand cmd;
+
+    //    try
     //    {
-    //        resultCollection.Add(f.Invoke());
-    //    });
+    //        con = connect("myProjDB"); // create the connection
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        //write to log
+    //        throw (ex);
+    //    }
 
-    //    dynamic Obj = new System.Dynamic.ExpandoObject();
-    //    Object[] data = resultCollection.ToArray();
-    //    Obj.boxs = data[0];
-    //    Obj.lineChart = data[1];
+    //    cmd = CreateReadDashboardDataCommand("spDashboardBoxs", con, interval);
 
-    //    return Obj;
+    //    try
+    //    {
+    //        SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
+    //        Object Obj = new Object();
+
+    //        while (dataReader.Read())
+    //        {
+    //            Obj = new
+    //            {
+    //                CurrentPO = Convert.ToInt32(dataReader["CurrentPO"]),
+    //                PrevPO = Convert.ToInt32(dataReader["PrevPO"]),
+    //                CurrentMR = Convert.ToInt32(dataReader["CurrentMR"]),
+    //                PrevMR = Convert.ToInt32(dataReader["PrevMR"]),
+    //                CurrentMRD = Convert.ToInt32(dataReader["CurrentMRD"]),
+    //                PrevMRD = Convert.ToInt32(dataReader["PrevMRD"])
+    //            };
+    //        }
+    //        return Obj;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        //write to log
+    //        throw (ex);
+    //    }
+
+    //    finally
+    //    {
+    //        if (con != null)
+    //        {
+    //            //close the db connection
+    //            con.Close();
+    //        }
+    //    }
+    //}
+
+    ////--------------------------------------------------------------------
+    //// Create Read dashboard data SqlCommand
+    ////--------------------------------------------------------------------
+    //private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int interval)
+    //{
+
+    //    SqlCommand cmd = new SqlCommand(); // create the command object
+
+    //    cmd.Connection = con;              // assign the connection to the command object
+
+    //    cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+    //    cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+
+    //    cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+    //    cmd.Parameters.AddWithValue("@interval", interval);
+
+    //    return cmd;
     //}
 
     //--------------------------------------------------------------------------------------------------
     // This method Read Boxes for dashboard
     //--------------------------------------------------------------------------------------------------
-    public Object ReadBoxs(int interval)
+    public Object ReadBoxs(int dep, int med, int month, string year)
     {
 
         SqlConnection con;
@@ -3741,11 +3820,11 @@ public class DBservices
         }
         catch (Exception ex)
         {
-            // write to log
+            //write to log
             throw (ex);
         }
 
-        cmd = CreateReadDashboardDataCommand("spDashboardBoxs", con, interval);
+        cmd = CreateReadDashboardDataCommand("spDashboardBoxs", con, dep, med, month, year);
 
         try
         {
@@ -3769,7 +3848,7 @@ public class DBservices
         }
         catch (Exception ex)
         {
-            // write to log
+            //write to log
             throw (ex);
         }
 
@@ -3777,46 +3856,35 @@ public class DBservices
         {
             if (con != null)
             {
-                // close the db connection
+                //close the db connection
                 con.Close();
             }
         }
     }
 
-    //--------------------------------------------------------------------
-    // Create Read dashboard data SqlCommand
-    //--------------------------------------------------------------------
-    private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int interval)
-    {
-
-        SqlCommand cmd = new SqlCommand(); // create the command object
-
-        cmd.Connection = con;              // assign the connection to the command object
-
-        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
-
-        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
-
-        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
-
-        cmd.Parameters.AddWithValue("@interval", interval);
-
-        return cmd;
-    }
-
     //--------------------------------------------------------------------------------------------------
     // This method Read Line chart for dashboard
     //--------------------------------------------------------------------------------------------------
-    public Object ReadLineChart(int dep, int med, int year)
+    public Object ReadLineChart(int dep, int med, int month, string year)
     {
 
-        SqlConnection con;
+        SqlConnection con1;
+        SqlConnection con2;
         SqlCommand cmd1;
         SqlCommand cmd2;
 
         try
         {
-            con = connect("myProjDB"); // create the connection
+            con1 = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        try
+        {
+            con2 = connect("myProjDB"); // create the connection
         }
         catch (Exception ex)
         {
@@ -3824,8 +3892,8 @@ public class DBservices
             throw (ex);
         }
 
-        cmd1 = CreateReadDashboardDataCommand("spDashboardUsageLineChart", con, dep, med, year);
-        cmd2 = CreateReadDashboardDataCommand("spDashboardUsageLineChart", con, dep, med, year);
+        cmd1 = CreateReadDashboardDataCommand("spDashboardUsageLineChart", con1, dep, med, month, year);
+        cmd2 = CreateReadDashboardDataCommand("spDashboardIssuedLineChart", con2, dep, med, month, year);
 
         try
         {
@@ -3850,18 +3918,10 @@ public class DBservices
                 index++;
             }
 
-            Object Obj = new
+            var Obj = new[]
             {
-                series = new[] {
-                    new{
-                         name = "צריכה בפועל",
-                         data = usageQty
-                    },
-                    new{
-                         name = "הנפקה",
-                         data = poQty
-                    }
-                }
+                new { name = "צריכה בפועל", data = usageQty },
+                new { name = "הנפקה", data = poQty }
             };
 
             return Obj;
@@ -3874,9 +3934,90 @@ public class DBservices
 
         finally
         {
-            if (con != null)
+            if (con1 != null)
             {
                 // close the db connection
+                con1.Close();
+            }
+            if (con2 != null)
+            {
+                // close the db connection
+                con2.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read Bar chart for dashboard
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadBarChart(int dep, int med, int month, string year)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            //write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDashboardDataCommand("spDashboardBarChart", con, dep, med, month, year);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            int[] barQty = new int[7];
+
+            while (dataReader.Read())
+            {
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("SupPullPO")))
+                    barQty[0] = Convert.ToInt32(dataReader["SupPullPO"]);
+                else
+                    barQty[0] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("NotSupPullPO")))
+                    barQty[1] = Convert.ToInt32(dataReader["NotSupPullPO"]);
+                else
+                    barQty[1] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("SupPushPO")))
+                    barQty[2] = Convert.ToInt32(dataReader["SupPushPO"]);
+                else
+                    barQty[2] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("NotSupPushPO")))
+                    barQty[3] = Convert.ToInt32(dataReader["NotSupPushPO"]);
+                else
+                    barQty[3] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("SupMR")))
+                    barQty[4] = Convert.ToInt32(dataReader["SupMR"]);
+                else
+                    barQty[4] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("WaitMR")))
+                    barQty[5] = Convert.ToInt32(dataReader["WaitMR"]);
+                else
+                    barQty[5] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("usageQty")))
+                    barQty[6] = Convert.ToInt32(dataReader["usageQty"]);
+                else
+                    barQty[6] = 0;
+            }
+            return barQty;
+        }
+        catch (Exception ex)
+        {
+            //write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                //close the db connection
                 con.Close();
             }
         }
@@ -3885,7 +4026,7 @@ public class DBservices
     //--------------------------------------------------------------------
     // Create Read dashboard data SqlCommand
     //--------------------------------------------------------------------
-    private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int dep, int med, int year)
+    private SqlCommand CreateReadDashboardDataCommand(String spName, SqlConnection con, int dep, int med, int month, string year)
     {
 
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -3900,13 +4041,16 @@ public class DBservices
 
         cmd.Parameters.AddWithValue("@depId", dep);
         cmd.Parameters.AddWithValue("@medId", med);
+        cmd.Parameters.AddWithValue("@month", month);
         cmd.Parameters.AddWithValue("@year", year);
 
         return cmd;
     }
 
 
+
     /***************** Token React *****************/
+
     //--------------------------------------------------------------------------------------------------
     // This method Update Token from the Tokens table
     //--------------------------------------------------------------------------------------------------
@@ -4681,7 +4825,6 @@ public class DBservices
 
 
     /*****************NormRequests*****************/
-
     //--------------------------------------------------------------------------------------------------
     // This method inserts a NormRequest to the NormRequests table 
     //--------------------------------------------------------------------------------------------------

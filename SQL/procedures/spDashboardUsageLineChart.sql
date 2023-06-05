@@ -22,7 +22,8 @@ ALTER PROCEDURE spDashboardUsageLineChart
 	-- Add the parameters for the stored procedure here
 	@depId smallint,
 	@medId smallint,
-	@year smallint
+	@month smallint,
+	@year char(4)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -37,7 +38,7 @@ BEGIN
            select sum(useQty) as TotalUsages, month(U.lastUpdate) as monthUsage
            from Usages U inner join MedUsages MU
                 on MU.usageId=U.usageId
-            where medId=@medId and depId=@depId and Year(U.lastUpdate)=@year
+            where medId=@medId and depId=@depId and Year(U.lastUpdate) like @year
            group by medId, depId, month(U.lastUpdate), Year(U.lastUpdate)
            order by month(U.lastUpdate)
 

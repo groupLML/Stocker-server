@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,14 +36,6 @@ namespace server.Controllers
         }
 
 
-        // GET api/<UsageController>/5
-        [HttpGet("/GetDashboard/interval/{interval}")]
-        public Object GetDashboard(int interval)
-        {
-            Usage use = new Usage();
-            return use.ReadBoxsData(interval);
-        }
-
         // GET: api/<UsageController>
         [HttpGet("/NormMedPrediction/dep/{dep}/med/{med}")]
         public int GetNormPrediction(int dep, int med)
@@ -52,12 +45,29 @@ namespace server.Controllers
         }
 
 
+        // GET api/<UsageController>/5
+        [HttpGet("/GetDashboard/dep/{dep}/med/{med}/month/{month}/year/{year}")]
+        public Object GetDashboard(int dep, int med, int month, string year)
+        {
+            Usage use = new Usage();
+            return use.GetDashboardData(dep, med, month, year);
+        }
+
+
+        //// GET api/<UsageController>/5
+        //[HttpGet("/GetDashboard/interval/{interval}")]
+        //public Object GetDashboard(int interval)
+        //{
+        //    Usage use = new Usage();
+        //    return use.ReadBoxsData(interval);
+        //}
+
+
         // POST api/<UsageController>
         [HttpPost]
         public bool Post([FromBody] Usage use)
         {
             return use.Insert();
-          
         }
 
         // PUT api/<UsageController>/5
@@ -73,14 +83,5 @@ namespace server.Controllers
         {
         }
 
-
-
-        // GET api/<UsageController>/5
-        [HttpGet("/GetData/dep/{dep}/med/{med}/year/{year}")]
-        public Object GetData(int dep, int med, int year)
-        {
-            DBservices dbs = new DBservices();
-            return dbs.ReadLineChart(dep, med, year);
-        }
     }
 }

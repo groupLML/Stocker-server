@@ -22,7 +22,8 @@ CREATE PROCEDURE spDashboardBarChart
 	-- Add the parameters for the stored procedure here
 	@depId smallint,
 	@medId smallint,
-	@year smallint
+	@month smallint,
+	@year char(4)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -30,49 +31,131 @@ BEGIN
 	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-declare @countCurrentPO smallint, @countPreviousPO smallint, @countCurrentMR smallint, @countPreviousMR smallint,
-	        @countCurrentMRD smallint, @countPreviousMRD smallint
+    declare @SupPullPO smallint, @NotSupPullPO smallint, @SupPushPO smallint, @NotSupPushPO smallint,
+	        @SupMR smallint, @WaitMR smallint, @usageQty smallint
 
-	Select @countCurrentPO= count(*), @countPreviousPO= (select count(*)
-	                                                     from [PullOrders] as PO
-	                                                     where PO.pullDate<=(getdate()-@interval) and PO.pullDate>=getdate()-@interval*2)
-	from [PullOrders] as PO
-	where datediff(day,PO.pullDate,getdate())<=
+    --כמות שסופקה מהזמנות משיכה
+    select @SupPullPO= sum(supQty)
+    from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+    where medId=@medId and depId=@depId and (month(pullDate)=@month and YEAR(pullDate)= @year)
+   
+    -- כמות שלא סופקה מהזמנות משיכה שסופקו
+	select @NotSupPullPO= sum(poQty-supQty)
+    from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+    where medId=@medId and depId=@depId and (month(pullDate)=@month and YEAR(pullDate)= @year) and pullStatus='I'
+   
+
+    --כמות שסופקה מהזמנות דחיפה
+    select @SupPushPO= sum(supQty)
+    from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+    where medId=@medId and depId=@depId and (month(pushDate)=@month and YEAR(pushDate)= @year)
+   
+    -- כמות שלא סופקה מהזמנות דחיפה שסופקו
+	select @NotSupPushPO= sum(poQty-supQty)
+    from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+    where medId=@medId and depId=@depId and (month(pushDate)=@month and YEAR(pushDate)= @year) and pushStatus='I'
 
 
-	Select @countCurrentMR=count(*), @countPreviousMR=(select count(*)
-	                                                   from [MedRequests] MR
-	                                                   where MR.reqDate<=(getdate()-@interval) and MR.reqDate>=getdate()-@interval*2)
-	from [MedRequests] MR
-	where MR.reqStatus like 'T' and datediff(day,MR.reqDate,getdate())<=@interval
+	 --כמות שסופקה מבקשות המחלקה
+	Select @SupMR=sum(reqQty)
+	from [MedRequests] MR 
+	where (MR.reqStatus like 'T' or MR.reqStatus like 'A') and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
 
 
-	Select @countCurrentMRD=count(*), @countPreviousMRD=(select count(*)
-	                                                     from [MedRequests] MR
-	                                                     where MR.reqStatus like 'D' and 
-													          (MR.reqDate<=(getdate()-@interval) and MR.reqDate>=getdate()-@interval*2))
-	from [MedRequests] MR
-	where MR.reqStatus like 'D' and datediff(day,MR.reqDate,getdate())<=@interval
+	 --כמות תרופות מבקשות שנמצאות בהמתנה
+	Select @WaitMR=sum(reqQty)
+	from [MedRequests] MR 
+	where MR.reqStatus like 'W' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
 
 
-	select @countCurrentPO as CurrentPO, 
-	       @countPreviousPO as PrevPO, 
-		   @countCurrentMR as CurrentMR,
-		   @countPreviousMR as PrevMR,
-		   @countCurrentMRD as CurrentMRD,
-		   @countPreviousMRD as PrevMRD
+	--תיעוד שימוש בקמיליון
+	select @usageQty=sum(useQty)
+	from Usages U inner Join MedUsages MU on U.usageId=MU.usageId
+	where medId=@medId and depId=@depId and (month(lastUpdate)=@month and YEAR(lastUpdate)= @year)
 
+
+
+	select @SupPullPO as SupPullPO, 
+	       @NotSupPullPO as NotSupPullPO, 
+		   @SupPushPO as SupPushPO, 
+	       @NotSupPushPO as NotSupPushPO, 
+		   @SupMR as SupMR, 
+		   @WaitMR as WaitMR, 
+		   @usageQty as usageQty
 
 END
 GO
 
 
-select *
-from PullOrders as PO inner join PullMedOrders as PMO
-on PO.pullId=PMO.orderId
-where medId=1 and depId=4 and pullStatus like 'I'
+    --select sum(poQty-supQty)
+    --from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+    --where medId=1 and depId=3 and (month(pullDate)=6 and YEAR(pullDate)= 2023) and pullStatus='I'
 
-select *
-from PushOrders as PO inner join PushMedOrders as PMO
-on PO.pushId=PMO.orderId
-where medId=1 and depId=4 
+	 
+	--UPDATE [PullOrders] set reportNum = ''  where pullId = 1047
+
+	--Select sum(reqQty)
+	--from [MedRequests] MR 
+	--where (MR.reqStatus like 'W' or MR.reqStatus like 'A') and medId=1 and cDep=3 and (month(reqDate)=4 and YEAR(reqDate)= 2023)
+
+
+
+
+	--declare @SupPullPO smallint, @NotSupPullPO smallint, @SupPushPO smallint, @NotSupPushPO smallint,
+	--        @SupMR smallint, @WaitMR smallint, @usageQty smallint,
+	--@depId smallint,
+	--@medId smallint,
+	--@month smallint,
+	--@year char(4)
+
+
+	--set @depId=3; set @medId=1; set @month= 4; set @year='2023';
+
+	-- --כמות שסופקה מהזמנות משיכה
+ --   select @SupPullPO= sum(supQty)
+ --   from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+ --   where medId=@medId and depId=@depId and (month(pullDate)=@month and YEAR(pullDate)= @year)
+   
+ --   -- כמות שלא סופקה מהזמנות משיכה שסופקו
+	--select @NotSupPullPO= sum(poQty-supQty)
+ --   from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+ --   where medId=@medId and depId=@depId and (month(pullDate)=@month and YEAR(pullDate)= @year) and pullStatus='I'
+   
+
+ --   --כמות שסופקה מהזמנות דחיפה
+ --   select @SupPushPO= sum(supQty)
+ --   from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+ --   where medId=@medId and depId=@depId and (month(pushDate)=@month and YEAR(pushDate)= @year)
+   
+ --   -- כמות שלא סופקה מהזמנות דחיפה שסופקו
+	--select @NotSupPushPO= sum(poQty-supQty)
+ --   from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+ --   where medId=@medId and depId=@depId and (month(pushDate)=@month and YEAR(pushDate)= @year) and pushStatus='I'
+
+
+	-- --כמות שסופקה מבקשות המחלקה
+	--Select @SupMR=sum(reqQty)
+	--from [MedRequests] MR 
+	--where (MR.reqStatus like 'T' or MR.reqStatus like 'A') and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
+
+
+	-- --כמות תרופות מבקשות שנמצאות בהמתנה
+	--Select @WaitMR=sum(reqQty)
+	--from [MedRequests] MR 
+	--where MR.reqStatus like 'W' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
+
+
+	----תיעוד שימוש בקמיליון
+	--select @usageQty=sum(useQty)
+	--from Usages U inner Join MedUsages MU on U.usageId=MU.usageId
+	--where medId=@medId and depId=@depId and (month(lastUpdate)=@month and YEAR(lastUpdate)= @year)
+
+
+
+	--select @SupPullPO as SupPullPO, 
+	--       @NotSupPullPO as NotSupPullPO, 
+	--	   @SupPushPO as SupPushPO, 
+	--       @NotSupPushPO as NotSupPushPO, 
+	--	   @SupMR as SupMR, 
+	--	   @WaitMR as WaitMR, 
+	--	   @usageQty as usageQty
