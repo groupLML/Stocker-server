@@ -28,6 +28,8 @@ BEGIN
 	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
+
+
 	
 	 SELECT N'הודעה חדשה' as titleM, N'מאת ' + U.firstName +' '+ U.lastName as textM, 1 as typeM, msgDate as dateM
 	 FROM [Messages] as M inner join [Users] as U on M.userId=U.userId
@@ -44,16 +46,17 @@ BEGIN
 	 where Datediff(day, reqDate, GETDATE()) < 7
 	 order by dateM desc
 
-	
-	 select  medId, depId, sum(stcQty) as qty, max(entryDate) as dateM
+	 with temp as (
+	 select medId, depId, sum(stcQty) as qty, max(entryDate) as dateM
 	 from Stocks
 	 group by medId, depId
+	 having sum(stcQty)<=5)
 
-	 select *
-	 from Stocks
-	 group by medId, depId
+	 select temp.depId, dateM
+	 from temp inner join Departments D on temp.depId=D.depId
+	 where Datediff(day, dateM, GETDATE()) < 7 
 
-	 --UPDATE [Stocks] set depId = 5  where stcId = 106
-	
+
+
 END
 GO
