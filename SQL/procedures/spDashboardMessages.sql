@@ -28,8 +28,11 @@ BEGIN
 	-- SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-
-
+	 with temp as (
+	 select medId, depId, sum(stcQty) as qty, max(entryDate) as dateM
+	 from Stocks
+	 group by medId, depId
+	 having sum(stcQty)<=5)
 	
 	 SELECT N'הודעה חדשה' as titleM, N'מאת ' + U.firstName +' '+ U.lastName as textM, 1 as typeM, msgDate as dateM
 	 FROM [Messages] as M inner join [Users] as U on M.userId=U.userId
@@ -40,22 +43,11 @@ BEGIN
 	      Departments D on N.depId=D.depId inner join [Users] as U on NR.userId=U.userId
 	 where Datediff(day, reqDate, GETDATE()) < 7
 	 union 
-	 SELECT N'מלאי מחלקה התרוקן' as titleM, N'מחלקה ' +depName as textM, 3 as typeM, reqDate as dateM
-	 from NormRequests NR inner join Norms N on NR.normId=N.normId inner join 
-	      Departments D on N.depId=D.depId inner join [Users] as U on NR.userId=U.userId
-	 where Datediff(day, reqDate, GETDATE()) < 7
-	 order by dateM desc
-
-	 with temp as (
-	 select medId, depId, sum(stcQty) as qty, max(entryDate) as dateM
-	 from Stocks
-	 group by medId, depId
-	 having sum(stcQty)<=5)
-
-	 select temp.depId, dateM
-	 from temp inner join Departments D on temp.depId=D.depId
+	 SELECT N'מלאי מחלקה התרוקן' as titleM, N'מחלקה ' +D.depName as textM, 3 as typeM, min(dateM) as dateM
+		 from temp inner join Departments D on temp.depId=D.depId
 	 where Datediff(day, dateM, GETDATE()) < 7 
-
+	 group by D.depId, D.depName
+	 order by dateM desc
 
 
 END

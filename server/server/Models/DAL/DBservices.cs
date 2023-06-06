@@ -3712,7 +3712,7 @@ public class DBservices
     public Object ReadData(int dep, int med, int month, string year)
     {
         ConcurrentBag<Object> resultCollection = new ConcurrentBag<Object>();
-        ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadBarChart(dep, med, month, year), () => ReadBoxs(dep, med, month, year), () => ReadLineChart(dep, med, month, year) }, f =>
+        ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadUpdates(), () => ReadBarChart(dep, med, month, year), () => ReadBoxs(dep, med, month, year), () => ReadLineChart(dep, med, month, year) }, f =>
         {
             resultCollection.Add(f.Invoke());
         });
@@ -3722,6 +3722,7 @@ public class DBservices
         Obj.lineChart = data[0];
         Obj.boxs = data[2];
         Obj.barChart = data[1];
+        Obj.updates = data[3];
 
         return Obj;
 
@@ -4018,6 +4019,60 @@ public class DBservices
             if (con != null)
             {
                 //close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read update and masseges for the dashboard
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadUpdates()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spDashboardMessages", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    title = dataReader["titleM"].ToString(),
+                    text = dataReader["textM"].ToString(),
+                    date = Convert.ToDateTime(dataReader["dateM"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
                 con.Close();
             }
         }
