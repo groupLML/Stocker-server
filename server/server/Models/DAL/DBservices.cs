@@ -4057,6 +4057,7 @@ public class DBservices
                 {
                     title = dataReader["titleM"].ToString(),
                     text = dataReader["textM"].ToString(),
+                    type = Convert.ToInt32(dataReader["typeM"]),
                     date = Convert.ToDateTime(dataReader["dateM"])
                 });
             }
