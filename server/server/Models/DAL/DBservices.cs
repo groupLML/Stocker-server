@@ -3711,21 +3711,43 @@ public class DBservices
     /***************** Dashboard *****************/
     public Object ReadData(int dep, int med, int month, string year)
     {
-        ConcurrentBag<Object> resultCollection = new ConcurrentBag<Object>();
-        ParallelLoopResult result = Parallel.ForEach(new Func<Object>[] { () => ReadUpdates(), () => ReadBarChart(dep, med, month, year), () => ReadBoxs(dep, med, month, year), () => ReadLineChart(dep, med, month, year) }, f =>
+        ConcurrentDictionary<int, Object> result = new ConcurrentDictionary<int, Object>();
+        Parallel.ForEach(new KeyValuePair<int, Func<Object>>[] { new KeyValuePair<int, Func<Object>>(1,() => ReadBarChart(dep, med, month, year)),
+                                                                 new KeyValuePair<int, Func<Object>>(2,() => ReadLineChart(dep, med, month, year)),
+                                                                 new KeyValuePair<int, Func<Object>>(3, () =>ReadBoxs(dep, med, month, year)),
+                                                                 new KeyValuePair<int, Func<Object>>(4,() => ReadUpdates()),
+                                                                 new KeyValuePair<int, Func<Object>>(5,() => ReadPieChart(dep, med, month, year))},
+            f =>
+            {
+                Object data = f.Value.Invoke();
+                result.TryAdd(f.Key, data);
+
+            });
+
+        dynamic data = new System.Dynamic.ExpandoObject();
+        foreach (int key in result.Keys)
         {
-            resultCollection.Add(f.Invoke());
-        });
+            switch (key)
+            {
+                case 1:
+                    data.barChart = result[key];
+                    break;
+                case 2:
+                    data.lineChart = result[key];
+                    break;
+                case 3:
+                    data.boxs = result[key];
+                    break;
+                case 4:
+                    data.updates = result[key];
+                    break;
+                case 5:
+                    data.pieChart = result[key];
+                    break;
+            }
+        };
 
-        dynamic Obj = new System.Dynamic.ExpandoObject();
-        Object[] data = resultCollection.ToArray();
-        Obj.lineChart = data[0];
-        Obj.boxs = data[2];
-        Obj.barChart = data[1];
-        Obj.updates = data[3];
-
-        return Obj;
-
+        return data;
     }
 
     ////--------------------------------------------------------------------------------------------------
@@ -3923,7 +3945,7 @@ public class DBservices
             {
                 new { name = "צריכה בפועל", data = usageQty },
                 new { name = "הנפקה", data = poQty }
-            };
+        };
 
             return Obj;
         }
@@ -3973,7 +3995,7 @@ public class DBservices
         {
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-            int[] barQty = new int[7];
+            int[] barQty = new int[6];
 
             while (dataReader.Read())
             {
@@ -3997,16 +4019,70 @@ public class DBservices
                     barQty[4] = Convert.ToInt32(dataReader["SupMR"]);
                 else
                     barQty[4] = 0;
-                if (!dataReader.IsDBNull(dataReader.GetOrdinal("WaitMR")))
-                    barQty[5] = Convert.ToInt32(dataReader["WaitMR"]);
+                //if (!dataReader.IsDBNull(dataReader.GetOrdinal("WaitMR")))
+                //    barQty[5] = Convert.ToInt32(dataReader["WaitMR"]);
+                //else
+                //    barQty[5] = 0;
+                if (!dataReader.IsDBNull(dataReader.GetOrdinal("usageQty")))
+                    barQty[5] = Convert.ToInt32(dataReader["usageQty"]);
                 else
                     barQty[5] = 0;
-                if (!dataReader.IsDBNull(dataReader.GetOrdinal("usageQty")))
-                    barQty[6] = Convert.ToInt32(dataReader["usageQty"]);
-                else
-                    barQty[6] = 0;
             }
+
             return barQty;
+        }
+        catch (Exception ex)
+        {
+            //write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                //close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Read pei chart for dashboard
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPieChart(int dep, int med, int month, string year)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            //write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDashboardDataCommand("spDashboardPieChart", con, dep, med, month, year);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    value = Convert.ToInt32(dataReader["totalQty"]),
+                    mame = dataReader["depName"].ToString(),
+                });
+            }
+            return listObj;
         }
         catch (Exception ex)
         {
@@ -4058,7 +4134,7 @@ public class DBservices
                     title = dataReader["titleM"].ToString(),
                     text = dataReader["textM"].ToString(),
                     type = Convert.ToInt32(dataReader["typeM"]),
-                    date = Convert.ToDateTime(dataReader["dateM"])
+                    date = dataReader["dateM"].ToString()
                 });
             }
             return listObj;
@@ -4425,11 +4501,11 @@ public class DBservices
         try
         {
             con = connect("myProjDB"); // create the connection
-        }
+        }
         catch (Exception ex)
         {
-            // write to log
-            throw (ex);
+            // write to log
+            throw (ex);
         }
 
         SqlTransaction transaction = con.BeginTransaction(); //פתיחת טרנזקציה
@@ -4437,41 +4513,41 @@ public class DBservices
         try
         {
             using (cmd1 = CreateUpdateInsertNormCommandSP("spInsertNorm", con, norm)) //יצירת command
-            {
+            {
                 cmd1.Transaction = transaction; //הפעלת טרנזקציה על הcommand
-                normId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
-            }
+                normId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
+            }
             for (int i = 0; i < norm.MedList.Count; i++)
             {
                 using (cmd2 = CreateUpdateInsertMedNormCommandSP("spInsertMedNorm", con, normId, norm.MedList[i]))//יצירת command
-                {
+                {
                     cmd2.Transaction = transaction;//הפעלת טרנזקציה על הcommand
-                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
-                }
+                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
+                }
             }
 
             if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
-            {
+            {
                 transaction.Commit();
                 return true;
             }
             else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
-            {
+            {
                 transaction.Rollback(); //ביטול כל הפעולות הקודמות
-                return false;
+                return false;
             }
         }
         catch (SqlException sqlEx)
         {
-            // אם התרחשה שגיאת sql, נבצע rollback
-            transaction.Rollback();
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
             Console.WriteLine("SqlException:" + sqlEx.Message);
             return false;
         }
         catch (Exception ex)
         {
-            // אם התרחשה כל שגיאה, נבצע rollback
-            transaction.Rollback();
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -4479,8 +4555,8 @@ public class DBservices
         {
             if (con != null)
             {
-                // close the db connection
-                con.Close();
+                // close the db connection
+                con.Close();
             }
         }
     }
@@ -4597,9 +4673,9 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
-    // Create the Update/Insert SqlCommand for norm
-    //---------------------------------------------------------------------------------
-    private SqlCommand CreateUpdateInsertMedNormCommandSP(String spName, SqlConnection con, int normId, MedNorm medNorm)
+    // Create the Update/Insert SqlCommand for norm
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateInsertMedNormCommandSP(String spName, SqlConnection con, int normId, MedNorm medNorm)
     {
         SqlCommand cmd = new SqlCommand(); // create the command object
 
@@ -4896,11 +4972,11 @@ public class DBservices
         try
         {
             con = connect("myProjDB"); // create the connection
-        }
+        }
         catch (Exception ex)
         {
-            // write to log
-            throw (ex);
+            // write to log
+            throw (ex);
         }
 
         SqlTransaction transaction = con.BeginTransaction(); //פתיחת טרנזקציה
@@ -4908,41 +4984,41 @@ public class DBservices
         try
         {
             using (cmd1 = CreateUpdateInsertNormRequestCommandSP("spInsertNormRequest", con, nr)) //יצירת command
-            {
+            {
                 cmd1.Transaction = transaction; //הפעלת טרנזקציה על הcommand
-                reqId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
-            }
+                reqId = Convert.ToInt32(cmd1.ExecuteScalar()); //הרצת command
+            }
             for (int i = 0; i < nr.MedReqList.Count; i++)
             {
                 using (cmd2 = CreateInsertMedNormRequestCommandSP("spInsertMedNormRequest", con, reqId, nr.MedReqList[i]))//יצירת command
-                {
+                {
                     cmd2.Transaction = transaction;//הפעלת טרנזקציה על הcommand
-                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
-                }
+                    numEffected += cmd2.ExecuteNonQuery(); //הרצת command
+                }
             }
 
             if (MedListCount == numEffected)// אם הכל הסתיים בהצלחה, נעשה commit
-            {
+            {
                 transaction.Commit();
                 return true;
             }
             else //אם לא כל התרופות בהזמנה נשמרו במסד הנתונים, נעשה rollback 
-            {
+            {
                 transaction.Rollback(); //ביטול כל הפעולות הקודמות
-                return false;
+                return false;
             }
         }
         catch (SqlException sqlEx)
         {
-            // אם התרחשה שגיאת sql, נבצע rollback
-            transaction.Rollback();
+            // אם התרחשה שגיאת sql, נבצע rollback
+            transaction.Rollback();
             Console.WriteLine("SqlException:" + sqlEx.Message);
             return false;
         }
         catch (Exception ex)
         {
-            // אם התרחשה כל שגיאה, נבצע rollback
-            transaction.Rollback();
+            // אם התרחשה כל שגיאה, נבצע rollback
+            transaction.Rollback();
             throw (ex);
         }
 
@@ -4950,8 +5026,8 @@ public class DBservices
         {
             if (con != null)
             {
-                // close the db connection
-                con.Close();
+                // close the db connection
+                con.Close();
             }
         }
     }

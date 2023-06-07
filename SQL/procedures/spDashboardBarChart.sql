@@ -18,7 +18,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE spDashboardBarChart
+ALTER PROCEDURE spDashboardBarChart
 	-- Add the parameters for the stored procedure here
 	@depId smallint,
 	@medId smallint,
@@ -32,7 +32,7 @@ BEGIN
 
     -- Insert statements for procedure here
     declare @SupPullPO smallint, @NotSupPullPO smallint, @SupPushPO smallint, @NotSupPushPO smallint,
-	        @SupMR smallint, @WaitMR smallint, @usageQty smallint
+	        @SupMR smallint, @usageQty smallint--, @WaitMR smallint
 
     --כמות שסופקה מהזמנות משיכה
     select @SupPullPO= sum(supQty)
@@ -62,10 +62,10 @@ BEGIN
 	where (MR.reqStatus like 'T' or MR.reqStatus like 'A') and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
 
 
-	 --כמות תרופות מבקשות שנמצאות בהמתנה
-	Select @WaitMR=sum(reqQty)
-	from [MedRequests] MR 
-	where MR.reqStatus like 'W' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
+	-- --כמות תרופות מבקשות שנמצאות בהמתנה
+	--Select @WaitMR=sum(reqQty)
+	--from [MedRequests] MR 
+	--where MR.reqStatus like 'W' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
 
 
 	--תיעוד שימוש בקמיליון
@@ -80,7 +80,7 @@ BEGIN
 		   @SupPushPO as SupPushPO, 
 	       @NotSupPushPO as NotSupPushPO, 
 		   @SupMR as SupMR, 
-		   @WaitMR as WaitMR, 
+		   --@WaitMR as WaitMR, 
 		   @usageQty as usageQty
 
 END
@@ -159,3 +159,19 @@ GO
 	--	   @SupMR as SupMR, 
 	--	   @WaitMR as WaitMR, 
 	--	   @usageQty as usageQty
+
+
+	-- select  sum(supQty)
+ --   from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+ --   where medId=1 and depId=3 and (month(pushDate)=4 and YEAR(pushDate)= 2023)
+
+	--select *--sum(poQty-supQty)
+ --   from [PushOrders] as PO inner join PushMedOrders as MPO on PO.pushId=MPO.orderId
+ --   where medId=1 and depId=3 and (month(pushDate)=4 and YEAR(pushDate)= 2023) and pushStatus='I'
+
+	--update PushMedOrders set supQty=2 where orderId=14 and medId=1
+
+
+	--Select*--sum(reqQty)
+	--from [MedRequests] MR 
+	--where MR.reqStatus like 'W' and medId=1 and cDep=3 and (month(reqDate)=4 and YEAR(reqDate)= 2023)
