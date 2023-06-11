@@ -4079,7 +4079,7 @@ public class DBservices
                 listObj.Add(new
                 {
                     value = Convert.ToInt32(dataReader["totalQty"]),
-                    mame = dataReader["depName"].ToString(),
+                    name = dataReader["depName"].ToString(),
                 });
             }
             return listObj;
