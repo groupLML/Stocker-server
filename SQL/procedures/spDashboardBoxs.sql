@@ -164,7 +164,20 @@ GO
 	--@year char(4)
 
 
-	--set @depId=3; set @medId=1; set @month= 1; set @year='2023';
+	--set @depId=3; set @medId=1; set @month= 6; set @year='2023';
+
+	-- ----------------------------------------Current data----------------------------------------
+ --   select @countCurrentPO= count(distinct PO.pullId)
+ --   from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
+ --   where medId=@medId and depId=@depId and (month(pullDate)=@month and YEAR(pullDate)= @year)
+   
+	--Select @countCurrentMR=count(distinct MR.reqId)
+	--from [MedRequests] MR 
+	--where MR.reqStatus like 'T' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
+
+	--Select @countCurrentMRD=count(distinct MR.reqId)
+	--from [MedRequests] MR 
+	--where MR.reqStatus like 'D' and medId=@medId and cDep=@depId and (month(reqDate)=@month and YEAR(reqDate)= @year)
 
 	------------------------------------------Previous data----------------------------------------
 	--if(@month=MONTH(GETDATE())and @year=YEAR(GETDATE()))  --מתחילת חודש נוכחי ועד להיום
@@ -231,38 +244,11 @@ GO
 	--    END
 
 
-	--select  
+	
+	--select @countCurrentPO as CurrentPO, 
 	--       @countPreviousPO as PrevPO, 
+	--	   @countCurrentMR as CurrentMR,
 	--	   @countPreviousMR as PrevMR,
+	--	   @countCurrentMRD as CurrentMRD,
 	--	   @countPreviousMRD as PrevMRD
 
-
-	--	   declare @countCurrentPO smallint, @countPreviousPO smallint, @countCurrentMR smallint, @countPreviousMR smallint,
-	--        @countCurrentMRD smallint, @countPreviousMRD smallint,
-
- --   @depId smallint,
-	--@medId smallint,
-	--@month smallint,
-	--@year char(4)
-
-
-	--set @depId=3; set @medId=1; set @month= 6; set @year='2023';
-
-
-	--	         select @countPreviousPO= count(distinct PO.pullId)
- --                from [PullOrders] as PO inner join PullMedOrders as MPO on PO.pullId=MPO.orderId
- --                where medId=@medId and depId=@depId and PO.pullDate>=DATEFROMPARTS(@year, @month-1, 1) and (year(PO.pullDate)=@year and month(PO.pullDate)=@month-1 and day(PO.pullDate)<=Day(GETDATE()))
-
-	--	        select @countPreviousMR=count(distinct MR.reqId)
-	--            from [MedRequests] MR 
-	--            where MR.reqStatus like 'T' and medId=@medId and cDep=@depId and reqDate>=DATEFROMPARTS(@year, @month-1, 1) and (year(reqDate)=@year and month(reqDate)=@month-1 and day(reqDate)<=Day(GETDATE()))
-
-	--	        select @countPreviousMRD=count(distinct MR.reqId)
-	--            from [MedRequests] MR 
-	--            where MR.reqStatus like 'D' and medId=@medId and cDep=@depId and reqDate>=DATEFROMPARTS(@year, @month-1, 1) and (year(reqDate)=@year and month(reqDate)=@month-1 and day(reqDate)<=Day(GETDATE()))
-
-
-	--			select  
-	--       @countPreviousPO as PrevPO, 
-	--	   @countPreviousMR as PrevMR,
-	--	   @countPreviousMRD as PrevMRD
