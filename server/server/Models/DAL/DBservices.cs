@@ -5593,7 +5593,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method Update a NormRequest in the NormRequests table 
     //--------------------------------------------------------------------------------------------------
-    public int UpdateNormRequestComplete(NormRequest nr)
+    public int UpdateNormRequestComplete(int reqId)
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -5608,7 +5608,7 @@ public class DBservices
             throw (ex);
         }
 
-        cmd = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequestManager", con, nr);
+        cmd = CreateUpdateNormRequestCompleteCommandSP("spUpdateNormRequestManager", con, reqId);
 
         try
         {
@@ -5629,5 +5629,28 @@ public class DBservices
                 con.Close();
             }
         }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the UpdateComplete SqlCommand
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateNormRequestCompleteCommandSP(String spName, SqlConnection con, int reqId)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@reqId", reqId);
+        cmd.Parameters.AddWithValue("@normId", 0);
+        cmd.Parameters.AddWithValue("@userId", 0);
+
+        return cmd;
     }
 }

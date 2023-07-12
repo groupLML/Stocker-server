@@ -44,10 +44,10 @@ namespace server.Controllers
 
         // PUT api/<NormRequestController>/5
         [HttpPut("UpdateComplete/reqId/{reqId}")]
-        public bool PutComplete(int reqId, [FromBody] NormRequest nr)
+        public bool PutComplete(int reqId)
         {
-            nr.ReqId = reqId;
-            int num = nr.UpdateComplete();
+            NormRequest nr = new NormRequest();
+            int num = nr.UpdateComplete(reqId);
             if (num==1)
                 return true;
             else

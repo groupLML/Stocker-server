@@ -98,10 +98,10 @@ namespace server.Models
             return dbs.UpdateNormRequestManager(mn, this);
         }
 
-        public int UpdateComplete()
+        public int UpdateComplete(int reqId)
         {
             DBservices dbs = new DBservices();
-            return dbs.UpdateNormRequestComplete(this);
+            return dbs.UpdateNormRequestComplete(reqId);
         }
 
     }
