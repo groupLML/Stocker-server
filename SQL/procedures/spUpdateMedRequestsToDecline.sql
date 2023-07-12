@@ -31,7 +31,9 @@ BEGIN
 	UPDATE MedRequests set reqStatus='D'
 	where reqStatus='W' and DATEDIFF(MINUTE,reqDate,getdate())>=180;
 
-
+	UPDATE MedRequests set reqStatus='D'
+	where reqStatus='A' and DATEDIFF(month,reqDate,getdate())>1;
 END
 GO
 
+--select *, DATEDIFF(month,reqDate,getdate()) from MedRequests where reqStatus='A'

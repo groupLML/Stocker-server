@@ -5530,4 +5530,63 @@ public class DBservices
 
         return cmd;
     }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update NormRequest do complete status in the NormRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public void UpdateCompleteReqs(ILogger<TimedHostedService> _logger)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateRequestsCompleteCommand("spUpdateNormRequestToComplete", con);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            Console.WriteLine("Change Time2: " + DateTime.Now + "Num Effected2: " + numEffected);
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            _logger.LogError(ex.Message);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the update request into complete status SqlCommand 
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateRequestsCompleteCommand(String spName, SqlConnection con)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 80;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        return cmd;
+    }
 }

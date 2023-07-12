@@ -41,6 +41,7 @@ namespace server.Models
 
             DBservices dbs = new DBservices();
             dbs.UpdateDeclineReqs(_logger);
+            dbs.UpdateCompleteReqs(_logger);
         }
 
 
