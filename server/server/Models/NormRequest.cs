@@ -97,6 +97,12 @@ namespace server.Models
             DBservices dbs = new DBservices();
             return dbs.UpdateNormRequestManager(mn, this);
         }
-        
+
+        public int UpdateComplete()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateNormRequestComplete(this);
+        }
+
     }
 }

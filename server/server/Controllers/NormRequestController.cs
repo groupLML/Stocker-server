@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using server.Models;
+using System;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,6 +40,18 @@ namespace server.Controllers
         {
             nr.ReqId = reqId;
             return nr.Update();
+        }
+
+        // PUT api/<NormRequestController>/5
+        [HttpPut("UpdateComplete/reqId/{reqId}")]
+        public bool PutComplete(int reqId, [FromBody] NormRequest nr)
+        {
+            nr.ReqId = reqId;
+            int num = nr.UpdateComplete();
+            if (num==1)
+                return true;
+            else
+                return false;
         }
 
 

@@ -5589,4 +5589,45 @@ public class DBservices
 
         return cmd;
     }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method Update a NormRequest in the NormRequests table 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateNormRequestComplete(NormRequest nr)
+    {
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateUpdateInsertNormRequestCommandSP("spUpdateNormRequestManager", con, nr);
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+                // write to log
+                throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 }
