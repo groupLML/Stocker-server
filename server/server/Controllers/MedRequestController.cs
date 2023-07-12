@@ -52,6 +52,14 @@ namespace server.Controllers
             return mr.ReadRequestDepTypes(depId, reqId);
         }
 
+        // GET: api/<MedRequestController>
+        [HttpGet("Report/{depId}")]
+        public Object GetReport(int depId)
+        {
+            MedRequest mr = new MedRequest();
+            return mr.ReadDepReport(depId);
+        }
+
 
         // POST api/<MedRequestController>
         [HttpPost]

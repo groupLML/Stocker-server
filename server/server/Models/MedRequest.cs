@@ -159,5 +159,10 @@ namespace server.Models
             return dbs.ReadMedRequestsManager();
         }
 
+        public Object ReadDepReport(int depId) 
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadDepRequestsReport(depId);
+        }
     }
 }

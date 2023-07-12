@@ -2039,7 +2039,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // 4 methods bellow: Read MedRequestsObjects and Create read command 
+    // 5 methods bellow: Read MedRequestsObjects and Create read command 
     //--------------------------------------------------------------------------------------------------
     public Object ReadMedRequestsManager()
     {
@@ -2216,6 +2216,59 @@ public class DBservices
             }
         }
     }
+    public Object ReadDepRequestsReport(int depId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadDepObjectCommandSP("spReadMedRequestsReport", con, depId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    mazNum = dataReader["mazNum"].ToString(),
+                    medName = dataReader["medName"].ToString(),
+                    reqMonth = dataReader["reqMonth"].ToString(),
+                    reqStatus = dataReader["reqStatus"].ToString(),
+                    sumQty = (float)Convert.ToSingle(dataReader["sumQty"])
+                });
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
     private SqlCommand CreateReadObjectCommandSP(String spName, SqlConnection con, int cDep)
     {
         SqlCommand cmd = new SqlCommand(); // create the command object
@@ -2358,6 +2411,7 @@ public class DBservices
         return cmd;
     }
 
+   
 
 
     /*****************PushOrders*****************/
