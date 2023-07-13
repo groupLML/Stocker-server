@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [Departments] (
 	[depId] smallint IDENTITY (0,1),
     [depName] nvarchar(30) unique,
-	[depPhone] char (9) unique check (depPhone like('04'+replicate('[0-9]',7))) NOT NULL,
+	[depPhone] char (9) check (depPhone like('04'+replicate('[0-9]',7))) NOT NULL,
 	[depType] nvarchar(11) check(depType in(N'כירורגיה', N'מערכות מידע', N'אורתופדיה', N'פנימית', N'בית מרקחת')) NOT NULL,
 	Primary key (depId) 
 )
@@ -12,11 +12,10 @@ CREATE TABLE [Users] (
 	[username] varchar(30) unique,
     [firstName] nvarchar(20) NOT NULL,
     [lastName] nvarchar(20) NOT NULL,
-	[email] nvarchar(50) check(email like '[0-9a-zA-Z]%@__%.__%') NOT NULL,
-	--[emailP] nvarchar(30) check(email like '[0-9a-zA-Z]%@hymc.gov.il'),
-	[password] char(3) NOT NULL,
-	--[password] char(8) NOT NULL,
-	[phone] char(10) unique check (phone like('05'+replicate('[0-9]',8))) NOT NULL,
+	[email] nvarchar(50) check(email like '[0-9a-zA-Z]%@hymc.gov.il') NOT NULL,
+	[emailP] nvarchar(50) check(emailP like '[0-9a-zA-Z]%@__%.__%') NOT NULL,
+	[password] char(6) NOT NULL,
+	[phone] char(10) check (phone like('05'+replicate('[0-9]',8))) NOT NULL,
 	[position] nvarchar(30),
 	[jobType] char(1) check(jobType in('P','N','A','M')) NOT NULL, 
 	[depId] smallint REFERENCES [Departments](depId) NOT NULL, 
@@ -31,7 +30,7 @@ CREATE TABLE [Medicines] (
     [comName] nvarchar(100) NOT NULL,
 	[mazNum] varchar(10) NOT NULL,
 	[eaQty] smallint check(eaQty>0) NOT NULL,
-	[unit] varchar(3) NOT NULL, --REFERENCES [Units](unitName)???
+	[unit] varchar(3) NOT NULL,
 	[method] varchar(3) NOT NULL,
 	[given] varchar(20) NOT NULL,
 	[medStatus] bit default 'true',
@@ -143,17 +142,6 @@ CREATE TABLE [DepRequests] (
 )
 
 
-CREATE TABLE [MedReturns](
-	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
-	[depId] smallint REFERENCES [Departments](depId) NOT NULL,
-	[rtnDate] datetime default GETDATE() NOT NULL,
-	[userId] smallint REFERENCES [Users](userId) NOT NULL,
-	[rtnQty] real check(rtnQty>0) NOT NULL,
-    [reason] nvarchar(10) check(reason in(N'פג תוקף', N'חוסר שימוש', N'הוזמן בטעות', N'פגום', N'טיפול הסתיים')) NOT NULL,
-	Primary key (medId,depId,rtnDate) 
-)
-
-
 CREATE TABLE [PushOrders] (
     [pushId] int IDENTITY (1,1),
 	[pUser] smallint REFERENCES [Users](userId),
@@ -219,28 +207,8 @@ Select * from [Stocks]
 Select * from [Messages] 
 Select * from [MedRequests]
 Select * from [DepRequests]
-Select * from [MedReturns]
 Select * from [PushOrders]
 Select * from [PushMedOrders]
 Select * from [PullOrders]
 Select * from [PullMedOrders]
 Select * from [Tokens]
-
---CREATE TABLE [Returns] (
---    [rtnId] smallint IDENTITY (1,1),
---   	[userId] smallint REFERENCES [Users](userId) NOT NULL,
---	[depId] smallint REFERENCES [Departments](depId) NOT NULL,
---	[rtnDate] datetime default GETDATE() NOT NULL,
---	Primary key (rtnId) 
---)
-
-
---CREATE TABLE [MedReturns](
---    [rtnId] smallint REFERENCES [Returns](rtnId) NOT NULL,
---	[medId] smallint REFERENCES [Medicines](medId) NOT NULL,
---    [reason] nvarchar(10) check(reason in(N'äåæîï áèòåú', N'çåñø ùéîåù', N'ôâ úå÷ó', N'ôâåí', N'èéôåì äñúééí')) NOT NULL,
---	[rtnQty] real check(rtnQty>0) NOT NULL,
---	Primary key (rtnId, medId) 
---)
-
-
