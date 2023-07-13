@@ -39,7 +39,7 @@ BEGIN
 
     -- Insert statements for procedure here
 	 UPDATE MedRequests set cUser=@cUser, aUser=@aUser ,cDep=@cDep, aDep=@aDep,
-	        medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=@reqDate
+	        medId=@medId, reqQty=@reqQty, reqStatus=@reqStatus, reqDate=getdate()
 	 where reqId = @reqId 
 
 END
