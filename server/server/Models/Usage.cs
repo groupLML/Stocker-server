@@ -57,10 +57,5 @@ namespace server.Models
         }
 
 
-        //public Object ReadBoxsData(int interval)
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.ReadBoxs(interval);
-        //}
     }
 }

@@ -81,7 +81,6 @@ namespace server.Controllers
             else
                 return BadRequest("הפעולה נכשלה"); //status 500
         
-
             //swagger exp: {"cUser": 45, "cDep": 3, "medId": 8, "reqQty": 5, "depTypes": ["כירורגיה"]}
         }
 

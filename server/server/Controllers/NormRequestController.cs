@@ -10,7 +10,6 @@ namespace server.Controllers
     [ApiController]
     public class NormRequestController : ControllerBase
     {
-        //כרגע אין שימוש, מחיקה////////////////////////////////////////////////////////
         // GET: api/<NormRequestController>
         [HttpGet]
         public IEnumerable<NormRequest> Get() //קריאה של התקנים עם פרטי התרופות בכל תקן

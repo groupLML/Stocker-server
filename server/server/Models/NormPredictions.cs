@@ -36,23 +36,6 @@ namespace server.Models
             this.FutureUsage = futureUsage;
         }
 
-
-        //public Dictionary<int, double> ReadNormPredictions(int depId)
-        //{
-        //    Dictionary<int, double> Predictions = new Dictionary<int, double>();
-        //    DBservices dbs = new DBservices();
-        //    List<Norm> list = dbs.ReadDepNorm(depId);
-        //    List<MedNorm> medList = list[0].MedList;
-
-        //    foreach (MedNorm mn in medList)
-        //    {
-        //        double predicted = MedNormPrediction(depId, mn.MedId);
-        //        Predictions.Add(mn.MedId, predicted);
-        //    }
-        //    return Predictions;
-        //}
-
-
         public double MedNormPrediction(int dep, int med)
         {
             //Create a dataset
@@ -62,7 +45,7 @@ namespace server.Models
             int len70 = (int)(list.Count * 70 / 100);//הגדרת כמות המייצגת את ה-70% מהדאטה כולו
 
             //shuffled
-            //list = Shuffle(list);
+            list = Shuffle(list);
 
             //Normalization
             double minOneMonth = 10000;

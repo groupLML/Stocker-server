@@ -86,8 +86,6 @@ namespace server.Models
         public List<NormRequest> ReadDepNormReq(int depId)
         {
             DBservices dbs = new DBservices();
-            //return dbs.ReadDepNormRequests(depId);
-            //return dbs.ReadNormRequests();
             return dbs.ReadDepNormRequestsPrediction(depId);
         }
 
