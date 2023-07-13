@@ -38,7 +38,7 @@ BEGIN
 	        case when (Datediff(minute, msgDate, GETDATE())<60 and Datediff(day, msgDate , GETDATE())=0) then CAST(Datediff(minute, msgDate, GETDATE()) AS nvarchar(5)) + N' דקה' 
 			     when (Datediff(minute, msgDate, GETDATE())>=60 and Datediff(day, msgDate, GETDATE())=0) then CAST(Datediff(HOUR, msgDate, GETDATE()) AS nvarchar(5)) + N' שעה' 
 			     else CAST(Datediff(day, msgDate , GETDATE()) AS nvarchar(5)) +N' יום' 
-			end as dateM 
+			end as dateM, msgId as idM  
 	 FROM [Messages] as M inner join [Users] as U on M.userId=U.userId
 	 where Datediff(day, msgDate, GETDATE()) < 7
 	 union 
@@ -46,7 +46,7 @@ BEGIN
 	        case when (Datediff(minute, reqDate, GETDATE())<60 and Datediff(day, reqDate , GETDATE())=0) then CAST(Datediff(minute, reqDate, GETDATE()) AS nvarchar(5)) + N' דקה' 
 			     when (Datediff(minute, reqDate, GETDATE())>=60 and Datediff(day, reqDate, GETDATE())=0) then CAST(Datediff(HOUR, reqDate, GETDATE()) AS nvarchar(5)) + N' שעה' 
 			     else CAST(Datediff(day, reqDate , GETDATE()) AS nvarchar(5)) +N' יום' 
-			end as dateM 
+			end as dateM, reqId as idM 
 	 from NormRequests NR inner join Norms N on NR.normId=N.normId inner join 
 	      Departments D on N.depId=D.depId inner join [Users] as U on NR.userId=U.userId
 	 where Datediff(day, reqDate, GETDATE()) < 7
@@ -55,7 +55,7 @@ BEGIN
 	        case when (Datediff(minute, min(dateM), GETDATE())<60 and Datediff(day, min(dateM) , GETDATE())=0) then CAST(Datediff(minute, min(dateM), GETDATE()) AS nvarchar(5)) + N' דקה' 
 			     when (Datediff(minute, min(dateM), GETDATE())>=60 and Datediff(day, min(dateM), GETDATE())=0) then CAST(Datediff(HOUR, min(dateM), GETDATE()) AS nvarchar(5)) + N' שעה' 
 			     else CAST(Datediff(day, min(dateM) , GETDATE()) AS nvarchar(5)) +N' יום' 
-			end as dateM 
+			end as dateM, D.depId as idM  
 	from temp inner join Departments D on temp.depId=D.depId
 	 where Datediff(day, dateM, GETDATE()) < 7 
 	 group by D.depId, D.depName

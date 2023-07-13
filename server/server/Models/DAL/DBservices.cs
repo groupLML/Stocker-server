@@ -4188,7 +4188,8 @@ public class DBservices
                     title = dataReader["titleM"].ToString(),
                     text = dataReader["textM"].ToString(),
                     type = Convert.ToInt32(dataReader["typeM"]),
-                    date = dataReader["dateM"].ToString()
+                    date = dataReader["dateM"].ToString(),
+                    id = dataReader["idM"].ToString()
                 });
             }
             return listObj;
