@@ -1,0 +1,17 @@
+﻿
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('user', 'user', 'user', 'user@hymc.gov.il', 'user@gmail.com', '123', '0501111111', 'user', 'N', 0, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('admin', 'admin', 'admin', 'admin@hymc.gov.il', 'admin@gmail.com','123', '0561318639', 'admin', 'A', 1, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('shlomi', 'שלומי', 'כהן', 'shlomi@hymc.gov.il', 'shlomi52@gmail.com', '123', '0598021030', 'manager', 'M', 2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Lin', 'לין', 'בן מאיר', 'lin@hymc.gov.il', 'linbenmeir0@gmail.com', '123', '0568184968', 'head nurse', 'N', 3, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Meitav', 'מיטב', 'מקבריט', 'meitav@hymc.gov.il', 'meitavmk96@gmail.com', '123', '0591451505', 'nurse', 'N', 4, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('lital', 'ליטל', 'יהודה', 'lital@hymc.gov.il', 'Lital5565@gmail.com', '123', '0507667988', 'pharmacist', 'P', 2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('ben', 'בן', 'מכלוף', 'ban@hymc.gov.il', 'ban@gmail.com', '123', '0543758801', 'pharmacist A', 'P',2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('dana', 'דנה', 'לוי', 'dana@hymc.gov.il', 'dana@gmail.com', '123', '0526781834', 'pharmacist A', 'P', 2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('Kim', 'קים', 'חסן', 'kim@hymc.gov.il', 'kim@gmail.com', '123', '0553538339', 'pharmacist A', 'P', 2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('doron', 'דורון', 'גבאי', 'doron@hymc.gov.il','doron5@gmail.com', '123', '0521677772', 'pharmacist A', 'P', 2, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('dan', 'דן', 'אריאלי', 'dan@hymc.gov.il', 'dan6@gmail.com', '123', '0505642039', 'nurse', 'M', 5, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('ron', 'רון', 'שחר', 'ron@hymc.gov.il','ron1995@gmail.com', '123', '0548186523', 'head nurse', 'N', 4, 1);
+insert into [Users] ([username], [firstName], [lastName], [email], [emailP], [password], [phone], [position], [jobType], [depId], [isActive]) values ('noa', 'נועה', 'מאמן', 'noa1@hymc.gov.il','noa1990@gmail.com', '123', '0591451705', 'nurse', 'N', 3, 1);
+
+
+Select * from [Users]  
