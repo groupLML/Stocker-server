@@ -63,5 +63,10 @@ namespace server.Models
             return dbs.ReadPullOrdersPharm();
         }
 
+        public Object ReadPullOrderPharm(int orderId) 
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadPullOrderPharm(orderId);
+        }
     }
 }
