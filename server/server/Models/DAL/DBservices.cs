@@ -3366,12 +3366,13 @@ public class DBservices
                     depName = dataReader["depName"].ToString(),
                     nurseId = Convert.ToInt32(dataReader["nUser"]),
                     nurseName = dataReader["nurseName"].ToString(),
-                    pharmId = Convert.ToInt32(dataReader["pUser"]),
+                    pUser = Convert.ToInt32(dataReader["pUser"]),
                     pharmName = dataReader["pharmName"].ToString(),
                     reportNum = dataReader["reportNum"].ToString(),
                     status = dataReader["pullStatus"].ToString(),
                     lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
                 });
+     
             }
             return listObj;
         }
