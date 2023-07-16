@@ -195,7 +195,7 @@ CREATE TABLE [Tokens] (
 )
 
 Select * from [Departments]
-Select * from [Users]  
+Select * from [Users] 
 Select * from [Medicines]
 Select * from [Norms]
 Select * from [MedNorms]
@@ -204,7 +204,7 @@ Select * from [MedNormRequests]
 Select * from [Usages]
 Select * from [MedUsages]
 Select * from [Stocks]
-Select * from [Messages] 
+Select * from [Messages]
 Select * from [MedRequests]
 Select * from [DepRequests]
 Select * from [PushOrders]
