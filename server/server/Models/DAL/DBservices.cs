@@ -18,7 +18,6 @@ using MathNet.Numerics;
 using System.Diagnostics.Metrics;
 using Accord.IO;
 using System.Collections.Concurrent;
-//using Microsoft.VisualBasic;
 
 /// DBServices is a class created by me to provides some DataBase Services
 public class DBservices
@@ -319,6 +318,68 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method Read medicine from the medicines table
+    //-------------------------------------------------------------------------------------------------
+    public Object ReadMedsAdmin()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadCommandSP("spReadMedicinesAdmin", con);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                        medId = Convert.ToInt32(dataReader["medId"]),
+                        genName = dataReader["genName"].ToString(),
+                        comName = dataReader["comName"].ToString(),
+                        fullName = dataReader["fullName"].ToString(),
+                        mazNum = dataReader["mazNum"].ToString(),
+                        eaQty = Convert.ToInt32(dataReader["eaQty"]),
+                        unit = dataReader["unit"].ToString(),
+                        method = dataReader["method"].ToString(),
+                        given = dataReader["given"].ToString(),
+                        status = Convert.ToBoolean(dataReader["medStatus"]),
+                        lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+                });
+                
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
 
     /*****************Users*****************/
@@ -428,6 +489,7 @@ public class DBservices
         cmd.Parameters.AddWithValue("@firstName", user.FirstName);
         cmd.Parameters.AddWithValue("@lastName", user.LastName);
         cmd.Parameters.AddWithValue("@email", user.Email);
+        cmd.Parameters.AddWithValue("@emailP", user.EmailP);
         cmd.Parameters.AddWithValue("@password", user.Password);
         cmd.Parameters.AddWithValue("@phone", user.Phone);
         cmd.Parameters.AddWithValue("@position", user.Position);
@@ -472,6 +534,7 @@ public class DBservices
                 user.FirstName = dataReader["FirstName"].ToString();
                 user.LastName = dataReader["LastName"].ToString();
                 user.Email = dataReader["Email"].ToString();
+                user.EmailP = dataReader["EmailP"].ToString();
                 user.Password = dataReader["Password"].ToString();
                 user.Phone = dataReader["Phone"].ToString();
                 user.Position = dataReader["Position"].ToString();
@@ -534,6 +597,7 @@ public class DBservices
                     firstName = dataReader["FirstName"].ToString(),
                     lastName = dataReader["LastName"].ToString(),
                     email = dataReader["Email"].ToString(),
+                    emailP = dataReader["EmailP"].ToString(),
                     password = dataReader["Password"].ToString(),
                     phone = dataReader["Phone"].ToString(),
                     position = dataReader["Position"].ToString(),

@@ -71,5 +71,11 @@ namespace server.Models
             return dbs.ReadMedsFullNames();
         }
 
+        public Object ReadMedsAdmin() //read only active medicines with full Names
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadMedsAdmin();
+        }
+
     }
 }
