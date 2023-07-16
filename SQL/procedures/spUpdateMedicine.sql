@@ -38,7 +38,7 @@ BEGIN
 
     -- Insert statements for procedure here
      UPDATE Medicines set genName=@genName, comName=@comName , mazNum=@mazNum, eaQty = @eaQty, unit=@unit,
-	 method=@method,given=@given, medStatus=@medStatus,lastUpdate=@lastUpdate
+	 method=@method,given=@given, medStatus=@medStatus,lastUpdate=getdate()
 	 where medId=@medId 
 END
 GO
