@@ -185,6 +185,7 @@ public class DBservices
 
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
 
+        cmd.Parameters.AddWithValue("@medId", medicine.MedId);
         cmd.Parameters.AddWithValue("@genName", medicine.GenName);
         cmd.Parameters.AddWithValue("@comName", medicine.ComName);
         cmd.Parameters.AddWithValue("@mazNum", medicine.MazNum);

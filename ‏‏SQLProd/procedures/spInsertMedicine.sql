@@ -18,7 +18,7 @@ GO
 -- Create date: <27/02/2023>
 -- Description:	<Insert Medicine>
 -- =============================================
-CREATE PROCEDURE spInsertMedicine
+ALTER PROCEDURE spInsertMedicine
 	-- Add the parameters for the stored procedure here
 	@medId smallint,
     @genName nvarchar(100),
