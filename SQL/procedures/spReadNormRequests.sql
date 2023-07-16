@@ -27,17 +27,22 @@ BEGIN
 	-- interfering with SELECT statements.
 	--SET NOCOUNT ON;
 
-	 select NR.reqId ,N.normId , D.depId, depName,
-	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty,MN.normQty
+	select NR.reqId ,N.normId , D.depId, depName,
+	        U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, 
+			genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty,
+			case when (MN.normQty is null) then 0
+			     else MN.normQty
+		    end normQty
 	 from [Departments] as D 
 	 inner join [Norms] as N on D.depId= N.depId
 	 inner join [NormRequests] as NR on N.normId= NR.normId
 	 inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
 	 inner join [Medicines] as M on MNR.medId=M.medId
-	 inner join [MedNorms] as MN on N.normId=MN.normId
 	 inner join [Users] as U on U.userId = NR.userId
-	 where reqStatus = 'W' and MN.medId = MNR.medId
+	 left join [MedNorms] as MN on N.normId=MN.normId and MNR.medId=MN.medId
+	 where reqStatus = 'W' 
 	 order by NR.reqId desc, reqDate desc
+
 	 
 END
 GO
@@ -50,6 +55,24 @@ GO
 	 --inner join [NormRequests] as NR on N.normId= NR.normId
 	 --inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
 	 --inner join [Medicines] as M on MNR.medId=M.medId
+	 --inner join [Users] as U on U.userId = NR.userId
+	 --where reqStatus = 'W'
+	 --order by NR.reqId desc, reqDate desc
+
+
+	 
+	 --select NR.reqId ,N.normId , D.depId, depName,
+	 --       U.userId, firstName +' '+ lastName as 'fullName',position,reqDate, MNR.medId, 
+		--	genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'medName',reqQty,
+		--	case when (MN.normQty is null) then 0
+		--	     else MN.normQty
+		--    end normQty
+	 --from [Departments] as D 
+	 --inner join [Norms] as N on D.depId= N.depId
+	 --inner join [NormRequests] as NR on N.normId= NR.normId
+	 --inner join [MedNormRequests] as MNR on NR.reqId= MNR.reqId
+	 --inner join [Medicines] as M on MNR.medId=M.medId
+	 --inner join [MedNorms] as MN on N.normId=MN.normId and MN.medId = MNR.medId
 	 --inner join [Users] as U on U.userId = NR.userId
 	 --where reqStatus = 'W'
 	 --order by NR.reqId desc, reqDate desc

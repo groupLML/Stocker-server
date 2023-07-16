@@ -3329,6 +3329,87 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method Read PullOrder from the PullOrders table by orderId
+    //--------------------------------------------------------------------------------------------------
+    public Object ReadPullOrderPharm(int orderId)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        cmd = CreateReadPullOrderCommandSP("spReadPullOrder", con, orderId);
+
+        try
+        {
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            List<Object> listObj = new List<Object>();
+
+            while (dataReader.Read())
+            {
+                listObj.Add(new
+                {
+                    orderId = Convert.ToInt32(dataReader["pullId"]),
+                    orderDate = Convert.ToDateTime(dataReader["orderDate"]),
+                    orderTime = Convert.ToDateTime(dataReader["orderTime"]).TimeOfDay,
+                    depId = Convert.ToInt32(dataReader["depId"]),
+                    depName = dataReader["depName"].ToString(),
+                    nurseId = Convert.ToInt32(dataReader["nUser"]),
+                    nurseName = dataReader["nurseName"].ToString(),
+                    pUser = Convert.ToInt32(dataReader["pUser"]),
+                    pharmName = dataReader["pharmName"].ToString(),
+                    reportNum = dataReader["reportNum"].ToString(),
+                    status = dataReader["pullStatus"].ToString(),
+                    lastUpdate = Convert.ToDateTime(dataReader["lastUpdate"])
+                });
+     
+            }
+            return listObj;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    private SqlCommand CreateReadPullOrderCommandSP(String spName, SqlConnection con, int pullId)
+    {
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spName;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command
+
+        cmd.Parameters.AddWithValue("@pullId", pullId);
+
+        return cmd;
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method Read PullOrders from the PullOrders table
     //--------------------------------------------------------------------------------------------------
     public Object ReadPullOrdersPharm()
@@ -5402,4 +5483,6 @@ public class DBservices
 
         return cmd;
     }
+
+
 }

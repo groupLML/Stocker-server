@@ -37,6 +37,13 @@ namespace server.Controllers
             return po.ReadPullOrdersPharm();
         }
 
+        // GET api/<PullOrderController>/5
+        [HttpGet("GetPullOrderPharmById/orderId/{orderId}")]
+        public Object GetPullOrderById(int orderId)
+        {
+            PullOrder po = new PullOrder();
+            return po.ReadPullOrderPharm(orderId);
+        }
 
         // GET api/<PullOrderController>/5
         [HttpGet("GetOrderDetails/orderId/{orderId}")]
