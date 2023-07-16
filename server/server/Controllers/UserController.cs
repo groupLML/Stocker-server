@@ -95,7 +95,7 @@ namespace server.Controllers
                 string password = user.Password;
 
                 MailMessage SendDetails = new MailMessage();
-                string usermail = user.Email;
+                string usermail = user.EmailP;
                 string ourMail = "cgroup36.proj@gmail.com";
                 string ourMailPass = "ilmdsebngylhpnxs\r\n";
 

@@ -26,7 +26,8 @@ ALTER PROCEDURE spInsertUser
 	@firstName nvarchar (20),
     @lastName nvarchar (20),
     @email nvarchar (50),
-    @password char(3),
+	@emailP nvarchar (50),
+    @password char(6),
 	@phone char(10) ,
 	@position nvarchar(30),
 	@jobType char(1), 
@@ -40,6 +41,6 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [Users] ([username],[firstName],[lastName],[email],[password],[phone],[position],[jobType],[depId],[isActive]) Values (@username,@firstName,@lastName,@email,@password,@phone,@position,@jobType,@depId,@isActive)
+	 Insert INTO [Users] ([username],[firstName],[lastName],[email],[emailP],[password],[phone],[position],[jobType],[depId],[isActive]) Values (@username,@firstName,@lastName,@email,@emailP, @password,@phone,@position,@jobType,@depId,@isActive)
 END
 GO
