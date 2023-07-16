@@ -20,12 +20,13 @@ GO
 -- =============================================
 ALTER PROCEDURE spUpdateUser 
 
-	@userId smallint,
+	@userId smallint, 
 	@username varchar(30),
 	@firstName nvarchar (20),
     @lastName nvarchar (20),
     @email nvarchar (50),
-    @password char(3),
+	@emailP nvarchar (50),
+    @password char(6),
 	@phone char(10) ,
 	@position nvarchar(30),
 	@jobType char(1), 
@@ -39,7 +40,7 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 UPDATE Users set username=@username, firstName = @firstName ,lastName = @lastName, [email]=@email,
+	 UPDATE Users set username=@username, firstName = @firstName ,lastName = @lastName, [email]=@email, emailP=@emailP,
 	 [password] = @password, [phone]=@phone, position=@position, jobType=@jobType, depId=@depId, isActive=@isActive
 	 where userId = @userId
 END

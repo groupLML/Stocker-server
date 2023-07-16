@@ -11,6 +11,7 @@ namespace server.Models
         string firstName;
         string lastName;
         string email;
+        string emailP;
         string password;
         string phone;
         string position;
@@ -24,6 +25,7 @@ namespace server.Models
         public string FirstName { get => firstName; set => firstName = value; }
         public string LastName { get => lastName; set => lastName = value; }
         public string Email { get => email; set => email = value; }
+        public string EmailP { get => emailP; set => emailP = value; }
         public string Password { get => password; set => password = value; }
         public string Phone { get => phone; set => phone = value; }
         public string Position { get => position; set => position = value; }
@@ -34,13 +36,14 @@ namespace server.Models
         //constructors
         public User() { }
 
-        public User(int userId, string username, string firstName, string lastName, string email, string password, string phone, string position, char jobType, int depId, bool isActive)
+        public User(int userId, string username, string firstName, string lastName, string email, string emailP, string password, string phone, string position, char jobType, int depId, bool isActive)
         {
             this.userId = userId;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
+            this.emailP = emailP;
             this.password = password;
             this.phone = phone;
             this.position = position;
@@ -57,7 +60,7 @@ namespace server.Models
 
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר במשתמש אחר
             {
-                if (this.Username == user.Username || this.Phone == user.Phone)
+                if (this.Username == user.Username)
                     return -1;
             }
             return dbs.InsertUser(this);
@@ -70,7 +73,7 @@ namespace server.Models
 
             foreach (User user in UsersList) //בדיקה אם השם משתמש לא קיים כבר
             {
-                if ((this.Username == user.Username || this.Phone == user.Phone) && user.UserId != this.UserId)
+                if ((this.Username == user.Username) && user.UserId != this.UserId)
                     return -1;
             }
             return dbs.UpdateUser(this);

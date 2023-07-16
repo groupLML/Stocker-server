@@ -25,6 +25,14 @@ namespace server.Controllers
             return med.ReadActiveMeds();
         }
 
+        // GET: api/<MedicineController>
+        [HttpGet("/GetMedsAdmin")]
+        public Object GetMedsAdmin()
+        {
+            Medicine med = new Medicine();
+            return med.ReadMedsAdmin();
+        }
+
 
         // POST api/<MedicineController>
         [HttpPost]

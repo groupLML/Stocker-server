@@ -15,24 +15,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author:		<LML>
--- Create date: <25-02-2023>
--- Description:	<insert user>
+-- Create date: <16/07/2023>
+-- Description:	<Read FULL NAME Medicines>
 -- =============================================
-
-ALTER PROCEDURE spInsertUser 
-
-    @userId smallint, 
-	@username varchar(30),
-	@firstName nvarchar (20),
-    @lastName nvarchar (20),
-    @email nvarchar (50),
-	@emailP nvarchar (50),
-    @password char(6),
-	@phone char(10) ,
-	@position nvarchar(30),
-	@jobType char(1), 
-	@depId smallint, 
-	@isActive bit
+CREATE PROCEDURE spReadMedicinesAdmin
+	-- Add the parameters for the stored procedure here
 
 AS
 BEGIN
@@ -41,6 +28,8 @@ BEGIN
 	--SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	 Insert INTO [Users] ([username],[firstName],[lastName],[email],[emailP],[password],[phone],[position],[jobType],[depId],[isActive]) Values (@username,@firstName,@lastName,@email,@emailP, @password,@phone,@position,@jobType,@depId,@isActive)
+	Select M.*, genName+' '+comName+' '+format(eaQty,'')+' '+unit+' '+given as 'fullName'
+	from [Medicines] M 
+	order by fullName
 END
 GO
