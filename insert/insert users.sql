@@ -3,11 +3,10 @@ where reqStatus = 'W'
 order by reqDate desc
 
 Select * from [NormRequests]
-where reqId = 207
+where reqId = 209
 
 Select * from [MedNormRequests]
-where reqId = 207
-
+where reqId = 229
 
 Select * from [Norms]
 Select * from [MedNorms]
