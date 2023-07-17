@@ -102,9 +102,9 @@ namespace server.Controllers
                 string messageBody = "<div align = \"right\" >";
                 messageBody += "היי " + lastName + " " + firstName + "<br>";
                 messageBody += "אנו שמחים לבשר לך על הצטרפותך <br> למערכת של בית החולים בהצלחה<br> :להלן הפרטים שלך עבור כניסה למערכת <br> ";
-                messageBody += username + " :שם משתמש" + "<br>";
+                messageBody += "שם משתמש: "+username+ "<br>";
                 messageBody += "סיסמא: " + password + "<br>";
-                messageBody += email+ " :המייל" + "<br>";
+                messageBody += "דואל: "+ email+ "<br>";
                 messageBody += "</div>";
              
                 SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
