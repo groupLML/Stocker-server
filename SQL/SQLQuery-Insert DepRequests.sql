@@ -19,3 +19,4 @@ Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,6)
 Insert INTO [DepRequests] ([reqId],[reqDep]) Values (2,7)
 
 
+select * from [DepRequests]
