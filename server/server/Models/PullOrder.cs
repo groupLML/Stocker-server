@@ -35,7 +35,7 @@ namespace server.Models
         public bool UpdatePharmIssued() //עדכון פרטי הזמנה ומעבר לסטטוס הונפק ע"י הרוקח
         {
             DBservices dbs = new DBservices();
-            PullOrder po = new PullOrder(this.OrderId, 0, 0, this.PUser, this.ReportNum, 'I', DateTime.Now, DateTime.Now, this.MedList);
+            PullOrder po = new PullOrder(this.OrderId, 0, 0, this.PUser, this.ReportNum, 'T', DateTime.Now, DateTime.Now, this.MedList);
             return dbs.UpdatePullOrderPharmIssued(po);
         }
 

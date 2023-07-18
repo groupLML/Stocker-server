@@ -38,7 +38,7 @@ BEGIN
     -- Insert statements for procedure here
 	 UPDATE [PullOrders] set [pUser]=@pUser,[reportNum]=@reportNum,
 	 [pullStatus]='I',[lastUpdate]=GETDATE()
-	 where pullId=@pullId and [pullStatus]='T'
+	 where pullId=@pullId 
 
 END
 GO
