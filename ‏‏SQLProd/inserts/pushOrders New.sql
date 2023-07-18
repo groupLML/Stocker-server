@@ -1,7 +1,14 @@
 Select * from [PushOrders]
 Select * from [PushMedOrders]
 Select * from [Medicines]
+Select * from [Departments]
 
+Select * from [PushOrders]
+where year(lastUpdate) =2023 and depId = 3 and MONTH(lastUpdate) = 6
+
+
+Select * from [PushMedOrders]
+where orderId between 613 and 651 and medId = 4
 
 INSERT INTO [PushOrders] ([pUser], [depId], [reportNum], [pushStatus], [pushDate], [lastUpdate]) VALUES (5, 3, '11111', 'I', '2022-01-23 13:49:47', '2022-01-25 13:49:47');
 INSERT INTO [PushOrders] ([pUser], [depId], [reportNum], [pushStatus], [pushDate], [lastUpdate]) VALUES (9, 3, '11112', 'I', '2022-01-07 01:40:22', '2022-01-09 01:40:22');
