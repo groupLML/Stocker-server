@@ -66,14 +66,18 @@ BEGIN
     BEGIN
     
 	      if(@monthPO = @counter)
+	        BEGIN
 	           INSERT INTO @res(qty) VALUES (@TotalPO);
-
+			   FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
+            END
 		  else
+	         BEGIN
 	           INSERT INTO @res(qty) VALUES (0);
+             END
 
 		  set @counter =@counter +1; 
 
-          FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
+          --FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
     END
 
     CLOSE po_Cursor
@@ -113,6 +117,8 @@ GO
 --order by monthPO
 
 
+
+
 --DECLARE @TotalPO smallint, @monthPO smallint, @counter smallint,
 --@depId smallint,
 --	@medId smallint,
@@ -121,7 +127,7 @@ GO
 --    DECLARE @res TABLE (qty smallint);
 
 --	set @depId=3;
---	set @medId= 1;
+--	set @medId= 4;
 --	set @year= '2023';
 
 --    DECLARE po_Cursor CURSOR FOR 
@@ -130,7 +136,7 @@ GO
 --			         when (t2.TotalPO IS NULL and t1.TotalPO IS NULL) then 0
 --			         else t1.TotalPO + t2.TotalPO
 --			         end as totalPO,
---		        case when (t1.monthPO IS NULL) then t2.monthPO
+--				case when (t1.monthPO IS NULL) then t2.monthPO
 --			         else t1.monthPO
 --			    end as monthPO
 --        from
@@ -156,14 +162,18 @@ GO
 --    BEGIN
     
 --	      if(@monthPO = @counter)
+--		  BEGIN
 --	           INSERT INTO @res(qty) VALUES (@TotalPO);
-
+--			   FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
+--          END
 --		  else
+--		  BEGIN
 --	           INSERT INTO @res(qty) VALUES (0);
+--          END
+		 
+--		 set @counter =@counter +1; 
 
---		  set @counter =@counter +1; 
-
---          FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
+--         --FETCH NEXT FROM po_Cursor INTO @TotalPO, @monthPO
 --    END
 
 --    CLOSE po_Cursor
@@ -171,3 +181,40 @@ GO
 
 --	select *
 --	from @res
+
+	
+	--select medId, depId, month(lastUpdate), sum(supQty) as TotalPO
+	--from PushOrders as P inner join PushMedOrders PO
+	--on P.pushId=PO.orderId
+ --   where medId=4 and depId=3 and pushStatus like 'I' and Year(lastUpdate)like 2023
+	--   group by medId, depId, month(lastUpdate), Year(lastUpdate)
+
+	--select sum(supQty) as TotalPO, month(lastUpdate) as monthPO, Year(lastUpdate) as yearPO
+ --            from PullOrders as PO inner join PullMedOrders as PMO on PO.pullId=PMO.orderId
+ --            where medId=4 and depId=3 and pullStatus like 'I' and Year(lastUpdate) like 2023 
+ --            group by medId, depId, month(lastUpdate), Year(lastUpdate)
+
+
+
+
+		 --  select case when (t1.TotalPO IS NULL) then 0+t2.TotalPO
+			--         when (t2.TotalPO IS NULL) then 0+t1.TotalPO
+			--         when (t2.TotalPO IS NULL and t1.TotalPO IS NULL) then 0
+			--         else t1.TotalPO + t2.TotalPO
+			--         end as totalPO,
+		 --       case when (t1.monthPO IS NULL) then t2.monthPO
+			--         else t1.monthPO
+			--    end as monthPO
+		 --from
+   --         (select sum(supQty) as TotalPO, month(lastUpdate) as monthPO, Year(lastUpdate) as yearPO
+   --          from PushOrders as PO inner join PushMedOrders as PMO on PO.pushId=PMO.orderId
+   --           where medId=4 and depId=3 and pushStatus like 'I' and Year(lastUpdate)like 2023 
+   --          group by medId, depId, month(lastUpdate), Year(lastUpdate)) as t1
+   --      FULL OUTER JOIN
+   --         (select sum(supQty) as TotalPO, month(lastUpdate) as monthPO, Year(lastUpdate) as yearPO
+   --          from PullOrders as PO inner join PullMedOrders as PMO on PO.pullId=PMO.orderId
+   --          where medId=4 and depId=3 and pullStatus like 'I' and Year(lastUpdate) like 2023 
+   --          group by medId, depId, month(lastUpdate), Year(lastUpdate)) as t2
+	  --   on t1.monthPO=t2.monthPO and t1.yearPO=t2.yearPO
+		 -- order by monthPO
+   
